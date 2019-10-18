@@ -214,3 +214,7 @@ dmypy.json
 # Raw database
 *.csv
 /database/html_sources/
+
+*.dot
+*.png
+*.h5

@@ -28,3 +28,12 @@ def test_collection_createandinsert(client):
     print(db.list_collection_names())
 
     assert True
+
+def test_collection_findall(client):
+    db = client["stocks"]
+    collection = db['companies']
+
+    for company in collection.find():
+        print(company)
+
+    assert True

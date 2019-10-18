@@ -4,9 +4,11 @@ class PriceRecord:
                  , open: float
                  , high: float
                  , low: float
-                 , close: float):
+                 , close: float
+                 , vol: int):
         self.date = date
         self.open = open
         self.high = high
         self.low = low
         self.close = close
+        self.vol = vol
