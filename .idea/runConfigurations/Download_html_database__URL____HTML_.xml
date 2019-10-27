@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Download html database [URL -&gt; HTML]" type="PythonConfigurationType" factoryName="Python">
+  <configuration default="false" name="Download html database [URL -&gt; HTML]" type="PythonConfigurationType" factoryName="Python" folderName="Database">
     <module name="MagisterkaProjekt" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />

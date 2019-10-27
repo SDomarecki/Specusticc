@@ -28,6 +28,3 @@ class IrisTest:
                 filled=True
         )
 
-    def convert_dot_to_png(self):
-        from subprocess import check_call
-        check_call(['dot', '-Tpng', 'iris_drzewo.dot', '-o', 'iris_drzewo.png'])
