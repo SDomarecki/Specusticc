@@ -5,6 +5,7 @@ import pymongo
 import pandas as pd
 import models.indicators as ind
 
+
 class DecisionTree:
     def __init__(self, ticker: str, timedelta: int) -> None:
         self.ticker = ticker

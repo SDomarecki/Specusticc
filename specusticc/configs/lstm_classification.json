@@ -1,32 +1,36 @@
 {
+	"import": {
+		"datatype": "real",
+		"method": "random_walk",
+		"gaussian_noise": false,
+		"ticker": "PKO",
+		"date": {
+			"from": "2010-01-01",
+			"to": "2018-12-31"
+		}
+	},
 	"data": {
-		"ticker" : "CDR",
 		"columns": [
 			"close",
 			"vol"
 		],
-		"date": {
-			"from": "2010-01-01",
-			"to": "2018-12-31"
-		},
 		"sequence_length": 50,
-		"train_test_split": 0.66,
-		"normalise": true
+		"test_size": 0.33,
+		"normalise": false
 	},
 	"training": {
-		"epochs": 3,
+		"epochs": 100,
 		"batch_size": 32
 	},
 	"model": {
-		"type": "neural_network",
-		"loss": "mse",
-		"optimizer": "adam",
 		"save_dir": "saved_models",
+		"target": "classification",
+		"type": "neural_network",
 		"layers": [
 			{
 				"type": "lstm",
 				"neurons": 100,
-				"input_timesteps": 49,
+				"input_timesteps": 50,
 				"input_dim": 2,
 				"return_seq": true
 			},
@@ -50,9 +54,11 @@
 			},
 			{
 				"type": "dense",
-				"neurons": 1,
+				"neurons": 5,
 				"activation": "linear"
 			}
-		]
+		],
+		"loss": "categorical_crossentropy",
+		"optimizer": "adam"
 	}
 }
