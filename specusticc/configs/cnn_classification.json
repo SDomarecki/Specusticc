@@ -24,18 +24,18 @@
 	},
 	"model": {
 		"save_dir": "saved_models",
-		"target": "regression",
+		"target": "classification",
 		"type": "neural_network",
 		"layers": [
 			{
 				"type": "input",
-				"input_timesteps": 49,
+				"input_timesteps": 50,
 				"input_dim": 2
 			},
 			{
 				"type": "conv1d",
 				"neurons": 100,
-				"kernel_size": 2
+				"kernel_size": 1
 			},
 			{
 				"type": "averagePooling1d",
@@ -44,7 +44,7 @@
 			{
 				"type": "conv1d",
 				"neurons": 100,
-				"kernel_size": 2
+				"kernel_size": 1
 			},
 			{
 				"type": "averagePooling1d",
@@ -52,11 +52,11 @@
 			},
 			{
 				"type": "dense",
-				"neurons": 1,
+				"neurons": 5,
 				"activation": "linear"
 			}
 		],
-		"loss": "mse",
+		"loss": "categorical_crossentropy",
 		"optimizer": "adam"
 	}
 }
