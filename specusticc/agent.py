@@ -34,8 +34,21 @@ class Agent:
         self.data_proc = DataProcessor(self.config)
 
     def create_model_from_config(self):
+        model_type = self.config['model']['type']
+        if model_type == 'neural_network':
+            self.create_neural_network_model()
+        elif model_type == 'decision_tree':
+            self.create_decision_tree_model()
+        else:
+            raise NotImplementedError
+
+    def create_neural_network_model(self):
         from specusticc.neural_networks.neural_network_builder import NeuralNetworkBuilder
         self.model = NeuralNetworkBuilder.build_network(self.config)
+
+    def create_decision_tree_model(self):
+        from specusticc.decision_tree.decision_tree_main import DecisionTree
+        self.model = DecisionTree()
 
     def prepare_data_batches(self):
         self.input_train, self.output_train = self.data_proc.get_train_data()
