@@ -16,7 +16,8 @@ def _get_closest_date_index(df: pd.DataFrame, date: datetime) -> int:
 def _filter_history_by_dates(df: pd.DataFrame, from_date: datetime, to_date: datetime) -> pd.DataFrame:
     from_index = _get_closest_date_index(df, from_date)
     to_index = _get_closest_date_index(df, to_date)
-    return df.iloc[from_index:to_index]
+    filtered = df.iloc[from_index:to_index]
+    return filtered
 
 
 class DataLoader:

@@ -47,23 +47,19 @@ class Agent:
         self.model = NeuralNetworkBuilder.build_network(self.config)
 
     def create_decision_tree_model(self):
-        from specusticc.decision_tree.decision_tree_main import DecisionTree
-        self.model = DecisionTree()
+        from specusticc.decision_tree.decision_tree import DecisionTree
+        self.model = DecisionTree(self.config)
 
     def prepare_data_batches(self):
         self.input_train, self.output_train = self.data_proc.get_train_data()
         self.input_test, self.output_test = self.data_proc.get_test_data()
 
     def train_model(self):
-        epochs = self.config['training']['epochs']
-        batch_size = self.config['training']['batch_size']
-        save_dir = self.config['model']['save_dir']
-        self.model.train(self.input_train, self.output_train, epochs, batch_size, save_dir)
+        self.model.train(self.input_train, self.output_train)
 
     def test_model(self):
         if self.config['model']['target'] == 'regression':
-            seq_len = self.config['data']['sequence_length']
-            self.predictions = self.model.predict_sequences_multiple(self.input_test, seq_len, seq_len)
+            self.predictions = self.model.predict_sequences_multiple(self.input_test)
         else:
             self.predictions = self.model.predict_classification(self.input_test)
 
@@ -94,7 +90,10 @@ class Agent:
         import numpy as np
         seq_len = self.config['data']['sequence_length']
 
-        y = self.input_test[:, :, 0].reshape(self.input_test.shape[0]*self.input_test.shape[1])
+        if self.config['model']['type'] == 'decision_tree':
+            y = self.input_test.to_numpy()
+        else:
+            y = self.input_test[:, :, 0].reshape(self.input_test.shape[0] * self.input_test.shape[1])
         fig = plt.figure(facecolor='white')
         ax = fig.add_subplot(111)
         ax.plot(y, label='True Data')

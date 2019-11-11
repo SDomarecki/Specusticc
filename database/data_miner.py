@@ -4,8 +4,8 @@ import pandas as pd
 import pymongo
 from bs4 import BeautifulSoup
 import json
-from models.company import Company
-from models.statement_history import StatementHistory
+from database.models.company import Company
+from database.models.statement_history import StatementHistory
 
 
 class DataMiner:

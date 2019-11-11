@@ -1,8 +1,6 @@
 {
 	"import": {
 		"datatype": "real",
-		"method": "random_walk",
-		"gaussian_noise": false,
 		"ticker": "PKO",
 		"date": {
 			"from": "2010-01-01",
@@ -11,8 +9,16 @@
 	},
 	"data": {
 		"columns": [
+			"open",
+			"high",
+			"low",
 			"close",
 			"vol"
+		],
+		"features": [
+			"roc",
+			"macd_val",
+			"rsi"
 		],
 		"sequence_length": 50,
 		"test_size": 0.33,
@@ -22,37 +28,6 @@
 		"save_dir": "saved_models",
 		"target": "classification",
 		"type": "decision_tree",
-		"layers": [
-			{
-				"type": "input",
-				"input_timesteps": 50,
-				"input_dim": 2
-			},
-			{
-				"type": "conv1d",
-				"neurons": 100,
-				"kernel_size": 1
-			},
-			{
-				"type": "averagePooling1d",
-				"pool_size": 2
-			},
-			{
-				"type": "conv1d",
-				"neurons": 100,
-				"kernel_size": 1
-			},
-			{
-				"type": "averagePooling1d",
-				"pool_size": 2
-			},
-			{
-				"type": "dense",
-				"neurons": 5,
-				"activation": "linear"
-			}
-		],
-		"loss": "categorical_crossentropy",
-		"optimizer": "adam"
+		"max_depth": 3
 	}
 }

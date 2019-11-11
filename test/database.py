@@ -26,8 +26,8 @@ def test_collection_createandinsert(client):
     post_id = posts.insert_one(post).inserted_id
     print(post_id)
     print(db.list_collection_names())
-
     assert True
+
 
 def test_collection_findall(client):
     db = client["stocks"]

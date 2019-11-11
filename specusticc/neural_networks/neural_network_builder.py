@@ -36,4 +36,4 @@ class NeuralNetworkBuilder:
         model.compile(loss=configs['model']['loss'], optimizer=configs['model']['optimizer'])
 
         print('[Model] Model Compiled')
-        return Model(model)
+        return Model(model, configs)

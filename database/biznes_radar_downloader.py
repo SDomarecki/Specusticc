@@ -5,7 +5,7 @@ import time
 import requests
 from bs4 import BeautifulSoup
 
-from models.company import Company
+from database.models.company import Company
 
 main_url = 'https://www.biznesradar.pl/'
 stocks_list_url = 'gielda/akcje_gpw'

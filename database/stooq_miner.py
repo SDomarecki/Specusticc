@@ -3,8 +3,8 @@ import os
 
 import pymongo
 import pandas as pd
-from models.price_history import PriceHistory
-from models.price_record import PriceRecord
+from database.models.price_history import PriceHistory
+from database.models.price_record import PriceRecord
 
 
 class StooqMiner:

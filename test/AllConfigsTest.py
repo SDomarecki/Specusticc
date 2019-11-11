@@ -1,5 +1,6 @@
 import pytest
 from specusticc.agent import Agent
+from pathlib import Path
 
 config_paths = [
     'configs/lstm_regression.json',
@@ -9,32 +10,31 @@ config_paths = [
     'configs/tree_classification.json'
 ]
 
-
-def test_lstm_regression():
-    config_path = config_paths[0]
-    agent = Agent(config_path=config_path)
-    assert True
+# def test_lstm_regression():
+#     config_path = config_path = Path(__file__).parent.parent / 'specusticc' / config_paths[0]
+#     agent = Agent(config_path=config_path)
+#     assert True
 
 
 def test_lstm_classification():
-    config_path = config_paths[1]
-    agent = Agent(config_path=config_path)
+    config_path = Path(__file__).parent.parent / 'specusticc' / config_paths[1]
+    agent = Agent(config_path=str(config_path))
     assert True
 
 
-def test_cnn_regression():
-    config_path = config_paths[2]
-    agent = Agent(config_path=config_path)
-    assert True
-
-
-def test_cnn_classification():
-    config_path = config_paths[3]
-    agent = Agent(config_path=config_path)
-    assert True
+# def test_cnn_regression():
+#     config_path = config_path = Path(__file__).parent.parent / 'specusticc' / config_paths[2]
+#     agent = Agent(config_path=str(config_path))
+#     assert True
+#
+#
+# def test_cnn_classification():
+#     config_path = config_path = Path(__file__).parent.parent / 'specusticc' / config_paths[3]
+#     agent = Agent(config_path=str(config_path))
+#     assert True
 
 
 def test_tree_classification():
-    config_path = config_paths[4]
-    agent = Agent(config_path=config_path)
+    config_path = config_path = Path(__file__).parent.parent / 'specusticc' / config_paths[4]
+    agent = Agent(config_path=str(config_path))
     assert True
