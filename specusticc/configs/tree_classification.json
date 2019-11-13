@@ -28,6 +28,6 @@
 		"save_dir": "saved_models",
 		"target": "classification",
 		"type": "decision_tree",
-		"max_depth": 3
+		"max_depth": 10
 	}
 }

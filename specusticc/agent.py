@@ -9,6 +9,19 @@ def create_save_dir(save_dir: str) -> None:
         os.makedirs(save_dir)
 
 
+def label_to_arg_max(data: str) -> int:
+    if data == 'Strong Buy':
+        return 4
+    elif data == 'Buy':
+        return 3
+    elif data == 'Hold':
+        return 2
+    elif data == 'Sell':
+        return 1
+    else:
+        return 0
+
+
 class Agent:
     def __init__(self, config_path: str) -> None:
         self.config = load_config(config_path)
@@ -91,7 +104,7 @@ class Agent:
         seq_len = self.config['data']['sequence_length']
 
         if self.config['model']['type'] == 'decision_tree':
-            y = self.input_test.to_numpy()
+            y = self.input_test[['close']].to_numpy()
         else:
             y = self.input_test[:, :, 0].reshape(self.input_test.shape[0] * self.input_test.shape[1])
         fig = plt.figure(facecolor='white')
@@ -99,7 +112,10 @@ class Agent:
         ax.plot(y, label='True Data')
         for i, data in enumerate(self.predictions):
             padding = (i+1) * seq_len
-            arg_max = np.argmax(data)
+            if self.config['model']['type'] == 'decision_tree':
+                arg_max = label_to_arg_max(data)
+            else:
+                arg_max = np.argmax(data)
             if arg_max > 2:
                 marker = '^'
             elif arg_max == 2:

@@ -13,7 +13,8 @@ class DataMiner:
         self.now = datetime.datetime.utcnow()
         self.client = pymongo.MongoClient("mongodb://localhost:27017/")
         self.companies = self.read_companies_source()
-        self.directories = self.get_ticker_list()
+        self.save_to_database()
+        # self.directories = self.get_ticker_list()
 
     @staticmethod
     def read_companies_source() -> [Company]:
