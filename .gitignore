@@ -215,6 +215,6 @@ dmypy.json
 *.csv
 /database/html_sources/
 
-*.dot
 *.png
 *.h5
+*/output

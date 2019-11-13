@@ -1,7 +1,7 @@
 {
 	"import": {
 		"datatype": "real",
-		"ticker": "PKO",
+		"ticker": "CDR",
 		"date": {
 			"from": "2010-01-01",
 			"to": "2018-12-31"

@@ -15,11 +15,16 @@ def boost_AT_info(source: pd.DataFrame) -> pd.DataFrame:
 
 class DecisionTree:
     def __init__(self, config: dict) -> None:
+        print('[Tree] Tree initialization')
         self.timedelta = config['data']['sequence_length']
         self.tree_clf = DecisionTreeClassifier(max_depth=config['model']['max_depth'])
         self.history = None
         self.target_labels = None
         self.feature_names = ['roc', 'macd_val', 'rsi']
+
+    def save(self, save_dir: str) -> None:
+        from joblib import dump
+        dump(self.tree_clf, save_dir)
 
     def train(self, x: pd.DataFrame, y: pd.DataFrame) -> None:
         x = boost_AT_info(x)

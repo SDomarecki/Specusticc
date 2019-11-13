@@ -15,12 +15,15 @@ class Model:
         self.save_dir = config['model']['save_dir']
         self.seq_len = config['data']['sequence_length']
 
+    def save(self, save_dir: str) -> None:
+        self.model.save(save_dir)
+
     def train(self, x: np.array, y: np.array) -> None:
         print('[Model] Training Started')
         print('[Model] %s epochs, %s batch size' % (self.epochs, self.batch_size))
 
         scaled_x = self._scale(x)
-        save_fname = os.path.join(self.save_dir, 'neural_network-%s-e%s.h5' % (dt.datetime.now().strftime('%Y-%m-%d_%H-%M'), str(self.epochs)))
+        save_fname = os.path.join('temp.h5')
         callbacks = [
             ModelCheckpoint(filepath=save_fname, monitor='loss', save_best_only=True)
         ]
@@ -31,7 +34,7 @@ class Model:
             callbacks=callbacks
         )
         self.model.save(save_fname)
-        print('[Model] Training Completed. Model saved as %s' % save_fname)
+        print('[Model] Training Completed')
 
     def predict_classification(self, test_data:np.array) -> []:
         print('[Model] Predicting position classes...')
