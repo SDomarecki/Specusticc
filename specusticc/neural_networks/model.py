@@ -3,7 +3,7 @@ import os
 
 import numpy as np
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
+from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from numpy import newaxis
 
 
@@ -25,6 +25,7 @@ class Model:
         scaled_x = self._scale(x)
         save_fname = os.path.join('temp.h5')
         callbacks = [
+            ReduceLROnPlateau(monitor='loss', factor=0.3, min_delta=0.01, patience=3, verbose=1),
             ModelCheckpoint(filepath=save_fname, monitor='loss', save_best_only=True)
         ]
         self.model.fit(
