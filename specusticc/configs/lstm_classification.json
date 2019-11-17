@@ -21,8 +21,8 @@
 		"normalise": false
 	},
 	"training": {
-		"epochs": 10,
-		"batch_size": 32
+		"epochs": 100,
+		"batch_size": 50
 	},
 	"model": {
 		"save_dir": "saved_models",
@@ -31,7 +31,7 @@
 		"layers": [
 			{
 				"type": "lstm",
-				"neurons": 100,
+				"neurons": 250,
 				"input_timesteps": 250,
 				"input_dim": 2,
 				"return_seq": true
@@ -42,12 +42,17 @@
 			},
 			{
 				"type": "lstm",
-				"neurons": 100,
+				"neurons": 150,
 				"return_seq": true
 			},
 			{
 				"type": "lstm",
 				"neurons": 100,
+				"return_seq": true
+			},
+						{
+				"type": "lstm",
+				"neurons": 50,
 				"return_seq": false
 			},
 			{
@@ -55,12 +60,18 @@
 				"rate": 0.2
 			},
 			{
+				"type": "batchNormalization"
+			},
+			{
 				"type": "dense",
 				"neurons": 5,
-				"activation": "linear"
+				"activation": "softmax"
 			}
 		],
 		"loss": "categorical_crossentropy",
-		"optimizer": "adam"
+		"optimizer": "adam",
+		"metrics": [
+			"accuracy"
+		]
 	}
 }

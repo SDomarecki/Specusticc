@@ -1,6 +1,9 @@
-from specusticc.agent import Agent
 import matplotlib.pyplot as plt
 import numpy as np
+from matplotlib import gridspec
+
+from specusticc.agent import Agent
+
 
 class Reporter:
     def __init__(self, agent: Agent) -> None:
@@ -62,19 +65,54 @@ class Reporter:
         ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
                   fancybox=True, shadow=True, ncol=5)
 
-
-        save_path = self.report_directory + '/plot.png'
-        plt.savefig(save_path)
+        self._save_plot()
 
     def _save_classification_report(self):
-        prediction_shift = self.config['data']['prediction_shift']
-        model_type = self.config['model']['type']
-        y = self.input_test[['close']].to_numpy()
         fig = plt.figure(facecolor='white', dpi=150)
-        ax = fig.add_subplot(111)
-        ax.plot(y, color='cornflowerblue', label='True Data')
-        for i, data in enumerate(self.predictions):
-            padding = (i+1) * prediction_shift
+        gs = gridspec.GridSpec(nrows=3, ncols=1, height_ratios=[10, 1, 1])
+        self._draw_original_data(fig, gs)
+        self._draw_original_classes(fig, gs)
+        self._draw_predicted_classes(fig, gs)
+        plt.tight_layout()
+        self._save_plot()
+
+    def _draw_original_data(self, fig, gs):
+        ax = fig.add_subplot(gs[0])
+        ax.set_title('Original price chart')
+        self._set_proper_xlim()
+
+        y = self.input_test[['close']].to_numpy()
+        ax.plot(y, color='cornflowerblue')
+        plt.grid()
+
+    def _draw_original_classes(self, fig, gs):
+        plot_title = 'Original price direction'
+        ax = self._draw_class_plot(fig, gs[1], plot_title)
+
+        self._draw_classes(self.output_test)
+
+    def _draw_predicted_classes(self, fig, gs):
+        plot_title = 'Predicted price direction'
+        ax = self._draw_class_plot(fig, gs[2], plot_title)
+
+        self._draw_classes(self.predictions)
+        self._create_plot_legend(ax)
+
+    def _draw_class_plot(self, fig, spec, title: str):
+        ax = fig.add_subplot(spec)
+        ax.axes.xaxis.set_ticklabels([])
+        ax.axes.yaxis.set_ticklabels([])
+        ax.set_title(title)
+        self._set_proper_xlim()
+        return ax
+
+    def _draw_classes(self, classes):
+        model_type = self.config['model']['type']
+        prediction_shift = self.config['data']['prediction_shift']
+        seq_len = self.config['data']['sequence_length']
+
+        for i, data in enumerate(classes):
+            padding = i * prediction_shift + seq_len
             if model_type == 'decision_tree':
                 arg_max = _label_to_arg_max(data)
             else:
@@ -90,8 +128,11 @@ class Reporter:
                 color = 'crimson'
             plt.plot(padding, 1, marker=marker, color=color)
 
-        plt.grid()
+    def _set_proper_xlim(self):
+        axes = plt.gca()
+        axes.set_xlim([0, len(self.input_test)])
 
+    def _create_plot_legend(self, ax):
         # Shrink current axis's height by 10% on the bottom
         box = ax.get_position()
         ax.set_position([box.x0, box.y0 + box.height * 0.1,
@@ -107,6 +148,8 @@ class Reporter:
                   loc='upper center', bbox_to_anchor=(0.5, -0.05),
                   fancybox=True, shadow=True, ncol=5)
 
+
+    def _save_plot(self):
         save_path = self.report_directory + '/plot.png'
         plt.savefig(save_path)
 

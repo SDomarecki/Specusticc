@@ -9,7 +9,7 @@ class DataToModelIO:
         len_data = len(data)
         self.seq_len = config['data']['sequence_length']
         self.shift = config['data']['sequence_shift']
-        self.timedelta = config['data']['prediction_shift']
+        self.prediction_shift = config['data']['prediction_shift']
         self.model_type = config['model']['type']
         self.x_len = int((len_data-self.seq_len)/self.shift)
 
@@ -55,7 +55,9 @@ class DataToModelIO:
 
     def calculate_classes(self) -> None:
         from specusticc.data_processing.ratio_to_class import ratio_to_class
-        timedelta = self.timedelta
+        prediction_shift = self.prediction_shift
+        seq_len = self.seq_len
+
         self.y = []
         i = 0
         while i < self.x_len - 1:
@@ -64,7 +66,7 @@ class DataToModelIO:
                 next_val = self.x.loc[:, 'close'].iloc[i+1]
             else:
                 present_val = self.x[i, -1, 0]
-                next_val = self.x[i+1, timedelta, 0]
+                next_val = self.x[i+1, prediction_shift, 0]
             ratio = next_val / present_val
 
             ratio_class = ratio_to_class(ratio, self.model_type)

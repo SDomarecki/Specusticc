@@ -1,10 +1,11 @@
-import datetime as dt
 import os
 
 import numpy as np
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint, ReduceLROnPlateau
 from numpy import newaxis
+from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
+from tensorflow.keras.models import Sequential
+
+from specusticc.timer import Timer
 
 
 class Model:
@@ -21,12 +22,14 @@ class Model:
     def train(self, x: np.array, y: np.array) -> None:
         print('[Model] Training Started')
         print('[Model] %s epochs, %s batch size' % (self.epochs, self.batch_size))
+        t = Timer()
+        t.start()
 
         scaled_x = self._scale(x)
         save_fname = os.path.join('temp.h5')
         callbacks = [
             ReduceLROnPlateau(monitor='loss', factor=0.3, min_delta=0.01, patience=3, verbose=1),
-            ModelCheckpoint(filepath=save_fname, monitor='loss', save_best_only=True)
+            ModelCheckpoint(filepath=save_fname, monitor='loss', save_best_only=True, verbose=1)
         ]
         self.model.fit(
             scaled_x,
@@ -36,6 +39,8 @@ class Model:
         )
         self.model.save(save_fname)
         print('[Model] Training Completed')
+        t.stop()
+        t.print_time()
 
     def predict_classification(self, test_data:np.array) -> []:
         print('[Model] Predicting position classes...')

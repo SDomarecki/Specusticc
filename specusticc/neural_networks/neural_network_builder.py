@@ -30,10 +30,15 @@ class NeuralNetworkBuilder:
                 model.add(L.Conv1D(neurons, kernel_size))
             elif layer['type'] == 'averagePooling1d':
                 model.add(L.AveragePooling1D(pool_size))
+            elif layer['type'] == 'batchNormalization':
+                model.add(L.BatchNormalization())
             else:
                 raise NotImplementedError
 
-        model.compile(loss=configs['model']['loss'], optimizer=configs['model']['optimizer'])
+        loss = configs['model']['loss']
+        optimizer = configs['model']['optimizer']
+        metrics = configs['model']['metrics']
+        model.compile(loss=loss, optimizer=optimizer, metrics=metrics)
 
         print('[Model] Model Compiled')
         return Model(model, configs)
