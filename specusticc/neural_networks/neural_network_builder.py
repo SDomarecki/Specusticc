@@ -24,6 +24,8 @@ class NeuralNetworkBuilder:
                 model.add(L.Dense(neurons, activation=activation))
             elif layer['type'] == 'lstm':
                 model.add(L.LSTM(neurons, input_shape=(input_timesteps, input_dim), return_sequences=return_seq))
+            elif layer['type'] == 'gru':
+                model.add(L.GRU(neurons, input_shape=(input_timesteps, input_dim), return_sequences=return_seq))
             elif layer['type'] == 'dropout':
                 model.add(L.Dropout(dropout_rate))
             elif layer['type'] == 'conv1d':

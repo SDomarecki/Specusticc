@@ -60,6 +60,7 @@ class Agent:
             self.predictions = self.model.predict_classification(self.input_test)
 
     def print_report(self):
+
         from specusticc.reporting.reporter import Reporter
         r = Reporter(self)
         r.print_report()

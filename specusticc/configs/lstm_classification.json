@@ -68,10 +68,10 @@
 				"activation": "softmax"
 			}
 		],
-		"loss": "categorical_crossentropy",
+		"loss": "sparse_categorical_crossentropy",
 		"optimizer": "adam",
 		"metrics": [
-			"accuracy"
+			"sparse_categorical_accuracy"
 		]
 	}
 }

@@ -14,10 +14,16 @@ class Reporter:
         self.report_directory = None
 
     def print_report(self):
+        # self._print_accuracy()
         self._create_report_directory()
         self._save_model()
         self._save_config()
         self._save_prediction_plot()
+
+    def _print_accuracy(self):
+        from sklearn.metrics import accuracy_score
+        acc = accuracy_score(self.output_test, self.predictions)
+        print('Accuracy of predictions: ' + str(acc))
 
     def _create_report_directory(self) -> None:
         import specusticc.directories as dirs
@@ -95,7 +101,10 @@ class Reporter:
         plot_title = 'Predicted price direction'
         ax = self._draw_class_plot(fig, gs[2], plot_title)
 
-        self._draw_classes(self.predictions)
+        prediction_classes = []
+        for pred in self.predictions:
+            prediction_classes.append(np.argmax(pred))
+        self._draw_classes(prediction_classes)
         self._create_plot_legend(ax)
 
     def _draw_class_plot(self, fig, spec, title: str):
@@ -116,7 +125,7 @@ class Reporter:
             if model_type == 'decision_tree':
                 arg_max = _label_to_arg_max(data)
             else:
-                arg_max = np.argmax(data)
+                arg_max = data
             if arg_max > 2:
                 marker = '^'
                 color = 'limegreen'

@@ -1,6 +1,6 @@
 def ratio_to_class(ratio: float, model_type: str):
     if model_type == 'neural_network':
-        return ratio_to_class_array(ratio)
+        return ratio_to_class_number(ratio)
     elif model_type == 'decision_tree':
         return ratio_to_class_name(ratio)
     else:
@@ -22,15 +22,15 @@ def ratio_to_class_name(ratio: float) -> str:
 
 def ratio_to_class_number(ratio: float) -> int:
     if ratio > 1.2:
-        return 5  # Strong Buy
+        return 4  # Strong Buy
     elif ratio > 1.05:
-        return 4  # Buy
+        return 3  # Buy
     elif ratio > 0.95:
-        return 3  # Hold
+        return 2  # Hold
     elif ratio > 0.8:
-        return 2  # Sell
+        return 1  # Sell
     else:
-        return 1  # Strong Sell
+        return 0  # Strong Sell
 
 
 def ratio_to_class_array(ratio: float) -> []:
