@@ -3,80 +3,85 @@ import numpy as np
 
 
 class DataToModelIO:
-    def __init__(self, data: pd.DataFrame, config: dict) -> None:
-        columns = config['data']['columns']
-        self.data = data.loc[:, columns]
-        len_data = len(data)
+    def __init__(self, config: dict) -> None:
+        self.config = config
+
         self.seq_len = config['data']['sequence_length']
-        self.shift = config['data']['sequence_shift']
-        self.prediction_shift = config['data']['prediction_shift']
-        self.model_type = config['model']['type']
-        self.x_len = int((len_data-self.seq_len)/self.shift)
+        self.columns_num = len(self.config['data']['columns']) - 1
+        self.input = None
+        self.output = None
+        self.input_len = None
 
-        last_index = self.x_len * self.seq_len
-        self.data_aligned_to_sequences = self.data.iloc[:last_index]
+    def transform_for_model(self, data: pd.DataFrame) -> tuple:
+        data_aligned = self._align_to_sequences(data)
+        data_aligned = data_aligned.drop(columns=['date'])
 
-        self.x = None
-        self.y = None
-        self.divide_for_model(config['model']['target'])
-
-    def divide_for_model(self, target: str) -> None:
+        target = self.config['model']['target']
         if target == 'regression':
-            self.divide_for_regression()
+            self._divide_for_regression(data_aligned)
         elif target == 'classification':
-            self.reshape_for_classification()
-            self.calculate_classes()
+            self._calculate_classes(data_aligned)
+            self._reshape_for_classification(data_aligned)
         else:
             raise NotImplementedError
+        return self.get_io()
 
-    def divide_for_regression(self) -> None:
-        data_np = self.data_aligned_to_sequences.to_numpy()
-        data_np = data_np.reshape(self.x_len, self.seq_len, 2)
+    def _align_to_sequences(self, data: pd.DataFrame) -> pd.DataFrame:
+        seq_len = self.config['data']['sequence_length']
+        shift = self.config['data']['sequence_shift']
 
-        self.x = data_np[:, :-1]
-        self.y = data_np[:, -1, 0]
+        len_data = len(data)
+        self.input_len = int((len_data - seq_len) / shift)
+        last_input_index = self.input_len * seq_len
+        return data.iloc[:last_input_index]
 
-    def reshape_for_classification(self) -> None:
+    def _divide_for_regression(self, data: pd.DataFrame) -> None:
+        data_np = data.to_numpy()
+        data_np = data_np.reshape(self.input_len, self.seq_len, self.columns_num)
+
+        self.input = data_np[:, :-1]
+        self.output = data_np[:, -1, 0]
+
+    def _reshape_for_classification(self, data: pd.DataFrame) -> None:
         # IF model is Decision Tree then leaves data model as Pandas
         # Else reshapes it to 3D numpy array
-        if self.model_type == 'decision_tree':
-            self.x = self.data_aligned_to_sequences
+        model_type = self.config['model']['type']
+        if model_type == 'decision_tree':
+            self.input = data
             return
 
+        sample_shift = self.config['data']['sequence_shift']
         shifts = 0
         data_np = []
-        while shifts < self.x_len:
-            data_np.append(self.data_aligned_to_sequences.iloc[shifts*self.shift: shifts*self.shift+self.seq_len])
+        while shifts < self.input_len:
+            data_np.append(data.iloc[shifts*sample_shift: shifts*sample_shift+self.seq_len])
             shifts += 1
         data_np = pd.concat(data_np).to_numpy()
-        # data_np = self.data_aligned_to_sequences.to_numpy()
-        data_np = data_np.reshape(self.x_len, self.seq_len, 2)
-        self.x = data_np
+        data_np = data_np.reshape(self.input_len, self.seq_len, self.columns_num)
+        self.input = data_np
 
-    def calculate_classes(self) -> None:
+    def _calculate_classes(self, data: pd.DataFrame) -> None:
         from specusticc.data_processing.ratio_to_class import ratio_to_class
-        prediction_shift = self.prediction_shift
-        seq_len = self.seq_len
+        prediction_shift = self.config['data']['prediction_shift']
+        sequence_shift = self.config['data']['sequence_shift']
 
-        self.y = []
+        output_labels = []
         i = 0
-        while i < self.x_len - 1:
-            if self.model_type == 'decision_tree':
-                present_val = self.x.loc[:, 'close'].iloc[i]
-                next_val = self.x.loc[:, 'close'].iloc[i+1]
-            else:
-                present_val = self.x[i, -1, 0]
-                next_val = self.x[i+1, prediction_shift, 0]
-            ratio = next_val / present_val
+        while i < self.input_len - 1:
+            present_val_index = i*sequence_shift + self.seq_len - 1
+            future_val_index = present_val_index + prediction_shift
 
-            ratio_class = ratio_to_class(ratio, self.model_type)
-            self.y.append(ratio_class)
+            present_val = data.loc[:, 'close'].iloc[present_val_index]
+            future_val = data.loc[:, 'close'].iloc[future_val_index]
+            ratio = future_val / present_val
 
+            ratio_class = ratio_to_class(ratio)
+            output_labels.append(ratio_class)
             i += 1
 
-        ratio_class = ratio_to_class(1, self.model_type)
-        self.y.append(ratio_class)
-        self.y = np.array(self.y)
+        ratio_class = ratio_to_class(1.)
+        output_labels.append(ratio_class)
+        self.output = np.array(output_labels)
 
     def get_io(self) -> tuple:
-        return self.x, self.y
+        return self.input, self.output

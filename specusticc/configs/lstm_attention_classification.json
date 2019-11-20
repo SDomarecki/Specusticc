@@ -11,14 +11,14 @@
 	},
 	"data": {
 		"columns": [
-			"date",
 			"close",
 			"vol"
 		],
 		"sequence_length": 250,
 		"sequence_shift": 50,
 		"prediction_shift": 50,
-		"test_size": 0.33
+		"test_size": 0.33,
+		"normalise": false
 	},
 	"training": {
 		"epochs": 100,
@@ -50,17 +50,21 @@
 				"neurons": 100,
 				"return_seq": true
 			},
-						{
+			{
 				"type": "lstm",
 				"neurons": 50,
 				"return_seq": false
 			},
 			{
-				"type": "dropout",
-				"rate": 0.2
+				"type": "batchNormalization"
 			},
 			{
-				"type": "batchNormalization"
+				"type": "attention",
+				"input_timesteps": 250
+			},
+			{
+				"type": "dropout",
+				"rate": 0.2
 			},
 			{
 				"type": "dense",

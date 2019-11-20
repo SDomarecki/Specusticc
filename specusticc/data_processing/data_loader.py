@@ -1,12 +1,13 @@
 import pandas as pd
 from datetime import datetime, timedelta
+import pymongo
 
 
 def _get_closest_date_index(df: pd.DataFrame, date: datetime) -> int:
     closest_index = None
     while closest_index is None:
         try:
-            closest_index = df.index[df['date'] == date.strftime('%Y-%m-%d')][0]
+            closest_index = df.index[df['date'] == date][0]
         except Exception:
             pass
         date = date - timedelta(days=1)
@@ -36,15 +37,16 @@ class DataLoader:
 
     def _load_from_database(self) -> pd.DataFrame:
         ticker = self.config['import']['ticker']
-        import pymongo
         client = pymongo.MongoClient("mongodb://localhost:27017/")
         stocks = client["stocks"]
         prices = stocks['prices']
-        history = prices.find_one({"ticker": ticker})['history']
+        raw_history = prices.find_one({"ticker": ticker})['history']
 
-        df = pd.DataFrame(history)[['date', 'open', 'high', 'low', 'close', 'vol']]
+        columns = self.config['data']['columns']
+        df_full_history = pd.DataFrame(raw_history)[columns]
+        df_full_history['date'] = pd.to_datetime(df_full_history['date'], format='%Y-%m-%d')
 
-        from_date = datetime.strptime(self.config['import']['date']['from'], '%Y-%m-%d')
-        to_date = datetime.strptime(self.config['import']['date']['to'], '%Y-%m-%d')
-        df = _filter_history_by_dates(df, from_date, to_date)
-        return df
+        from_date = self.config['import']['date']['from']
+        to_date = self.config['import']['date']['to']
+        df_filtered_history = _filter_history_by_dates(df_full_history, from_date, to_date)
+        return df_filtered_history

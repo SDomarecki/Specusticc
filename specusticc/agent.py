@@ -1,6 +1,11 @@
 def load_config(config_path) -> dict:
     import json
-    return json.load(open(config_path))
+    from datetime import datetime
+
+    config = json.load(open(config_path))
+    config['import']['date']['from'] = datetime.strptime(config['import']['date']['from'], '%Y-%m-%d')
+    config['import']['date']['to'] = datetime.strptime(config['import']['date']['to'], '%Y-%m-%d')
+    return config
 
 
 class Agent:
@@ -10,8 +15,6 @@ class Agent:
         self.model = None
         self.predictions = None
         self.report = None
-        self.org_train = None
-        self.org_test = None
         self.input_train = None
         self.input_test = None
         self.output_train = None
@@ -48,7 +51,7 @@ class Agent:
     def prepare_data_batches(self):
         self.input_train, self.output_train = self.data_proc.get_train_data()
         self.input_test, self.output_test = self.data_proc.get_test_data()
-        self.org_train, self.org_test = self.data_proc.get_org_data()
+        self.original_pandas_input_test = self.data_proc.test
 
     def train_model(self):
         self.model.train(self.input_train, self.output_train)
@@ -60,7 +63,6 @@ class Agent:
             self.predictions = self.model.predict_classification(self.input_test)
 
     def print_report(self):
-
         from specusticc.reporting.reporter import Reporter
         r = Reporter(self)
         r.print_report()

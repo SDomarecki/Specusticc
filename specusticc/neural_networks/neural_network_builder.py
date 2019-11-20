@@ -18,21 +18,24 @@ class NeuralNetworkBuilder:
             kernel_size = layer['kernel_size'] if 'kernel_size' in layer else 2
             pool_size = layer['pool_size'] if 'pool_size' in layer else None
 
-            if layer['type'] == 'input':
+            layer_type = layer['type']
+            if layer_type == 'input':
                 model.add(L.Input(shape=(input_timesteps, input_dim)))
-            elif layer['type'] == 'dense':
+            elif layer_type == 'dense':
                 model.add(L.Dense(neurons, activation=activation))
-            elif layer['type'] == 'lstm':
+            elif layer_type == 'lstm':
                 model.add(L.LSTM(neurons, input_shape=(input_timesteps, input_dim), return_sequences=return_seq))
-            elif layer['type'] == 'gru':
+            elif layer_type == 'gru':
                 model.add(L.GRU(neurons, input_shape=(input_timesteps, input_dim), return_sequences=return_seq))
-            elif layer['type'] == 'dropout':
+            elif layer_type == 'attention':
+                model.add(L.Attention())
+            elif layer_type == 'dropout':
                 model.add(L.Dropout(dropout_rate))
-            elif layer['type'] == 'conv1d':
+            elif layer_type == 'conv1d':
                 model.add(L.Conv1D(neurons, kernel_size))
-            elif layer['type'] == 'averagePooling1d':
+            elif layer_type == 'averagePooling1d':
                 model.add(L.AveragePooling1D(pool_size))
-            elif layer['type'] == 'batchNormalization':
+            elif layer_type == 'batchNormalization':
                 model.add(L.BatchNormalization())
             else:
                 raise NotImplementedError
