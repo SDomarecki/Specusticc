@@ -26,7 +26,7 @@ class Model:
         t.start()
 
         scaled_x = self._scale(x)
-        save_fname = os.path.join('temp.h5')
+        save_fname = 'temp.h5'
         callbacks = [
             ReduceLROnPlateau(monitor='loss', factor=0.3, min_delta=0.01, patience=3, verbose=1),
             ModelCheckpoint(filepath=save_fname, monitor='loss', save_best_only=True, verbose=1)

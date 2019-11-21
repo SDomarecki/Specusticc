@@ -21,12 +21,12 @@ def generate(config_import: dict) -> pd.DataFrame:
         elif method == 'sine':
             step = np.sin(price_history.__len__() * np.pi)
         elif method == 'exponental':
-            step = current_price*0.001
+            step = current_price * 0.001
         elif method == 'polynomial':
             step = 1
 
         if gauss:
-            step += np.random.normal(-step*0.5, step*0.5)
+            step += np.random.normal(-step * 0.5, step * 0.5)
 
         next_price = current_price + step
         if step > 0:

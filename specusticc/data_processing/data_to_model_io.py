@@ -37,10 +37,10 @@ class DataToModelIO:
 
     def _divide_for_regression(self, data: pd.DataFrame) -> None:
         data_np = data.to_numpy()
-        data_np = data_np.reshape(self.input_len, self.seq_len, self.columns_num)
+        tensor = data_np.reshape(self.input_len, self.seq_len, self.columns_num)
 
-        self.input = data_np[:, :-1]
-        self.output = data_np[:, -1, 0]
+        self.input = tensor[:, :-1]
+        self.output = tensor[:, -1, 0]
 
     def _reshape_for_classification(self, data: pd.DataFrame) -> None:
         # IF model is Decision Tree then leaves data model as Pandas
@@ -54,7 +54,7 @@ class DataToModelIO:
         shifts = 0
         data_np = []
         while shifts < self.input_len:
-            data_np.append(data.iloc[shifts*sample_shift: shifts*sample_shift+self.seq_len])
+            data_np.append(data.iloc[shifts * sample_shift: shifts * sample_shift + self.seq_len])
             shifts += 1
         data_np = pd.concat(data_np).to_numpy()
         data_np = data_np.reshape(self.input_len, self.seq_len, self.columns_num)
@@ -68,7 +68,7 @@ class DataToModelIO:
         output_labels = []
         i = 0
         while i < self.input_len - 1:
-            present_val_index = i*sequence_shift + self.seq_len - 1
+            present_val_index = i * sequence_shift + self.seq_len - 1
             future_val_index = present_val_index + prediction_shift
 
             present_val = data.loc[:, 'close'].iloc[present_val_index]

@@ -1,10 +1,23 @@
-def load_config(config_path) -> dict:
-    import json
-    from datetime import datetime
+import json
+from datetime import datetime
 
-    config = json.load(open(config_path))
-    config['import']['date']['from'] = datetime.strptime(config['import']['date']['from'], '%Y-%m-%d')
-    config['import']['date']['to'] = datetime.strptime(config['import']['date']['to'], '%Y-%m-%d')
+from .data_processing.data_processor import DataProcessor
+from .reporting.reporter import Reporter
+from .neural_networks.neural_network_builder import NeuralNetworkBuilder
+from .decision_tree.decision_tree import DecisionTree
+
+
+def load_config(config_path) -> dict:
+    file = open(config_path)
+    config = json.load(file)
+
+    date = config['import']['date']
+    date_format = '%Y-%m-%d'
+
+    date['from'] = datetime.strptime(date['from'], date_format)
+    date['to'] = datetime.strptime(date['to'], date_format)
+
+    config['import']['date'] = date
     return config
 
 
@@ -28,7 +41,6 @@ class Agent:
         self.print_report()
 
     def load_data(self):
-        from specusticc.data_processing.data_processor import DataProcessor
         self.data_proc = DataProcessor(self.config)
 
     def create_model_from_config(self):
@@ -41,11 +53,9 @@ class Agent:
             raise NotImplementedError
 
     def create_neural_network_model(self):
-        from specusticc.neural_networks.neural_network_builder import NeuralNetworkBuilder
         self.model = NeuralNetworkBuilder.build_network(self.config)
 
     def create_decision_tree_model(self):
-        from specusticc.decision_tree.decision_tree import DecisionTree
         self.model = DecisionTree(self.config)
 
     def prepare_data_batches(self):
@@ -63,6 +73,6 @@ class Agent:
             self.predictions = self.model.predict_classification(self.input_test)
 
     def print_report(self):
-        from specusticc.reporting.reporter import Reporter
-        r = Reporter(self)
+        test = (self.original_pandas_input_test, self.output_test)
+        r = Reporter(self.config, test, self.predictions, self.model)
         r.print_report()

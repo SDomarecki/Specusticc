@@ -22,6 +22,8 @@ def _filter_history_by_dates(df: pd.DataFrame, from_date: datetime, to_date: dat
 
 
 class DataLoader:
+    database_url = 'mongodb://localhost:27017/'
+
     def __init__(self, config: dict) -> None:
         self.config = config
 
@@ -36,11 +38,11 @@ class DataLoader:
             raise NotImplementedError
 
     def _load_from_database(self) -> pd.DataFrame:
+        client = pymongo.MongoClient(DataLoader.database_url)
+        stocks_database = client['stocks']
+        prices_collection = stocks_database['prices']
         ticker = self.config['import']['ticker']
-        client = pymongo.MongoClient("mongodb://localhost:27017/")
-        stocks = client["stocks"]
-        prices = stocks['prices']
-        raw_history = prices.find_one({"ticker": ticker})['history']
+        raw_history = prices_collection.find_one({"ticker": ticker})['history']
 
         columns = self.config['data']['columns']
         df_full_history = pd.DataFrame(raw_history)[columns]

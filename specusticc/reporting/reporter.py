@@ -1,12 +1,12 @@
-from specusticc.agent import Agent
+from ..neural_networks.model import Model
 
 
 class Reporter:
-    def __init__(self, agent: Agent) -> None:
-        self.config = agent.config
-        self.input_test, self.output_test = agent.original_pandas_input_test, agent.output_test
-        self.predictions = agent.predictions
-        self.model = agent.model
+    def __init__(self, config: dict, test: tuple,  predictions, model: Model) -> None:
+        self.config = config
+        self.input_test, self.output_test = test
+        self.predictions = predictions
+        self.model = model
         self.report_directory = None
 
     def print_report(self) -> None:

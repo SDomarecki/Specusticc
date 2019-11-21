@@ -3,6 +3,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn import tree
 from IPython.display import Image
 
+
 class DecisionTreeVisualizer:
     def __init__(self, tree_clf: DecisionTreeClassifier, config: dict) -> None:
         self.tree = tree_clf
@@ -24,4 +25,3 @@ class DecisionTreeVisualizer:
 
         # Create PNG
         graph.write_png("tree.png")
-
