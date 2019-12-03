@@ -1,3 +1,9 @@
+from specusticc.data_processing.data_to_model_io import DataToModelIO
+from specusticc.data_processing.data_loader import DataLoader
+from specusticc.predictive_models.decision_tree.tree_data_processor import TreeDataProcessor
+from specusticc.predictive_models.neural_networks.neural_network_data_processor import NeuralNetworkDataProcessor
+
+
 class DataProcessor:
     def __init__(self, config: dict) -> None:
         self.config = config
@@ -5,27 +11,24 @@ class DataProcessor:
         self.test = None
 
         self._load_data()
-        self._preprocess_data()
+        self._reshape_data_to_model_input_output()
 
     def _load_data(self) -> None:
-        from specusticc.data_processing.data_loader import DataLoader
         loader = DataLoader(self.config)
-        self.loaded_data = loader.load_data()
+        self.loaded_train_input, self.loaded_train_output, self.loaded_test_input, self.loaded_test_output = loader.load_data()
+        self.test = self.loaded_test_input.copy()
 
-    def _preprocess_data(self) -> None:
-        self._split_data()
-        self._transform_data_to_model_input_output()
+    def _reshape_data_to_model_input_output(self):
+        type = self.config['model']['type']
+        if type == 'decision_tree':
+            data2io = TreeDataProcessor(self.config)
+        elif type == 'neural_network':
+            data2io = NeuralNetworkDataProcessor(self.config)
+        else:
+            raise NotImplementedError
 
-    def _split_data(self) -> None:
-        from sklearn.model_selection import train_test_split
-        test_size = self.config['data']['test_size']
-        self.train, self.test = train_test_split(self.loaded_data, test_size=test_size, shuffle=False)
-
-    def _transform_data_to_model_input_output(self):
-        from specusticc.data_processing.data_to_model_io import DataToModelIO
-        data2io = DataToModelIO(self.config)
-        self.input_train, self.output_train = data2io.transform_for_model(self.train)
-        self.input_test, self.output_test = data2io.transform_for_model(self.test)
+        self.input_train, self.output_train = data2io.transform_for_model(self.loaded_train_input, self.loaded_train_output)
+        self.input_test, self.output_test = data2io.transform_for_model(self.loaded_test_input, self.loaded_test_output)
 
     def get_train_data(self) -> tuple:
         return self.input_train, self.output_train

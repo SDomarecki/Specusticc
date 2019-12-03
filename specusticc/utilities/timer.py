@@ -14,4 +14,4 @@ class Timer:
 
     def print_time(self):
         time_taken = self.end_dt - self.start_dt
-        print('[Timer] Time taken: %s' % (time_taken))
+        print('[Timer] Time taken: %s' % time_taken)

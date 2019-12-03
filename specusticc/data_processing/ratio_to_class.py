@@ -19,6 +19,6 @@ def _ratio_to_3_class(ratio: float) -> int:
     if ratio > 1.05:
         return 2  # Buy
     elif ratio > 0.95:
-        return 1 # Hold
+        return 1  # Hold
     else:
         return 0  # Sell

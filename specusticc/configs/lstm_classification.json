@@ -1,31 +1,50 @@
 {
 	"import": {
-		"datatype": "real",
-		"method": "random_walk",
-		"gaussian_noise": false,
-		"ticker": "PKO",
-		"date": {
-			"from": "2008-01-01",
+		"input": [
+			{
+				"ticker": "PKO",
+				"columns": [
+					"open",
+					"high",
+					"low",
+					"close",
+					"vol"
+				]
+			},
+			{
+				"ticker": "PZU",
+				"columns": [
+					"open",
+					"high",
+					"low",
+					"close",
+					"vol"
+				]
+			}
+		],
+		"target": [
+			{
+				"ticker": "PKO",
+				"columns": [
+					"close"
+				]
+			}
+		],
+		"train_date": {
+			"from": "2010-06-01",
+			"to": "2015-12-31"
+		},
+		"test_date": {
+			"from": "2016-01-01",
 			"to": "2019-06-30"
 		}
 	},
-	"data": {
-		"columns": [
-			"date",
-			"close",
-			"vol"
-		],
+	"preprocessing": {
 		"sequence_length": 250,
-		"sequence_shift": 50,
-		"prediction_shift": 50,
-		"test_size": 0.33
-	},
-	"training": {
-		"epochs": 100,
-		"batch_size": 50
+		"sample_time_difference": 50,
+		"sequence_prediction_time": 50
 	},
 	"model": {
-		"save_dir": "saved_models",
 		"target": "classification",
 		"type": "neural_network",
 		"layers": [
@@ -33,12 +52,12 @@
 				"type": "lstm",
 				"neurons": 250,
 				"input_timesteps": 250,
-				"input_dim": 2,
+				"input_dim": 10,
 				"return_seq": true
 			},
 			{
 				"type": "dropout",
-				"rate": 0.2
+				"rate": 0.4
 			},
 			{
 				"type": "lstm",
@@ -57,7 +76,7 @@
 			},
 			{
 				"type": "dropout",
-				"rate": 0.2
+				"rate": 0.4
 			},
 			{
 				"type": "batchNormalization"
@@ -68,10 +87,16 @@
 				"activation": "softmax"
 			}
 		],
-		"loss": "sparse_categorical_crossentropy",
-		"optimizer": "adam",
-		"metrics": [
-			"sparse_categorical_accuracy"
-		]
+		"compilation": {
+			"loss": "sparse_categorical_crossentropy",
+			"optimizer": "adam",
+			"metrics": [
+				"sparse_categorical_accuracy"
+			]
+		},
+		"fitting":{
+			"epochs": 100,
+			"batch_size": 20
+		}
 	}
 }

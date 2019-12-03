@@ -1,37 +1,48 @@
 {
 	"import": {
-		"datatype": "real",
-		"method": "random_walk",
-		"gaussian_noise": false,
-		"ticker": "PKO",
-		"date": {
+		"input": [
+			{
+				"ticker": "PKO",
+				"columns": [
+					"open",
+					"high",
+					"low",
+					"close",
+					"vol"
+				]
+			}
+		],
+		"target": [
+			{
+				"ticker": "PKO",
+				"columns": [
+					"close"
+				]
+			}
+		],
+		"train_date": {
 			"from": "2008-01-01",
+			"to": "2015-12-31"
+		},
+		"test_date": {
+			"from": "2016-01-01",
 			"to": "2019-06-30"
 		}
 	},
-	"data": {
-		"columns": [
-			"date",
-			"open",
-			"high",
-			"low",
-			"close",
-			"vol"
-		],
-		"features": [
-			"roc",
-			"macd_val",
-			"rsi"
-		],
+	"preprocessing": {
 		"sequence_length": 250,
-		"sequence_shift": 50,
-		"prediction_shift": 50,
-		"test_size": 0.33
+		"sample_time_difference": 50,
+		"sequence_prediction_time": 50
 	},
 	"model": {
 		"save_dir": "saved_models",
 		"target": "classification",
 		"type": "decision_tree",
-		"max_depth": 10
+		"max_depth": 10,
+		"features": [
+			"roc",
+			"macd_val",
+			"rsi"
+		]
 	}
 }

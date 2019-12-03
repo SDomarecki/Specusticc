@@ -1,4 +1,4 @@
-from specusticc.agent import Agent
+from specusticc.agent.agent import Agent
 import sys
 
 if __name__ == "__main__":
