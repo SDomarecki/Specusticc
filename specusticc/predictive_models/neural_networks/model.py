@@ -1,5 +1,5 @@
 import numpy as np
-from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau
+from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, CSVLogger, TensorBoard
 from tensorflow.keras.models import Sequential
 
 from specusticc.utilities.timer import Timer
@@ -23,7 +23,9 @@ class Model:
         save_fname = 'temp.h5'
         callbacks = [
             ReduceLROnPlateau(monitor='loss', factor=0.3, min_delta=0.01, patience=3, verbose=1),
-            ModelCheckpoint(filepath=save_fname, monitor='loss', save_best_only=True, verbose=1)
+            ModelCheckpoint(filepath=save_fname, monitor='loss', save_best_only=True, verbose=1),
+            TensorBoard(),
+            CSVLogger(filename='learning.log')
         ]
         self.model.fit(
             x,

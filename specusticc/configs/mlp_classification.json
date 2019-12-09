@@ -10,16 +10,6 @@
 					"close",
 					"vol"
 				]
-			},
-			{
-				"ticker": "PZU",
-				"columns": [
-					"open",
-					"high",
-					"low",
-					"close",
-					"vol"
-				]
 			}
 		],
 		"target": [
@@ -31,7 +21,7 @@
 			}
 		],
 		"train_date": {
-			"from": "2010-06-01",
+			"from": "2008-01-01",
 			"to": "2015-12-31"
 		},
 		"test_date": {
@@ -49,37 +39,26 @@
 		"type": "neural_network",
 		"layers": [
 			{
-				"type": "lstm",
-				"neurons": 250,
-				"input_timesteps": 100,
-				"input_dim": 10,
-				"return_seq": true
+				"type": "dense",
+				"neurons": 500,
+				"input_dim": 500,
+				"activation": "relu"
 			},
 			{
 				"type": "dropout",
-				"rate": 0.4
+				"rate": 0.2
 			},
 			{
-				"type": "lstm",
-				"neurons": 150,
-				"return_seq": true
+				"type": "dense",
+				"neurons": 400
 			},
 			{
-				"type": "lstm",
-				"neurons": 100,
-				"return_seq": true
-			},
-						{
-				"type": "lstm",
-				"neurons": 50,
-				"return_seq": false
+				"type": "dense",
+				"neurons": 100
 			},
 			{
-				"type": "dropout",
-				"rate": 0.4
-			},
-			{
-				"type": "batchNormalization"
+				"type": "dense",
+				"neurons": 20
 			},
 			{
 				"type": "dense",
@@ -95,8 +74,8 @@
 			]
 		},
 		"fitting":{
-			"epochs": 100,
-			"batch_size": 62
+			"epochs": 50,
+			"batch_size": 100
 		}
 	}
 }

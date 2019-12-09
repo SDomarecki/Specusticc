@@ -1,4 +1,3 @@
-from specusticc.data_processing.data_to_model_io import DataToModelIO
 from specusticc.data_processing.data_loader import DataLoader
 from specusticc.predictive_models.decision_tree.tree_data_processor import TreeDataProcessor
 from specusticc.predictive_models.neural_networks.neural_network_data_processor import NeuralNetworkDataProcessor

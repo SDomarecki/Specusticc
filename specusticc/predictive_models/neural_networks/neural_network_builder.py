@@ -49,6 +49,8 @@ class NeuralNetworkBuilder:
             self._add_average_pooling_1d(config_layer)
         elif layer_type == 'batchNormalization':
             self._add_batch_normalization()
+        elif layer_type == 'flatten':
+            self._add_flatten()
         else:
             raise NotImplementedError
 
@@ -60,7 +62,7 @@ class NeuralNetworkBuilder:
 
     def _add_dense(self, config_layer):
         neurons = config_layer['neurons']
-        activation = config_layer['activation']
+        activation = config_layer['activation'] if 'activation' in config_layer else None
         layer = L.Dense(neurons, activation=activation)
         self.model.add(layer)
 
@@ -89,10 +91,15 @@ class NeuralNetworkBuilder:
         layer = L.Dropout(dropout_rate)
         self.model.add(layer)
 
+    def _add_flatten(self):
+        layer = L.Flatten()
+        self.model.add(layer)
+
     def _add_conv1d(self, config_layer):
-        neurons = config_layer['neurons']
+        filters = config_layer['filters']
         kernel_size = config_layer['kernel_size']
-        layer = L.Conv1D(neurons, kernel_size)
+        activation = config_layer['activation']
+        layer = L.Conv1D(filters=filters, kernel_size=kernel_size, activation=activation)
         self.model.add(layer)
 
     def _add_average_pooling_1d(self, config_layer):

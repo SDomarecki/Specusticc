@@ -10,7 +10,6 @@ class Agent:
         self.config = load_config(config_path)
         self.model = None
         self.predictions = None
-        self.report = None
         self.input_train = None
         self.input_test = None
         self.output_train = None

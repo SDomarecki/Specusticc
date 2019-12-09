@@ -55,7 +55,12 @@ class NeuralNetworkDataProcessor:
             end_index = start_index + self.timestamps
             data_np.append(input_data_normalized.iloc[start_index: end_index])
         data_np = pd.concat(data_np).to_numpy()
-        data_np = data_np.reshape(self.samples, self.timestamps, self.features)
+
+        first_layer_type = self.config['model']['layers'][0]['type']
+        if first_layer_type == 'dense':
+            data_np = data_np.reshape(self.samples, self.timestamps * self.features)
+        else:
+            data_np = data_np.reshape(self.samples, self.timestamps, self.features)
         self.input = data_np
 
     def _normalize(self, input_data: pd.DataFrame) -> pd.DataFrame:

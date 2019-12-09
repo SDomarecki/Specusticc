@@ -218,3 +218,4 @@ dmypy.json
 *.png
 *.h5
 */output
+*/logs
