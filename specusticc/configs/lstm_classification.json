@@ -50,28 +50,14 @@
 		"layers": [
 			{
 				"type": "lstm",
-				"neurons": 250,
+				"neurons": 100,
 				"input_timesteps": 100,
 				"input_dim": 10,
 				"return_seq": true
 			},
 			{
-				"type": "dropout",
-				"rate": 0.4
-			},
-			{
 				"type": "lstm",
-				"neurons": 150,
-				"return_seq": true
-			},
-			{
-				"type": "lstm",
-				"neurons": 100,
-				"return_seq": true
-			},
-						{
-				"type": "lstm",
-				"neurons": 50,
+				"neurons": 20,
 				"return_seq": false
 			},
 			{
@@ -88,10 +74,10 @@
 			}
 		],
 		"compilation": {
-			"loss": "sparse_categorical_crossentropy",
+			"loss": "categorical_crossentropy",
 			"optimizer": "adam",
 			"metrics": [
-				"sparse_categorical_accuracy"
+				"categorical_accuracy"
 			]
 		},
 		"fitting":{

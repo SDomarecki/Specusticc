@@ -1,5 +1,18 @@
-def ratio_to_class(ratio: float) -> int:
-    return _ratio_to_5_class(ratio)
+def ratio_to_class(ratio: float) -> []:
+    return _ratio_to_5_class_array(ratio)
+
+
+def _ratio_to_5_class_array(ratio: float) -> []:
+    if ratio > 1.2:
+        return [0, 0, 0, 0, 1]  # Strong Buy
+    elif ratio > 1.05:
+        return [0, 0, 0, 1, 0]  # Buy
+    elif ratio > 0.95:
+        return [0, 0, 1, 0, 0]  # Hold
+    elif ratio > 0.8:
+        return [0, 1, 0, 0, 0]  # Sell
+    else:
+        return [1, 0, 0, 0, 0]  # Strong Sell
 
 
 def _ratio_to_5_class(ratio: float) -> int:

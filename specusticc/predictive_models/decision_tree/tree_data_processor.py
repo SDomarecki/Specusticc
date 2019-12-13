@@ -10,7 +10,7 @@ import pandas as pd
 def boost_AT_info(source: pd.DataFrame) -> pd.DataFrame:
     source = source.reset_index(drop=True)
 
-    import specusticc.data_processing.indicators as ind
+    import specusticc.predictive_models.decision_tree.indicators as ind
     print('[Tree] Boosting techincal analysis info')
     history = ind.macd(source, close_col='close')
     history = ind.rsi(history, close_col='close')

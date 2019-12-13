@@ -1,8 +1,8 @@
+from datetime import datetime
+
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib import gridspec
 import pandas as pd
-from datetime import datetime
 
 
 class Plotter:
@@ -63,7 +63,10 @@ class Plotter:
         plot_title = 'Original price direction'
         ax = self._draw_class_plot(ax, plot_title)
 
-        self._draw_classes(ax, classes)
+        org_classes = []
+        for org in classes:
+            org_classes.append(np.argmax(org))
+        self._draw_classes(ax, org_classes)
 
     def _draw_predicted_classes(self, ax, classes):
         plot_title = 'Predicted price direction'
