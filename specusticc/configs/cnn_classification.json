@@ -77,10 +77,10 @@
 			}
 		],
 		"compilation": {
-			"loss": "sparse_categorical_crossentropy",
+			"loss": "categorical_crossentropy",
 			"optimizer": "adam",
 			"metrics": [
-				"sparse_categorical_accuracy"
+				"categorical_accuracy"
 			]
 		},
 		"fitting":{

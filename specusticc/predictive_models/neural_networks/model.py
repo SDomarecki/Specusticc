@@ -2,7 +2,10 @@ import numpy as np
 from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, CSVLogger, TensorBoard
 from tensorflow.keras.models import Sequential
 
+from specusticc.data_processing.data_holder import DataHolder
 from specusticc.utilities.timer import Timer
+
+import matplotlib.pyplot as plt
 
 
 class Model:
@@ -14,11 +17,14 @@ class Model:
     def save(self, save_dir: str) -> None:
         self.model.save(save_dir)
 
-    def train(self, x: np.array, y: np.array) -> None:
+    def train(self, data: DataHolder) -> None:
         print('[Model] Training Started')
         print('[Model] %s epochs, %s batch size' % (self.epochs, self.batch_size))
         t = Timer()
         t.start()
+
+        x_train = data.train_input
+        y_train = data.train_output
 
         save_fname = 'temp.h5'
         callbacks = [
@@ -27,9 +33,10 @@ class Model:
             TensorBoard(),
             CSVLogger(filename='learning.log')
         ]
-        self.model.fit(
-            x,
-            y,
+        history = self.model.fit(
+            x_train,
+            y_train,
+            validation_split=0.2,
             epochs=self.epochs,
             callbacks=callbacks
         )
@@ -38,11 +45,19 @@ class Model:
         t.stop()
         t.print_time()
 
-    def predict_classification(self, test_data:np.array) -> []:
-        print('[Model] Predicting position classes...')
+        self._plot_history(history)
+
+    def _plot_history(self, history):
+        # summarize history for accuracy
+        plt.plot(history.history['categorical_accuracy'])
+        plt.plot(history.history['val_categorical_accuracy'])
+        plt.title('model accuracy')
+        plt.ylabel('accuracy')
+        plt.xlabel('epoch')
+        plt.legend(['train', 'validation'], loc='upper left')
+        plt.show()
+
+    def predict(self, test_data: np.array) -> []:
+        print('[Model] Predicting...')
         predictions = self.model.predict(test_data)
         return predictions
-
-    def predict_regression(self, test_data: np.array) -> []:
-        raise NotImplementedError
-

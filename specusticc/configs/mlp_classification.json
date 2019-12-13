@@ -32,7 +32,7 @@
 	"preprocessing": {
 		"sequence_length": 100,
 		"sample_time_difference": 20,
-		"sequence_prediction_time": 50
+		"sequence_prediction_time": 30
 	},
 	"model": {
 		"target": "classification",
@@ -42,23 +42,19 @@
 				"type": "dense",
 				"neurons": 500,
 				"input_dim": 500,
-				"activation": "relu"
+				"activation": "sigmoid"
 			},
 			{
 				"type": "dropout",
-				"rate": 0.2
+				"rate": 0.3
 			},
 			{
 				"type": "dense",
-				"neurons": 400
+				"neurons": 200
 			},
 			{
-				"type": "dense",
-				"neurons": 100
-			},
-			{
-				"type": "dense",
-				"neurons": 20
+				"type": "dropout",
+				"rate": 0.3
 			},
 			{
 				"type": "dense",
@@ -67,14 +63,14 @@
 			}
 		],
 		"compilation": {
-			"loss": "sparse_categorical_crossentropy",
+			"loss": "categorical_crossentropy",
 			"optimizer": "adam",
 			"metrics": [
-				"sparse_categorical_accuracy"
+				"categorical_accuracy"
 			]
 		},
 		"fitting":{
-			"epochs": 50,
+			"epochs": 100,
 			"batch_size": 100
 		}
 	}

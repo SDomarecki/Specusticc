@@ -9,11 +9,8 @@ class Agent:
     def __init__(self, config_path: str) -> None:
         self.config = load_config(config_path)
         self.model = None
+        self.data = None
         self.predictions = None
-        self.input_train = None
-        self.input_test = None
-        self.output_train = None
-        self.output_test = None
 
         self._create_model_from_config()
         self._load_data()
@@ -27,20 +24,15 @@ class Agent:
 
     def _load_data(self):
         dp = DataProcessor(self.config)
-        self.input_train, self.output_train = dp.get_train_data()
-        self.input_test, self.output_test = dp.get_test_data()
-        self.original_pandas_input_test = dp.test
+        self.data = dp.create_data_holder()
 
     def _train_model(self):
-        self.model.train(self.input_train, self.output_train)
+        self.model.train(self.data)
 
     def _test_model(self):
-        if self.config['model']['target'] == 'regression':
-            self.predictions = self.model.predict_regression(self.input_test)
-        else:
-            self.predictions = self.model.predict_classification(self.input_test)
+        self.predictions = self.model.predict(self.data.test_input)
 
     def _print_report(self):
-        test = (self.original_pandas_input_test, self.output_test)
+        test = (self.data.reporter_test_input, self.data.test_output)
         r = Reporter(self.config, test, self.predictions, self.model)
         r.print_report()

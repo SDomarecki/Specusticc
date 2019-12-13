@@ -37,15 +37,6 @@ class NeuralNetworkDataProcessor:
             raise NotImplementedError
         return self.get_io()
 
-    def _align_to_sequences(self, data: pd.DataFrame) -> pd.DataFrame:
-        seq_len = self.config['pre']['sequence_length']
-        shift = self.config['data']['sequence_shift']
-
-        len_data = len(data)
-        self.input_len = int((len_data - seq_len) / shift)
-        last_input_index = self.input_len * seq_len
-        return data.iloc[:last_input_index]
-
     def _reshape_for_classification(self, input_data: pd.DataFrame) -> None:
         sample_diff = self.config['preprocessing']['sample_time_difference']
         input_data_normalized = self._normalize(input_data)
