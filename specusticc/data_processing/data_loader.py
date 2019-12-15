@@ -26,12 +26,19 @@ class DataLoader:
         self.collection = stocks_database['prices']
 
     def _load_dataframes(self) -> None:
-        train_date = self.config['import']['train_date']
-        test_date = self.config['import']['test_date']
+        if 'train_date' in self.config['import']:
+            train_date = self.config['import']['train_date']
+        else:
+            train_date = None
 
-        for input in self.config['import']['input']:
-            ticker = input['ticker']
-            loaded = self._load_dataframe(input)
+        if 'test_date' in self.config['import']:
+            test_date = self.config['import']['test_date']
+        else:
+            test_date = None
+
+        columns = self.config['import']['input']['columns']
+        for ticker in self.config['import']['input']['tickers']:
+            loaded = self._load_dataframe(ticker, columns)
             print('[Loader] Filtering by date')
             one_train_input = _filter_history_by_dates(loaded, train_date)
             self.train_input[ticker] = one_train_input
@@ -39,21 +46,18 @@ class DataLoader:
             print('[Loader] Filtered')
             self.test_input[ticker] = one_test_input
 
-        for target in self.config['import']['target']:
-            ticker = target['ticker']
-            loaded = self._load_dataframe(target)
+        columns = self.config['import']['target']['columns']
+        for ticker in self.config['import']['target']['tickers']:
+            loaded = self._load_dataframe(ticker, columns)
             one_train_output = _filter_history_by_dates(loaded, train_date)
             self.train_output[ticker] = one_train_output
             one_test_output = _filter_history_by_dates(loaded, test_date)
             self.test_output[ticker] = one_test_output
 
-    def _load_dataframe(self, input: dict) -> pd.DataFrame:
-        print('[Loader] Loading %s' % input)
-        ticker = input['ticker']
-        # TODO generation case
+    def _load_dataframe(self, ticker: str, columns:[]) -> pd.DataFrame:
+        print('[Loader] Loading %s' % ticker)
         raw_history = self.collection.find_one({"ticker": ticker})['history']
 
-        columns = input['columns']
         if 'date' not in columns:
             columns.append('date')
 
@@ -64,6 +68,9 @@ class DataLoader:
 
 
 def _filter_history_by_dates(df: pd.DataFrame, dates: dict) -> pd.DataFrame:
+    if dates is None:
+        return df
+
     from_date = dates['from']
     to_date = dates['to']
     from_index = _get_closest_date_index(df, from_date)

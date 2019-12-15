@@ -26,6 +26,7 @@ class NeuralNetworkBuilder:
         loss = compilation['loss']
         optimizer = compilation['optimizer']
         metrics = compilation['metrics']
+
         self.model.compile(loss=loss, optimizer=optimizer, metrics=metrics)
         print('[Model] Model Compiled')
 

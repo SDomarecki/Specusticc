@@ -29,7 +29,7 @@ class Model:
         save_fname = 'temp.h5'
         callbacks = [
             ReduceLROnPlateau(monitor='loss', factor=0.3, min_delta=0.01, patience=3, verbose=1),
-            ModelCheckpoint(filepath=save_fname, monitor='categorical_accuracy', save_best_only=True, verbose=1),
+            ModelCheckpoint(filepath=save_fname, monitor='loss', save_best_only=True, verbose=1),
             TensorBoard(),
             CSVLogger(filename='learning.log')
         ]
@@ -49,8 +49,8 @@ class Model:
 
     def _plot_history(self, history):
         # summarize history for accuracy
-        plt.plot(history.history['categorical_accuracy'])
-        plt.plot(history.history['val_categorical_accuracy'])
+        plt.plot(history.history['loss'])
+        plt.plot(history.history['val_loss'])
         plt.title('model accuracy')
         plt.ylabel('accuracy')
         plt.xlabel('epoch')

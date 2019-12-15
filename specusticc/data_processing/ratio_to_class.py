@@ -2,6 +2,15 @@ def ratio_to_class(ratio: float) -> []:
     return _ratio_to_5_class_array(ratio)
 
 
+def _ratio_to_3_class_array(ratio: float) -> []:
+    if ratio > 1.05:
+        return [0, 0, 1]
+    elif ratio > 0.95:
+        return [0, 1, 0]
+    else:
+        return [1, 0, 0]
+
+
 def _ratio_to_5_class_array(ratio: float) -> []:
     if ratio > 1.2:
         return [0, 0, 0, 0, 1]  # Strong Buy

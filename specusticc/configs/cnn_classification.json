@@ -1,25 +1,33 @@
 {
 	"import": {
-		"input": [
-			{
-				"ticker": "PKO",
-				"columns": [
-					"open",
-					"high",
-					"low",
-					"close",
-					"vol"
-				]
-			}
-		],
-		"target": [
-			{
-				"ticker": "PKO",
-				"columns": [
-					"close"
-				]
-			}
-		],
+		"input": {
+			"tickers": [
+				"PKO",
+				"PZU",
+				"CDR",
+				"CCC",
+				"11B"
+			],
+			"columns": [
+				"open",
+				"high",
+				"low",
+				"close",
+				"vol"
+			]
+		},
+		"target": {
+			"tickers": [
+				"PKO",
+				"PZU",
+				"CDR",
+				"CCC",
+				"11B"
+			],
+			"columns": [
+				"close"
+			]
+		},
 		"train_date": {
 			"from": "2008-01-01",
 			"to": "2015-12-31"
@@ -85,7 +93,7 @@
 		},
 		"fitting":{
 			"epochs": 100,
-			"batch_size": 50
+			"batch_size": 500
 		}
 	}
 }
