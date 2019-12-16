@@ -2,7 +2,6 @@
 	"import": {
 		"input": {
 			"tickers": [
-				"PEO",
 				"PKO"
 			],
 			"columns": [
@@ -12,7 +11,6 @@
 		},
 		"target": {
 			"tickers": [
-				"PEO",
 				"PKO"
 			],
 			"columns": [
@@ -30,7 +28,7 @@
 	},
 	"preprocessing": {
 		"sequence_length": 100,
-		"sample_time_difference": 20,
+		"sample_time_difference": 30,
 		"sequence_prediction_time": 30
 	},
 	"model": {
@@ -38,36 +36,18 @@
 		"type": "neural_network",
 		"layers": [
 			{
-				"type": "input",
-				"input_timesteps": 100,
-				"input_dim": 2
-			},
-			{
-				"type": "conv1d",
-				"filters": 64,
-				"kernel_size": 3,
+				"type": "dense",
+				"neurons": 500,
+				"input_dim": 200,
 				"activation": "sigmoid"
 			},
 			{
-				"type": "conv1d",
-				"filters": 64,
-				"kernel_size": 3,
-				"activation": "relu"
+				"type": "dense",
+				"neurons": 200
 			},
 			{
 				"type": "dropout",
-				"rate": 0.4
-			},
-			{
-				"type": "averagePooling1d",
-				"pool_size": 2
-			},
-			{
-				"type": "flatten"
-			},
-			{
-				"type": "dense",
-				"neurons": 100
+				"rate": 0.5
 			},
 			{
 				"type": "dense",

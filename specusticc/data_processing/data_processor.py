@@ -1,5 +1,3 @@
-from sklearn.model_selection import train_test_split
-
 from specusticc.data_processing.data_holder import DataHolder
 from specusticc.data_processing.data_loader import DataLoader
 from specusticc.predictive_models.decision_tree.tree_data_processor import TreeDataProcessor

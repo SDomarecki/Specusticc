@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Specusticc - MLP / Classification" type="PythonConfigurationType" factoryName="Python" folderName="Specusticc">
+  <configuration default="false" name="MLP / Classification" type="PythonConfigurationType" factoryName="Python" folderName="Specc Class">
     <module name="MagisterkaProjekt" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />

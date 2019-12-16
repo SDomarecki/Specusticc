@@ -1,8 +1,6 @@
 import numpy as np
 import pandas as pd
 
-from sklearn import preprocessing
-
 from specusticc.data_processing.ratio_to_class import ratio_to_class
 
 
@@ -12,6 +10,8 @@ class NeuralNetworkDataProcessor:
 
         self.samples = None
         self.timestamps = config['preprocessing']['sequence_length']
+        self.prediction = config['preprocessing']['sequence_prediction_time']
+        self.sample_time_diff = config['preprocessing']['sample_time_difference']
         self.features = 0
 
         self.input = None
@@ -21,32 +21,29 @@ class NeuralNetworkDataProcessor:
         self._count_features()
 
     def transform_for_model(self, input_data: dict, output_data: dict) -> tuple:
-        input_dataframe = self._unpack_data(input_data)
-        output_dataframe = self._unpack_data(output_data)
-
-        self._count_samples(input_dataframe)
-
         target = self.config['model']['target']
+
+        self._reshape_input_data(input_data)
         if target == 'regression':
-            self._reshape_for_regression(input_dataframe)
-            self._shift_for_regression(output_dataframe)
+            self._shift_for_regression(output_data)
         elif target == 'classification':
-            self._calculate_classes(output_dataframe)
-            self._reshape_for_classification(input_dataframe)
+            self._calculate_classes(output_data)
         else:
             raise NotImplementedError
-        return self.get_io()
+        return self.input, self.output
 
-    def _reshape_for_classification(self, input_data: pd.DataFrame) -> None:
-        sample_diff = self.config['preprocessing']['sample_time_difference']
-        input_data_normalized = self._normalize(input_data)
+    def _reshape_input_data(self, data: dict):
         data_np = []
-        for i in range(self.samples):
-            start_index = i * sample_diff
-            end_index = start_index + self.timestamps
-            data_np.append(input_data_normalized.iloc[start_index: end_index])
-        data_np = pd.concat(data_np).to_numpy()
+        self.samples = 0
+        for k, v in data.items():
+            samples = int((len(v) - self.prediction - self.timestamps) / self.sample_time_diff)
+            self.samples += samples
+            for i in range(samples):
+                start_index = i * self.sample_time_diff
+                end_index = start_index + self.timestamps
+                data_np.append(v.drop(columns='date').iloc[start_index: end_index])
 
+        data_np = pd.concat(data_np).to_numpy()
         first_layer_type = self.config['model']['layers'][0]['type']
         if first_layer_type == 'dense':
             data_np = data_np.reshape(self.samples, self.timestamps * self.features)
@@ -54,71 +51,40 @@ class NeuralNetworkDataProcessor:
             data_np = data_np.reshape(self.samples, self.timestamps, self.features)
         self.input = data_np
 
-    def _normalize(self, input_data: pd.DataFrame) -> pd.DataFrame:
-        val = input_data.values
-        scaler = preprocessing.StandardScaler()
-        val_scaled = scaler.fit_transform(val)
-        input_data_normalized = pd.DataFrame(val_scaled, columns=input_data.columns)
-        return input_data_normalized
-
-    def _calculate_classes(self, data: pd.DataFrame) -> None:
-        sequence_prediction_time = self.config['preprocessing']['sequence_prediction_time']
-        sample_time_difference = self.config['preprocessing']['sample_time_difference']
-
+    def _calculate_classes(self, data: dict) -> None:
         output_labels = []
-        for i in range(self.samples - 1):
-            present_val_index = i * sample_time_difference + self.timestamps - 1
-            future_val_index = present_val_index + sequence_prediction_time
+        for k, v in data.items():
+            samples = int((len(v) - self.prediction - self.timestamps) / self.sample_time_diff)
+            for i in range(samples - 1):
+                present_val_index = i * self.sample_time_diff + self.timestamps - 1
+                future_val_index = present_val_index + self.prediction
 
-            # TODO change this ugly hardcode asap
-            present_val = data.loc[:, 'PKO_close'].iloc[present_val_index]
-            future_val = data.loc[:, 'PKO_close'].iloc[future_val_index]
-            ratio = future_val / present_val
+                present_val = v.loc[:, 'close'].iloc[present_val_index]
+                future_val = v.loc[:, 'close'].iloc[future_val_index]
 
-            ratio_class = ratio_to_class(ratio)
+                ratio = future_val / present_val
+
+                ratio_class = ratio_to_class(ratio)
+                output_labels.append(ratio_class)
+
+            ratio_class = ratio_to_class(1.)
             output_labels.append(ratio_class)
 
-        ratio_class = ratio_to_class(1.)
-        output_labels.append(ratio_class)
         self.output = np.array(output_labels)
 
-    def get_io(self) -> tuple:
-        return self.input, self.output
-
     def _count_features(self):
-        inputs = self.config['import']['input']
-        for input in inputs:
-            columns = input['columns']
-            self.features += len(columns) - 1
+        columns = self.config['import']['input']['columns']
+        self.features += len(columns) - 1
 
-    def _count_samples(self, data: pd.DataFrame) -> None:
-        prediction = self.config['preprocessing']['sequence_prediction_time']
-        sample_time_diff = self.config['preprocessing']['sample_time_difference']
+    def _shift_for_regression(self, data: dict):
+        output_values = []
 
-        self.samples = int((len(data) - prediction - self.timestamps)/sample_time_diff)
+        for k, v in data.items():
+            samples = int((len(v) - self.prediction - self.timestamps) / self.sample_time_diff)
+            for i in range(samples):
+                start_index = i * self.sample_time_diff + self.timestamps
+                end_index = start_index + self.prediction
+                output_values.append(v.drop(columns='date').iloc[start_index: end_index])
 
-    def _reshape_for_regression(self, input_data):
-        raise NotImplementedError
-
-    def _shift_for_regression(self, output_data):
-        raise NotImplementedError
-
-    def _unpack_data(self, data: dict) -> pd.DataFrame:
-        history_array = []
-        tickers = []
-        for ticker, history in data.items():
-            new_history = history.copy()
-            new_history.columns = ticker + '_' + new_history.columns
-            history_array.append(new_history)
-            tickers.append(ticker)
-
-        merged = history_array[0]
-        first_prefix_date = tickers[0] + '_date'
-        for i in range(1, len(history_array)):
-            next_prefix_date = tickers[i] + '_date'
-            merged = pd.merge(merged, history_array[i],
-                              left_on=first_prefix_date,
-                              right_on=next_prefix_date)
-            merged = merged.drop(columns=[next_prefix_date])
-        merged = merged.drop(columns=[first_prefix_date])
-        return merged
+        output_values = pd.concat(output_values).to_numpy()
+        self.output = output_values.reshape(self.samples, self.prediction)

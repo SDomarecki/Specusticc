@@ -63,6 +63,7 @@ class DataLoader:
 
         df_full_history = pd.DataFrame(raw_history)[columns]
         df_full_history['date'] = pd.to_datetime(df_full_history['date'], format='%Y-%m-%d')
+
         print('[Loader] Loaded')
         return df_full_history
 

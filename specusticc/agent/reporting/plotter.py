@@ -12,20 +12,40 @@ class Plotter:
         self.x_len = 0
         pd.plotting.register_matplotlib_converters()
 
-    def draw_regression_plot(self, predictions):
-        seq_len = self.config['data']['sequence_length']
+    def draw_regression_plots(self, predictions):
+        for k, v in self.true_data.items():
+            self._draw_regression_plot(predictions, k, v)
 
-        fig = plt.figure(facecolor='white')
-        ax = fig.add_subplot(111)
-        ax.plot(self.true_data, label='True Data')
+    def _draw_regression_plot(self, predictions, ticker: str, true_data):
+        sample_time_difference = self.config['preprocessing']['sample_time_difference']
+        seq_len = self.config['preprocessing']['sequence_length']
+        prediction_len = self.config['preprocessing']['sequence_prediction_time']
+
+        date_series = true_data['date']
+        close_series = true_data['close']
+
+        first_date = date_series.iloc[0]
+        last_date = date_series.iloc[-1]
+
+        self.x_len = len(date_series)
+
+        fig, axes = plt.subplots(facecolor='white', figsize=(9.6, 7.2), nrows=2,
+                                 gridspec_kw={'height_ratios': [5, 5]})
+
+        self._set_proper_date_xlim(axes[0], first_date, last_date)
+        axes[0].plot_date(date_series, close_series, label=ticker, linestyle='solid', markersize=0)
+        axes[0].grid()
         # Pad the list of predictions to shift it in the graph to it's correct start
         for i, data in enumerate(predictions):
-            padding = [None for p in range(i * seq_len)]
-            plt.plot(padding + data, label='Prediction')
+            start = i * sample_time_difference + seq_len
+            end = start + prediction_len
+            padding = np.arange(start, end).tolist()
+            axes[1].plot(padding, data, color='limegreen')
 
-        plt.grid()
+        axes[1].grid()
+        self._set_proper_numeric_xlim(axes[1])
 
-        self._draw_regression_legend(ax)
+        self._draw_regression_legend(axes[1])
 
     def _draw_regression_legend(self, ax):
         # Shrink current axis's height by 10% on the bottom
@@ -33,9 +53,13 @@ class Plotter:
         ax.set_position([box.x0, box.y0 + box.height * 0.1,
                          box.width, box.height * 0.9])
 
+        from matplotlib.lines import Line2D
+        custom_lines = [Line2D([0], [0], color='cornflowerblue', lw=2),
+                        Line2D([0], [0], color='limegreen', lw=2)]
         # Put a legend below current axis
-        ax.legend(loc='upper center', bbox_to_anchor=(0.5, -0.05),
-                  fancybox=True, shadow=True, ncol=5)
+        ax.legend(custom_lines, ['True data', 'Prediction'],
+                  loc='upper center', bbox_to_anchor=(0.5, -0.05),
+                  fancybox=True, shadow=True, ncol=7)
 
     def draw_classification_plot(self, original_classes, predicted_classes):
         fig, axes = plt.subplots(facecolor='white', figsize=(9.6, 7.2), nrows=3,

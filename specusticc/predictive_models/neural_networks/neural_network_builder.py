@@ -1,5 +1,5 @@
-import tensorflow.keras.models as M
 import tensorflow.keras.layers as L
+import tensorflow.keras.models as M
 
 from specusticc.predictive_models.neural_networks.model import Model
 

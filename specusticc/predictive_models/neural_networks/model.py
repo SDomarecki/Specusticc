@@ -51,10 +51,11 @@ class Model:
         # summarize history for accuracy
         plt.plot(history.history['loss'])
         plt.plot(history.history['val_loss'])
-        plt.title('model accuracy')
-        plt.ylabel('accuracy')
+        plt.title('mean squared error')
+        plt.ylabel('error')
         plt.xlabel('epoch')
         plt.legend(['train', 'validation'], loc='upper left')
+        plt.grid()
         plt.show()
 
     def predict(self, test_data: np.array) -> []:

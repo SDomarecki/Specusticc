@@ -46,7 +46,7 @@ class Reporter:
         target = self.config['model']['target']
         p = Plotter(self.config, self.input_test)
         if target == 'regression':
-            p.draw_regression_plot(self.predictions)
+            p.draw_regression_plots(self.predictions)
         elif target == 'classification':
             p.draw_classification_plot(self.output_test, self.predictions)
         else:
