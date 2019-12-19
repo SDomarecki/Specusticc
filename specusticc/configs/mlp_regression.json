@@ -5,6 +5,7 @@
 				"PKO"
 			],
 			"columns": [
+				"open",
 				"close",
 				"vol"
 			]
@@ -63,7 +64,7 @@
 			]
 		},
 		"fitting":{
-			"epochs": 50,
+			"epochs": 1000,
 			"batch_size": 500
 		}
 	}

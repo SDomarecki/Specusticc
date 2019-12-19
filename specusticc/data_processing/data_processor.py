@@ -22,10 +22,10 @@ class DataProcessor:
         self.data_holder.reporter_test_input = self.loaded_test_input.copy()
 
     def _reshape_data_to_model_input_output(self) -> None:
-        type = self.config['model']['type']
-        if type == 'decision_tree':
+        predictive_model_type = self.config['model']['type']
+        if predictive_model_type == 'decision_tree':
             data2io = TreeDataProcessor(self.config)
-        elif type == 'neural_network':
+        elif predictive_model_type == 'neural_network':
             data2io = NeuralNetworkDataProcessor(self.config)
         else:
             raise NotImplementedError

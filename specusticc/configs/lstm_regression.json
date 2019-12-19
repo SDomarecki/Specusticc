@@ -38,7 +38,7 @@
 		"type": "neural_network",
 		"layers": [
 			{
-				"type": "gru",
+				"type": "lstm",
 				"neurons": 100,
 				"input_timesteps": 100,
 				"input_dim": 2,

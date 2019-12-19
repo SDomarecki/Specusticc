@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from sklearn.preprocessing import MinMaxScaler
 
 from specusticc.data_processing.ratio_to_class import ratio_to_class
 
@@ -35,7 +36,7 @@ class NeuralNetworkDataProcessor:
     def _reshape_input_data(self, data: dict):
         data_np = []
         self.samples = 0
-        for k, v in data.items():
+        for v in data.values():
             samples = int((len(v) - self.prediction - self.timestamps) / self.sample_time_diff)
             self.samples += samples
             for i in range(samples):
@@ -53,7 +54,7 @@ class NeuralNetworkDataProcessor:
 
     def _calculate_classes(self, data: dict) -> None:
         output_labels = []
-        for k, v in data.items():
+        for v in data.values():
             samples = int((len(v) - self.prediction - self.timestamps) / self.sample_time_diff)
             for i in range(samples - 1):
                 present_val_index = i * self.sample_time_diff + self.timestamps - 1
@@ -79,7 +80,7 @@ class NeuralNetworkDataProcessor:
     def _shift_for_regression(self, data: dict):
         output_values = []
 
-        for k, v in data.items():
+        for v in data.values():
             samples = int((len(v) - self.prediction - self.timestamps) / self.sample_time_diff)
             for i in range(samples):
                 start_index = i * self.sample_time_diff + self.timestamps
@@ -87,4 +88,8 @@ class NeuralNetworkDataProcessor:
                 output_values.append(v.drop(columns='date').iloc[start_index: end_index])
 
         output_values = pd.concat(output_values).to_numpy()
+
+        self.scaler = MinMaxScaler(feature_range=(0, 1))
+        output_values = self.scaler.fit_transform(output_values)
+
         self.output = output_values.reshape(self.samples, self.prediction)

@@ -1,3 +1,5 @@
+from specusticc.agent.reporting.classification_plotter import ClassificationPlotter
+from specusticc.agent.reporting.regression_plotter import RegressionPlotter
 from specusticc.predictive_models.neural_networks.model import Model
 import specusticc.utilities.directories as dirs
 import json
@@ -32,23 +34,24 @@ class Reporter:
         with open(save_path, 'w') as outfile:
             json.dump(self.config, outfile, indent=4)
 
-    def _restore_string_data(self):
-        fromDT = self.config['import']['train_date']['from']
-        self.config['import']['train_date']['from'] = fromDT.strftime('%Y-%m-%d')
-        toDT = self.config['import']['train_date']['to']
-        self.config['import']['train_date']['to'] = toDT.strftime('%Y-%m-%d')
-        fromDT = self.config['import']['test_date']['from']
-        self.config['import']['test_date']['from'] = fromDT.strftime('%Y-%m-%d')
-        toDT = self.config['import']['test_date']['to']
-        self.config['import']['test_date']['to'] = toDT.strftime('%Y-%m-%d')
+    def _restore_string_data(self) -> None:
+        if 'train_date' in self.config['import']:
+            fromDT = self.config['import']['train_date']['from']
+            self.config['import']['train_date']['from'] = fromDT.strftime('%Y-%m-%d')
+            toDT = self.config['import']['train_date']['to']
+            self.config['import']['train_date']['to'] = toDT.strftime('%Y-%m-%d')
+        if 'test_date' in self.config['import']:
+            fromDT = self.config['import']['test_date']['from']
+            self.config['import']['test_date']['from'] = fromDT.strftime('%Y-%m-%d')
+            toDT = self.config['import']['test_date']['to']
+            self.config['import']['test_date']['to'] = toDT.strftime('%Y-%m-%d')
 
     def _save_prediction_plot(self) -> None:
         target = self.config['model']['target']
-        p = Plotter(self.config, self.input_test)
         if target == 'regression':
-            p.draw_regression_plots(self.predictions)
+            p = RegressionPlotter(self.config, self.input_test)
         elif target == 'classification':
-            p.draw_classification_plot(self.output_test, self.predictions)
+            p = ClassificationPlotter(self.config, self.input_test)
         else:
             raise NotImplementedError
-        p.save_prediction_plot(self.report_directory)
+        p.draw_and_save_prediction_plots(self.output_test, self.predictions, self.report_directory)

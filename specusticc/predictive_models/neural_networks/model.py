@@ -1,5 +1,5 @@
 import numpy as np
-from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, CSVLogger, TensorBoard
+from tensorflow.keras.callbacks import ModelCheckpoint, ReduceLROnPlateau, CSVLogger, TensorBoard, EarlyStopping
 from tensorflow.keras.models import Sequential
 
 from specusticc.data_processing.data_holder import DataHolder
@@ -28,6 +28,7 @@ class Model:
 
         save_fname = 'temp.h5'
         callbacks = [
+            EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=20),
             ReduceLROnPlateau(monitor='loss', factor=0.3, min_delta=0.01, patience=3, verbose=1),
             ModelCheckpoint(filepath=save_fname, monitor='loss', save_best_only=True, verbose=1),
             TensorBoard(),
@@ -36,7 +37,7 @@ class Model:
         history = self.model.fit(
             x_train,
             y_train,
-            validation_split=0.2,
+            validation_data=(data.test_input, data.test_output),
             epochs=self.epochs,
             callbacks=callbacks
         )
