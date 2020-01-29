@@ -1,13 +1,13 @@
-import pytest
-from specusticc.agent import Agent
 from pathlib import Path
 
+from specusticc.agent import Agent
+
 config_paths = [
-    'configs/lstm_regression.json',
-    'configs/lstm_classification.json',
-    'configs/cnn_regression.json',
-    'configs/cnn_classification.json',
-    'configs/tree_classification.json'
+    'configs_bak/lstm_regression.json',
+    'configs_bak/lstm_classification.json',
+    'configs_bak/cnn_regression.json',
+    'configs_bak/cnn_classification.json',
+    'configs_bak/tree_classification.json'
 ]
 
 # def test_lstm_regression():

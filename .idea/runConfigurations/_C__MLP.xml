@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Tree / Classification" type="PythonConfigurationType" factoryName="Python" folderName="Specc Class">
+  <configuration default="false" name="[C] MLP" type="PythonConfigurationType" factoryName="Python" folderName="Specc Class">
     <module name="MagisterkaProjekt" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
@@ -13,7 +13,7 @@
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/specusticc/specustic_main.py" />
-    <option name="PARAMETERS" value="configs/tree_classification.json" />
+    <option name="PARAMETERS" value="configs/neural_network_classification.json mlp" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />

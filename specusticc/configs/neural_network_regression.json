@@ -1,0 +1,38 @@
+{
+  "import": {
+    "input": {
+      "tickers": [
+        "PKO"
+      ],
+      "columns": [
+        "close",
+        "vol"
+      ]
+    },
+    "target": {
+      "tickers": [
+        "PKO"
+      ],
+      "columns": [
+        "close"
+      ]
+    },
+    "train_date": {
+      "from": "2008-01-01",
+      "to": "2015-12-31"
+    },
+    "test_date": {
+      "from": "2016-01-01",
+      "to": "2019-06-30"
+    }
+  },
+  "preprocessing": {
+    "sequence_length": 100,
+    "sample_time_difference": 20,
+    "sequence_prediction_time": 50
+  },
+  "model": {
+    "target": "regression",
+    "type": "neural_network"
+  }
+}

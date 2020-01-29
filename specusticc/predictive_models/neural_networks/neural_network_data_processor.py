@@ -45,8 +45,8 @@ class NeuralNetworkDataProcessor:
                 data_np.append(v.drop(columns='date').iloc[start_index: end_index])
 
         data_np = pd.concat(data_np).to_numpy()
-        first_layer_type = self.config['model']['layers'][0]['type']
-        if first_layer_type == 'dense':
+        input_dim = self.config['model']['input_dim']
+        if input_dim == 2:
             data_np = data_np.reshape(self.samples, self.timestamps * self.features)
         else:
             data_np = data_np.reshape(self.samples, self.timestamps, self.features)
