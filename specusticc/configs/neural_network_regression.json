@@ -28,7 +28,7 @@
   },
   "preprocessing": {
     "sequence_length": 100,
-    "sample_time_difference": 20,
+    "sample_time_difference": 50,
     "sequence_prediction_time": 50
   },
   "model": {
