@@ -54,9 +54,12 @@ class DataLoader:
             one_test_output = _filter_history_by_dates(loaded, test_date)
             self.test_output[ticker] = one_test_output
 
-    def _load_dataframe(self, ticker: str, columns:[]) -> pd.DataFrame:
+    def _load_dataframe(self, ticker: str, columns: []) -> pd.DataFrame:
         print('[Loader] Loading %s' % ticker)
-        raw_history = self.collection.find_one({"ticker": ticker})['history']
+        if ticker == 'test':
+            raw_history = _generate_test_data()
+        else:
+            raw_history = self.collection.find_one({"ticker": ticker})['history']
 
         if 'date' not in columns:
             columns.append('date')
@@ -67,6 +70,28 @@ class DataLoader:
         print('[Loader] Loaded')
         return df_full_history
 
+
+def _generate_test_data():
+    import numpy as np
+    import matplotlib.pyplot as plt
+
+    fs = 10000  # sample rate
+    f = 25  # the frequency of the signal
+
+    x = np.arange(fs)  # the points on the x axis for plotting
+    # compute the value (amplitude) of the sin wave at the for each sample
+    y = np.sin(2 * np.pi * f * (x / fs))*50 + 100
+    plt.plot(x, y)
+    plt.show()
+
+    current_date = datetime(2000, 1, 1)
+    td = timedelta(days=1)
+    res = []
+    for val in y:
+        one_dist = {'date':current_date, 'open':val, 'high':val, 'low':val, 'close':val, 'vol':100000}
+        res.append(one_dist)
+        current_date = current_date + td
+    return res
 
 def _filter_history_by_dates(df: pd.DataFrame, dates: dict) -> pd.DataFrame:
     if dates is None:

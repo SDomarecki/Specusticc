@@ -5,8 +5,7 @@
         "PKO"
       ],
       "columns": [
-        "close",
-        "vol"
+        "close"
       ]
     },
     "target": {
@@ -18,21 +17,23 @@
       ]
     },
     "train_date": {
-      "from": "2008-01-01",
-      "to": "2015-12-31"
+      "from": "2005-01-01",
+      "to": "2016-12-31"
     },
     "test_date": {
-      "from": "2016-01-01",
+      "from": "2017-01-01",
       "to": "2019-06-30"
     }
   },
   "preprocessing": {
-    "sequence_length": 100,
-    "sample_time_difference": 50,
-    "sequence_prediction_time": 50
+    "sequence_length": 200,
+    "sample_time_difference": 15,
+    "sequence_prediction_time": 30
   },
   "model": {
     "target": "regression",
-    "type": "neural_network"
+    "type": "neural_network",
+    "name": "TO_REPLACE!",
+    "input_dim": "TO_REPLACE!"
   }
 }

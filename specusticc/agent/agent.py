@@ -7,7 +7,7 @@ from .reporting.reporter import Reporter
 class Agent:
     def __init__(self, config_path: str, model_name: str) -> None:
         self.config = load_config(config_path)
-        self.model_name = model_name
+        self.config['model']['name'] = model_name
         self.model = None
         self.data = None
         self.predictions = None
@@ -20,14 +20,14 @@ class Agent:
         self._print_report()
 
     def _boost_config_with_model(self):
-        if self.model_name == 'mlp':
+        simple_dim_list = ['basic', 'mlp']
+        if self.config['model']['name'] in simple_dim_list:
             self.config['model']['input_dim'] = 2
         else:
             self.config['model']['input_dim'] = 3
 
-
     def _create_model_from_config(self):
-        builder = PredictiveModelBuilder(self.config, self.model_name)
+        builder = PredictiveModelBuilder(self.config)
         self.model = builder.build()
 
     def _load_data(self):

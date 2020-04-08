@@ -2,13 +2,14 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/database/html_sources" />
+      <excludeFolder url="file://$MODULE_DIR$/database/stooq_original" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.7 (--Magisterka--)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Python 3.8 (--Magisterka--)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TestRunnerService">
-    <option name="projectConfiguration" value="pytest" />
     <option name="PROJECT_TEST_RUNNER" value="pytest" />
   </component>
 </module>

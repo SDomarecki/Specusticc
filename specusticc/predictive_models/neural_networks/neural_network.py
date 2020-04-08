@@ -6,16 +6,21 @@ from specusticc.data_processing.data_holder import DataHolder
 from specusticc.utilities.timer import Timer
 
 
-class ModelV2:
-    def __init__(self):
+class NeuralNetwork:
+    def __init__(self, config: dict):
         self.predictive_model = None
         self.callbacks = None
         self.epochs = 0
         self.batch_size = 0
         self.save_fname = 'temp.h5'
 
+        self.input_timesteps = config['preprocessing']['sequence_length']
+        self.input_features = len(config['import']['input']['columns'])
+        self.output_timesteps = config['preprocessing']['sequence_prediction_time']
+
         self._build_model()
         self._compile_model()
+        self._set_callbacks()
 
     def save(self, save_dir: str) -> None:
         self.predictive_model.save(save_dir)
@@ -67,9 +72,9 @@ class ModelV2:
 
     def _set_callbacks(self) -> None:
         self.callbacks = [
-            C.EarlyStopping(monitor='val_loss', mode='min', verbose=1, patience=20),
-            C.ReduceLROnPlateau(monitor='loss', factor=0.3, min_delta=0.01, patience=3, verbose=1),
+            C.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=20),
+            C.ReduceLROnPlateau(monitor='loss', factor=0.3, min_delta=0.01, patience=5, verbose=1),
             C.ModelCheckpoint(filepath=self.save_fname, monitor='loss', save_best_only=True, verbose=1),
-            C.TensorBoard(),
-            C.CSVLogger(filename='learning.log')
+            # C.TensorBoard(),
+            # C.CSVLogger(filename='learning.log')
         ]

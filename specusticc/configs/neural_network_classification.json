@@ -28,11 +28,13 @@
   },
   "preprocessing": {
     "sequence_length": 100,
-    "sample_time_difference": 20,
+    "sample_time_difference": 10,
     "sequence_prediction_time": 50
   },
   "model": {
     "target": "classification",
-    "type": "neural_network"
+    "type": "neural_network",
+    "name": "TO_REPLACE!",
+    "input_dim": "TO_REPLACE!"
   }
 }

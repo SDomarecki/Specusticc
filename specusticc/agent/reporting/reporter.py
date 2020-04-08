@@ -1,13 +1,11 @@
 from specusticc.agent.reporting.classification_plotter import ClassificationPlotter
 from specusticc.agent.reporting.regression_plotter import RegressionPlotter
-from specusticc.predictive_models.neural_networks.model import Model
+from specusticc.predictive_models.neural_networks.neural_network import NeuralNetwork
 import specusticc.utilities.directories as dirs
 import json
-from specusticc.agent.reporting.plotter import Plotter
-
 
 class Reporter:
-    def __init__(self, config: dict, test: tuple,  predictions, model: Model) -> None:
+    def __init__(self, config: dict, test: tuple,  predictions, model: NeuralNetwork) -> None:
         self.config = config
         self.input_test, self.output_test = test
         self.predictions = predictions
