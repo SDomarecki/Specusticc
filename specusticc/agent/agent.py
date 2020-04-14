@@ -1,46 +1,53 @@
+from specusticc.configs_init.configer import Configer
+from specusticc.data_loading.data_loader import DataLoader
+from specusticc.data_postprocessing.data_postprocessor import DataPostprocessor
 from specusticc.data_processing.data_processor import DataProcessor
-from specusticc.predictive_models.predictive_model_builder import PredictiveModelBuilder
-from .load_config import load_config
-from .reporting.reporter import Reporter
+from specusticc.model_testing.tester import Tester
+from specusticc.model_training.trainer import Trainer
+from specusticc.model_creating.predictive_model_builder import PredictiveModelBuilder
+from specusticc.reporting.reporter import Reporter
 
 
 class Agent:
-    def __init__(self, config_path: str, model_name: str) -> None:
-        self.config = load_config(config_path)
-        self.config['model']['name'] = model_name
-        self.model = None
-        self.data = None
-        self.predictions = None
+    def __init__(self, config_path: str, model_name: str):
+        configer = Configer(config_path, model_name)
+        self.configs = configer.get_class_configs()
 
-        self._boost_config_with_model()
-        self._create_model_from_config()
-        self._load_data()
-        self._train_model()
-        self._test_model()
-        self._print_report()
-
-    def _boost_config_with_model(self):
-        simple_dim_list = ['basic', 'mlp']
-        if self.config['model']['name'] in simple_dim_list:
-            self.config['model']['input_dim'] = 2
-        else:
-            self.config['model']['input_dim'] = 3
-
-    def _create_model_from_config(self):
-        builder = PredictiveModelBuilder(self.config)
-        self.model = builder.build()
+        # Basic pipeline, probably to change when AutoML will be implemented
+        self._load_data()  #1
+        self._preprocess_data() #2
+        self._create_predictive_model() #3
+        self._train_model() #4
+        self._test_model() #5
+        self._postprocess_data() #6
+        self._print_report() #7
 
     def _load_data(self):
-        dp = DataProcessor(self.config)
-        self.data = dp.create_data_holder()
+        dl = DataLoader(self.configs['loader'])
+        self.loaded_data = dl.get_data()
+
+    def _preprocess_data(self):
+        dp = DataProcessor(self.loaded_data, self.configs['preprocessor'])
+        self.processed_data = dp.get_data()
+
+    def _create_predictive_model(self):
+        builder = PredictiveModelBuilder(self.configs['model_creator'])
+        self.model = builder.build()
 
     def _train_model(self):
-        self.model.train(self.data)
+        trainer = Trainer(self.model, self.processed_data, self.configs['training'])
+        trainer.train()
+        self.model = trainer.get_model()
 
     def _test_model(self):
-        self.predictions = self.model.predict(self.data.test_input)
+        tester = Tester(self.model, self.processed_data, self.configs['testing'])
+        tester.test()
+        self.test_results = tester.get_test_results()
+
+    def _postprocess_data(self):
+        dp = DataPostprocessor(self.processed_data, self.test_results, self.configs['postprocessor'])
+        self.postprocessed_data = dp.get_data()
 
     def _print_report(self):
-        test = (self.data.reporter_test_input, self.data.test_output)
-        r = Reporter(self.config, test, self.predictions, self.model)
+        r = Reporter(self.configs, self.postprocessed_data, self.model, self.configs['reporter'])
         r.print_report()
