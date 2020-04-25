@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 
-from specusticc.data_processing.ratio_to_class import ratio_to_class
+from specusticc.data_preprocessing.ratio_to_class import ratio_to_class
 
 
 class NeuralNetworkOutputDataPreprocessor:

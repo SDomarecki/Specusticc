@@ -8,3 +8,4 @@ if __name__ == "__main__":
 
     config_path = 'raw_configs/' + config_file
     agent = Agent(config_path=config_path, model_name=model_name)
+    agent.run()

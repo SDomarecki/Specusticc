@@ -3,7 +3,7 @@ import numpy as np
 import tensorflow.keras.callbacks as C
 
 from specusticc.configs_init.model_creator_config import ModelCreatorConfig
-from specusticc.data_processing.data_holder import DataHolder
+from specusticc.data_preprocessing.data_holder import DataHolder
 from specusticc.utilities.timer import Timer
 
 
@@ -35,10 +35,10 @@ class NeuralNetwork:
         x_train = data.train_input
         y_train = data.train_output
 
+        self.predictive_model.summary()
         history = self.predictive_model.fit(
-            x_train,
+            [x_train, y_train],
             y_train,
-            validation_data=(data.test_input, data.test_output),
             epochs=self.epochs,
             callbacks=self.callbacks
         )

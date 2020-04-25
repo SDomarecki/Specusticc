@@ -1,5 +1,5 @@
 from specusticc.configs_init.postprocessor_config import PostprocessorConfig
-from specusticc.data_processing.data_holder import DataHolder
+from specusticc.data_preprocessing.data_holder import DataHolder
 
 import numpy as np
 

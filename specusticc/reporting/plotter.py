@@ -35,8 +35,8 @@ class Plotter:
         ax.plot_date(date_series, close_series, color='cornflowerblue', linestyle='solid', markersize=0)
         ax.grid()
 
-    def _draw_original_time_series_wo_dates(self, ax, time_series):
-        ax.set_title('Original price chart')
+    def _draw_original_time_series_wo_dates(self, ax, title, time_series):
+        ax.set_title(title)
         self._set_proper_numeric_xlim(ax, len(time_series))
         x = np.arange(0, len(time_series), 1)
         ax.plot(x, time_series, color='cornflowerblue')

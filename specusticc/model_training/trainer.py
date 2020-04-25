@@ -1,5 +1,5 @@
 from specusticc.configs_init.training_config import TrainingConfig
-from specusticc.data_processing.data_holder import DataHolder
+from specusticc.data_preprocessing.data_holder import DataHolder
 
 
 class Trainer:

@@ -3,13 +3,13 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 from specusticc.configs_init.preprocessor_config import PreprocessorConfig
-from specusticc.data_processing.data_holder import DataHolder
-from specusticc.data_processing.neural_network_input_data_preprocessor import NeuralNetworkInputDataPreprocessor
-from specusticc.data_processing.neural_network_output_data_preprocessor import NeuralNetworkOutputDataPreprocessor
-from specusticc.data_processing.tree_data_processor import TreeDataProcessor
+from specusticc.data_preprocessing.data_holder import DataHolder
+from specusticc.data_preprocessing.neural_network_input_data_preprocessor import NeuralNetworkInputDataPreprocessor
+from specusticc.data_preprocessing.neural_network_output_data_preprocessor import NeuralNetworkOutputDataPreprocessor
+from specusticc.data_preprocessing.tree_data_processor import TreeDataProcessor
 
 
-class DataProcessor:
+class DataPreprocessor:
     def __init__(self, data: dict, config: PreprocessorConfig) -> None:
         self.config = config
         self.input = data['input']

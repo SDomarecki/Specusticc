@@ -7,6 +7,9 @@ from specusticc.reporting.plotter import Plotter
 
 
 class RegressionPlotter(Plotter):
+    learn_title = 'Learning set price chart'
+    test_title = 'Testing set price chart'
+    predictions_title = 'Predictions'
     def __init__(self, config: ReporterConfig):
         super().__init__(config)
 
@@ -16,13 +19,13 @@ class RegressionPlotter(Plotter):
     def _draw_regression_plot(self, test_results: dict):
         fig, axes = self._draw_empty_figure()
         if self.config.test_on_learning_base:
-            self._draw_original_time_series_wo_dates(axes[0][0], test_results['learn']['true_data'])
-            self._draw_predictions(axes[1][0], test_results['learn']['prediction'])
-            self._draw_original_time_series_wo_dates(axes[0][1], test_results['test']['true_data'])
-            self._draw_predictions(axes[1][1], test_results['test']['prediction'])
+            self._draw_original_time_series_wo_dates(axes[0][0], self.learn_title, test_results['learn']['true_data'])
+            self._draw_predictions(axes[1][0], self.predictions_title, test_results['learn']['prediction'])
+            self._draw_original_time_series_wo_dates(axes[0][1], self.test_title, test_results['test']['true_data'])
+            self._draw_predictions(axes[1][1], self.predictions_title, test_results['test']['prediction'])
         else:
             self._draw_original_time_series_wo_dates(axes[0], test_results['test']['true_data'])
-            self._draw_predictions(axes[1], test_results['test']['prediction'])
+            self._draw_predictions(axes[1], self.predictions_title, test_results['test']['prediction'])
         self._draw_regression_legend(axes[1][1])
         plt.tight_layout()
 
@@ -34,8 +37,8 @@ class RegressionPlotter(Plotter):
             return plt.subplots(facecolor='white', figsize=(9.6, 7.2), nrows=2,
                                 gridspec_kw={'height_ratios': [4, 4]})
 
-    def _draw_predictions(self, ax, predictions):
-        ax.set_title('Predictions')
+    def _draw_predictions(self, ax, title, predictions):
+        ax.set_title(title)
         self._set_proper_numeric_xlim(ax, len(predictions))
         x = np.arange(0, len(predictions), 1)
         ax.plot(x, predictions, color='limegreen')
