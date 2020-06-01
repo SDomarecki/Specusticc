@@ -11,13 +11,12 @@ class NeuralNetworkInputDataPreprocessor:
         self.prediction = config.seq_prediction_time
         self.sample_time_diff = config.sample_time_diff
         self.features = config.features
-        self.samples = 0
 
     def transform_input(self, data):
         data = data.drop(columns='date')
         data_np = []
-        self.samples = int((len(data) - self.prediction - self.timestamps) / self.sample_time_diff)
-        for i in range(self.samples):
+        samples = int((len(data) - self.prediction - self.timestamps) / self.sample_time_diff)
+        for i in range(samples):
             start_index = i * self.sample_time_diff
             end_index = start_index + self.timestamps
             data_np.append(data.iloc[start_index: end_index])
@@ -28,8 +27,8 @@ class NeuralNetworkInputDataPreprocessor:
         data_np = scaler.fit_transform(data_np)
 
         if self.config.input_dim == 2:
-            data_np = data_np.reshape(self.samples, self.timestamps * self.features)
+            data_np = data_np.reshape(samples, self.timestamps * self.features)
         else:
-            data_np = data_np.reshape(self.samples, self.timestamps, self.features)
+            data_np = data_np.reshape(samples, self.timestamps, self.features)
 
         return data_np, scaler

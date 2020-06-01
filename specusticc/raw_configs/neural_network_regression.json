@@ -17,8 +17,16 @@
         "close"
       ]
     },
+    "context": {
+      "tickers": [
+        "PZU"
+      ],
+      "columns": [
+        "close"
+      ]
+    },
     "train_date": {
-      "from": "2005-01-01",
+      "from": "2011-01-01",
       "to": "2016-12-31"
     },
     "test_date": {

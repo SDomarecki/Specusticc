@@ -7,4 +7,7 @@ class ModelCreatorConfig:
         self.nn_input_features = 0
         self.nn_output_timesteps = 0
         self.t_max_depth = 0
+
+        self.nn_context_timesteps = 0
+        self.nn_context_features = 0
         pass

@@ -11,6 +11,8 @@ import specusticc.utilities.directories as dirs
 
 
 class Configer:
+    context_models_list = ['encoder-decoder', 'lstm-attention', 'transformer']
+
     def __init__(self, config_path: str, model_name: str):
         self.dict_config_from_json = load_and_preprocess_config(config_path, model_name)
         self.class_configs = {}
@@ -30,6 +32,8 @@ class Configer:
         loader_config = LoaderConfig()
         loader_config.input_tickers = self.dict_config_from_json['import']['input']['tickers']
         loader_config.output_tickers = self.dict_config_from_json['import']['target']['tickers']
+        if self.dict_config_from_json['model']['name'] in self.context_models_list:
+            loader_config.context_tickers = self.dict_config_from_json['import']['context']['tickers']
         loader_config.source = 'mongodb'  # TODO to upgrade...someday
         loader_config.database_url = self.dict_config_from_json['import']['database_url']
         self.class_configs['loader'] = loader_config
@@ -42,6 +46,14 @@ class Configer:
         preprocessor_config.output_columns = self.dict_config_from_json['import']['target']['columns']
         if 'date' not in preprocessor_config.output_columns:
             preprocessor_config.output_columns.append('date')
+
+        if 'context' in self.dict_config_from_json['import']:
+            preprocessor_config.context_columns = self.dict_config_from_json['import']['context']['columns']
+            if 'date' not in preprocessor_config.context_columns:
+                preprocessor_config.context_columns.append('date')
+            preprocessor_config.context_features = len(
+                    self.dict_config_from_json['import']['context']['columns']) - 1  # minus data
+
         preprocessor_config.train_date = self.dict_config_from_json['import']['train_date']
         preprocessor_config.test_date = self.dict_config_from_json['import']['test_date']
         preprocessor_config.machine_learning_target = self.dict_config_from_json['model']['target']
@@ -50,7 +62,7 @@ class Configer:
         preprocessor_config.seq_length = self.dict_config_from_json['preprocessing']['sequence_length']
         preprocessor_config.seq_prediction_time = self.dict_config_from_json['preprocessing']['sequence_prediction_time']
         preprocessor_config.sample_time_diff = self.dict_config_from_json['preprocessing']['sample_time_difference']
-        preprocessor_config.features = len(self.dict_config_from_json['import']['input']['columns']) -1 #minus data
+        preprocessor_config.features = len(self.dict_config_from_json['import']['input']['columns']) -1 # minus data
         self.class_configs['preprocessor'] = preprocessor_config
 
     def _create_model_creator_config(self):
@@ -60,8 +72,12 @@ class Configer:
         if model_creator_config.model_type == 'neural_network':
             model_creator_config.nn_name = self.dict_config_from_json['model']['name']
             model_creator_config.nn_input_timesteps = self.dict_config_from_json['preprocessing']['sequence_length']
-            model_creator_config.nn_input_features = len(self.dict_config_from_json['import']['input']['columns']) -1 #minus data
+            model_creator_config.nn_input_features = len(self.dict_config_from_json['import']['input']['columns']) -1 # minus data
             model_creator_config.nn_output_timesteps = self.dict_config_from_json['preprocessing']['sequence_prediction_time']
+
+            if self.dict_config_from_json['model']['name'] in self.context_models_list:
+                model_creator_config.nn_context_timesteps = self.dict_config_from_json['preprocessing']['sequence_length']
+                model_creator_config.nn_context_features = len(self.dict_config_from_json['import']['context']['columns']) -1 # minus data
         elif model_creator_config.model_type == 'decision_tree':
             model_creator_config.t_max_depth = self.dict_config_from_json['model']['max_depth']
         else:

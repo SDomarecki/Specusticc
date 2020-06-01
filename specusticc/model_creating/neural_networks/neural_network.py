@@ -32,12 +32,12 @@ class NeuralNetwork:
         t = Timer()
         t.start()
 
-        x_train = data.train_input
-        y_train = data.train_output
+        x_train = data.get_train_input()
+        y_train = data.get_train_output()
 
         self.predictive_model.summary()
         history = self.predictive_model.fit(
-            [x_train, y_train],
+            x_train,
             y_train,
             epochs=self.epochs,
             callbacks=self.callbacks
@@ -52,7 +52,7 @@ class NeuralNetwork:
     def _plot_history(self, history):
         # summarize history for accuracy
         plt.plot(history.history['loss'])
-        plt.plot(history.history['val_loss'])
+        # plt.plot(history.history['val_loss'])
         plt.title('mean squared error')
         plt.ylabel('error')
         plt.xlabel('epoch')

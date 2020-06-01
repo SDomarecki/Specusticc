@@ -7,29 +7,43 @@ from specusticc.model_creating.neural_networks.neural_network import NeuralNetwo
 
 class LSTMAttention(NeuralNetwork):
     def __init__(self, config: ModelCreatorConfig):
+        self.context_timesteps = config.nn_context_timesteps
+        self.context_features = config.nn_context_features
+
         super().__init__(config)
         self.epochs = 50
         self.batch_size = 500
 
+
     def _build_model(self) -> None:
-        inputs = L.Input(shape=(self.input_timesteps, self.input_features))
+        # define training encoder
+        encoder_in = L.Input(shape=(self.context_timesteps, self.context_features))
+        encoder = L.LSTM(100, return_sequences=True, return_state=True)
+        encoder_out, state_h, state_c = encoder(encoder_in)
+        # We discard `encoder_outputs` and only keep the states.
+        encoder_states = [state_h, state_c]
 
-        lstm100 = L.LSTM(units=100, return_sequences=True)(inputs)
-        attention = L.Dense(1, activation='tanh')(lstm100)
-        attention = L.Activation('softmax')(attention)
+        # Set up the decoder, using `encoder_states` as initial state.
+        decoder_in = L.Input(shape=(self.input_timesteps, self.input_features))
+        # We set up our decoder to return full output sequences,
+        # and to return internal states as well. We don't use the
+        # return states in the training model, but we will use them in inference.
+        decoder_lstm = L.LSTM(100, return_sequences=True, return_state=True)
+        decoder_out, _, _ = decoder_lstm(decoder_in, initial_state=encoder_states)
+        decoder_out = L.GlobalAveragePooling1D()(decoder_out)
 
-        concat = L.Concatenate()([lstm100, attention])
-        predictions = L.Dense(self.output_timesteps, activation="linear")(concat)
-        self.predictive_model = M.Model(inputs=inputs, outputs=predictions)
+        attn_out = L.Attention(name='attention_layer')([encoder_out, decoder_out])
+        attn_out = L.GlobalAveragePooling1D()(attn_out)
+        decoder_concat = L.Concatenate(name='concat_layer')([decoder_out, attn_out])
+        decoder_concat = L.Flatten()(decoder_concat)
+        decoder_dense = L.Dense(self.output_timesteps, activation='linear')
 
-    def _build_model_obs(self) -> None:
-        self.predictive_model = M.Sequential()
+        decoder_out = decoder_dense(decoder_concat)
 
-        self.predictive_model.add(L.LSTM(units=100, input_shape=(self.input_timesteps, self.input_features), return_sequences=True))
-        self.predictive_model.add(L.LSTM(units=100, return_sequences=True))
-        self.predictive_model.add(L.Attention())
-        self.predictive_model.add(L.Dropout(rate=0.2))
-        self.predictive_model.add(L.Dense(units=self.output_timesteps, activation="linear"))
+        # Define the model that will turn
+        # `encoder_input_data` & `decoder_input_data` into `decoder_target_data`
+        self.predictive_model = M.Model([encoder_in, decoder_in], decoder_out)
+
 
     def _compile_model(self) -> None:
         self.predictive_model.compile(loss="mean_squared_error", optimizer="adam", metrics=["mean_squared_error"])

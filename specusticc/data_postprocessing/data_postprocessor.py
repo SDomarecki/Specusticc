@@ -1,7 +1,6 @@
 from specusticc.configs_init.postprocessor_config import PostprocessorConfig
 from specusticc.data_preprocessing.data_holder import DataHolder
 
-import numpy as np
 
 class DataPostprocessor:
     def __init__(self, processed_data: DataHolder, test_results: dict, config: PostprocessorConfig):

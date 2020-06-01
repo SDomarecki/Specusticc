@@ -14,6 +14,7 @@ class DataPreprocessor:
         self.config = config
         self.input = data['input']
         self.output = data['output']
+        self.context = data['context']
 
         self.data_holder = None
 
@@ -31,6 +32,9 @@ class DataPreprocessor:
             self.input[ticker] = df[self.config.input_columns]
         for ticker, df in self.output.items():
             self.output[ticker] = df[self.config.output_columns]
+        if self.context:
+            for ticker, df in self.context.items():
+                self.context[ticker] = df[self.config.context_columns]
 
     def _filter_by_dates(self):
         for ticker, df in self.input.items():
@@ -39,6 +43,10 @@ class DataPreprocessor:
         for ticker, df in self.output.items():
             self.train_output = _filter_history_by_dates(df, self.config.train_date)
             self.test_output = _filter_history_by_dates(df, self.config.test_date)
+        if self.context:
+            for ticker, df in self.context.items():
+                self.train_context = _filter_history_by_dates(df, self.config.train_date)
+                self.test_context = _filter_history_by_dates(df, self.config.test_date)
 
     def _reshape_data_to_model_input_output(self):
         model_type = self.config.model_type
@@ -66,6 +74,10 @@ class DataPreprocessor:
         dh.test_input, dh.test_input_scaler = data2i.transform_input(self.test_input)
         dh.test_output, dh.test_output_scaler = data2o.transform_output(self.test_output)
 
+        if self.context:
+            dh.train_context, dh.train_context_scaler = data2i.transform_input(self.train_context)
+            dh.test_context, dh.test_context_scaler = data2i.transform_input(self.test_context)
+
         self.data_holder = dh
 
 
@@ -75,6 +87,8 @@ def _filter_history_by_dates(df: pd.DataFrame, dates: dict) -> pd.DataFrame:
 
     from_date = dates['from']
     to_date = dates['to']
+
+    # TODO funkcja sprawdzająca czy daty from_date, to_date leżą w zakresie df
     from_index = _get_closest_date_index(df, from_date)
     to_index = _get_closest_date_index(df, to_date)
     filtered = df.iloc[from_index:to_index]

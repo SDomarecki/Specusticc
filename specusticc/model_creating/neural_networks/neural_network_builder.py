@@ -42,6 +42,7 @@ class NeuralNetworkBuilder:
         from specusticc.model_creating.neural_networks.models.regression.lstm_attention import LSTMAttention
         from specusticc.model_creating.neural_networks.models.regression.mlp import MLP
         from specusticc.model_creating.neural_networks.models.regression.lstm_enc_dec import LSTMEncoderDecoder
+        from specusticc.model_creating.neural_networks.models.regression.transformer import ModelTransformer
 
         name = self.config.nn_name
         if name == 'basic':
@@ -56,5 +57,7 @@ class NeuralNetworkBuilder:
             self.model = LSTMEncoderDecoder(self.config)
         elif name == 'mlp':
             self.model = MLP(self.config)
+        elif name == 'transformer':
+            self.model = ModelTransformer(self.config)
         else:
             raise NotImplementedError
