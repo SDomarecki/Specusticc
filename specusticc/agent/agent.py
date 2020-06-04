@@ -1,3 +1,5 @@
+import logging
+
 from specusticc.automated_ml.autokeras_predictor import AutokerasPredictor
 from specusticc.configs_init.configer import Configer
 from specusticc.data_loading.data_loader import DataLoader
@@ -11,8 +13,11 @@ from specusticc.reporting.reporter import Reporter
 
 class Agent:
     def __init__(self, config_path: str, model_name: str):
+        logging.info('Agent start')
+
         configer = Configer(config_path, model_name)
         self.configs = configer.get_class_configs()
+        # TODO wypis configów do loga?
 
         self.loaded_data = None
         self.processed_data = None
@@ -24,6 +29,7 @@ class Agent:
 
     def run(self):
         # Basic pipeline, probably to change when AutoML will be implemented
+        # TODO Planowany przebieg pipeline-u w log
         self._load_data()  #1
         self._preprocess_data() #2
 
