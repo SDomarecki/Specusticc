@@ -15,9 +15,9 @@ class NeuralNetwork:
         self.batch_size = 0
         self.save_fname = 'temp.h5'
 
-        self.input_timesteps = config.nn_input_timesteps
-        self.input_features = config.nn_input_features
-        self.output_timesteps = config.nn_output_timesteps
+        self.input_timesteps = config.input_timesteps
+        self.input_features = config.input_features
+        self.output_timesteps = config.output_timesteps
 
         self._build_model()
         self._compile_model()

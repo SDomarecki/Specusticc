@@ -5,8 +5,6 @@ class PreprocessorConfig:
         self.context_columns = []
         self.train_date = {}
         self.test_date = {}
-        self.machine_learning_target = ''
-        self.model_type = ''
         self.input_dim = 0
         self.seq_length = 0
         self.seq_prediction_time = 0

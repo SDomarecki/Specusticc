@@ -7,8 +7,8 @@ from specusticc.model_creating.neural_networks.neural_network import NeuralNetwo
 
 class LSTMAttention(NeuralNetwork):
     def __init__(self, config: ModelCreatorConfig):
-        self.context_timesteps = config.nn_context_timesteps
-        self.context_features = config.nn_context_features
+        self.context_timesteps = config.context_timesteps
+        self.context_features = config.context_features
 
         super().__init__(config)
         self.epochs = 50

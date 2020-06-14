@@ -12,30 +12,6 @@ class NeuralNetworkBuilder:
         return self.model
 
     def _choose_network(self):
-        target = self.config.machine_learning_target
-        if target == 'classification':
-            self._choose_classification_network()
-        elif target == 'regression':
-            self._choose_regression_network()
-        else:
-            raise NotImplementedError
-
-    def _choose_classification_network(self):
-        from specusticc.model_creating.neural_networks.models.classification.cnn import CNN
-        from specusticc.model_creating.neural_networks.models.classification.lstm import LSTM
-        from specusticc.model_creating.neural_networks.models.classification.mlp import MLP
-
-        name = self.config.nn_name
-        if name == 'cnn':
-            self.model = CNN(self.config)
-        elif name == 'lstm':
-            self.model = LSTM(self.config)
-        elif name == 'mlp':
-            self.model = MLP(self.config)
-        else:
-            raise NotImplementedError
-
-    def _choose_regression_network(self):
         from specusticc.model_creating.neural_networks.models.regression.basic_net import BasicNet
         from specusticc.model_creating.neural_networks.models.regression.cnn import CNN
         from specusticc.model_creating.neural_networks.models.regression.lstm import LSTM
@@ -44,7 +20,7 @@ class NeuralNetworkBuilder:
         from specusticc.model_creating.neural_networks.models.regression.lstm_enc_dec import LSTMEncoderDecoder
         from specusticc.model_creating.neural_networks.models.regression.transformer import ModelTransformer
 
-        name = self.config.nn_name
+        name = self.config.name
         if name == 'basic':
             self.model = BasicNet(self.config)
         elif name == 'cnn':

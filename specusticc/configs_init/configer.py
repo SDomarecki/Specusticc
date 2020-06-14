@@ -56,8 +56,6 @@ class Configer:
 
         preprocessor_config.train_date = self.dict_config_from_json['import']['train_date']
         preprocessor_config.test_date = self.dict_config_from_json['import']['test_date']
-        preprocessor_config.machine_learning_target = self.dict_config_from_json['model']['target']
-        preprocessor_config.model_type = self.dict_config_from_json['model']['type']
         preprocessor_config.input_dim = self.dict_config_from_json['model']['input_dim']
         preprocessor_config.seq_length = self.dict_config_from_json['preprocessing']['sequence_length']
         preprocessor_config.seq_prediction_time = self.dict_config_from_json['preprocessing']['sequence_prediction_time']
@@ -67,21 +65,16 @@ class Configer:
 
     def _create_model_creator_config(self):
         model_creator_config = ModelCreatorConfig()
-        model_creator_config.model_type = self.dict_config_from_json['model']['type']
-        model_creator_config.machine_learning_target = self.dict_config_from_json['model']['target']
-        if model_creator_config.model_type == 'neural_network':
-            model_creator_config.nn_name = self.dict_config_from_json['model']['name']
-            model_creator_config.nn_input_timesteps = self.dict_config_from_json['preprocessing']['sequence_length']
-            model_creator_config.nn_input_features = len(self.dict_config_from_json['import']['input']['columns']) -1 # minus data
-            model_creator_config.nn_output_timesteps = self.dict_config_from_json['preprocessing']['sequence_prediction_time']
 
-            if self.dict_config_from_json['model']['name'] in self.context_models_list:
-                model_creator_config.nn_context_timesteps = self.dict_config_from_json['preprocessing']['sequence_length']
-                model_creator_config.nn_context_features = len(self.dict_config_from_json['import']['context']['columns']) -1 # minus data
-        elif model_creator_config.model_type == 'decision_tree':
-            model_creator_config.t_max_depth = self.dict_config_from_json['model']['max_depth']
-        else:
-            raise NotImplementedError
+        model_creator_config.name = self.dict_config_from_json['model']['name']
+        model_creator_config.input_timesteps = self.dict_config_from_json['preprocessing']['sequence_length']
+        model_creator_config.input_features = len(self.dict_config_from_json['import']['input']['columns']) - 1 # minus data
+        model_creator_config.output_timesteps = self.dict_config_from_json['preprocessing']['sequence_prediction_time']
+
+        if self.dict_config_from_json['model']['name'] in self.context_models_list:
+            model_creator_config.context_timesteps = self.dict_config_from_json['preprocessing']['sequence_length']
+            model_creator_config.context_features = len(self.dict_config_from_json['import']['context']['columns']) - 1 # minus data
+
         self.class_configs['model_creator'] = model_creator_config
 
     def _create_training_config(self):
@@ -101,8 +94,6 @@ class Configer:
 
     def _create_reporter_config(self):
         reporter_config = ReporterConfig()
-        reporter_config.model_type = self.dict_config_from_json['model']['type']
-        reporter_config.machine_learning_target = self.dict_config_from_json['model']['target']
         reporter_config.test_on_learning_base = self.dict_config_from_json['model']['test_on_learning']
         reporter_config.report_directory = 'output/' + dirs.get_timestamp_dir()
         self.class_configs['reporter'] = reporter_config

@@ -5,9 +5,9 @@ from specusticc.configs_init.configer import Configer
 from specusticc.data_loading.data_loader import DataLoader
 from specusticc.data_postprocessing.data_postprocessor import DataPostprocessor
 from specusticc.data_preprocessing.data_preprocessor import DataPreprocessor
+from specusticc.model_creating.neural_networks.neural_network_builder import NeuralNetworkBuilder
 from specusticc.model_testing.tester import Tester
 from specusticc.model_training.trainer import Trainer
-from specusticc.model_creating.predictive_model_builder import PredictiveModelBuilder
 from specusticc.reporting.reporter import Reporter
 
 
@@ -57,7 +57,7 @@ class Agent:
         self.test_results = akp.get_test_results()
 
     def _create_predictive_model(self):
-        builder = PredictiveModelBuilder(self.configs['model_creator'])
+        builder = NeuralNetworkBuilder(self.configs['model_creator'])
         self.model = builder.build()
 
     def _train_model(self):

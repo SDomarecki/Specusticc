@@ -1,10 +1,7 @@
 from specusticc.configs_init.preprocessor_config import PreprocessorConfig
 
-import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-
-from specusticc.data_preprocessing.ratio_to_class import ratio_to_class
 
 
 class NeuralNetworkOutputDataPreprocessor:
@@ -16,37 +13,6 @@ class NeuralNetworkOutputDataPreprocessor:
         self.features = config.features
 
     def transform_output(self, data):
-        target = self.config.machine_learning_target
-        if target == 'regression':
-            return self._shift_for_regression(data)
-        elif target == 'classification':
-            return self._calculate_classes(data)
-        else:
-            raise NotImplementedError
-
-    def _calculate_classes(self, data: dict):
-        output_labels = []
-        for v in data.values():
-            samples = int((len(v) - self.prediction - self.timestamps) / self.sample_time_diff)
-            for i in range(samples - 1):
-                present_val_index = i * self.sample_time_diff + self.timestamps - 1
-                future_val_index = present_val_index + self.prediction
-
-                present_val = v.loc[:, 'close'].iloc[present_val_index]
-                future_val = v.loc[:, 'close'].iloc[future_val_index]
-
-                ratio = future_val / present_val
-
-                ratio_class = ratio_to_class(ratio)
-                output_labels.append(ratio_class)
-
-            ratio_class = ratio_to_class(1.)
-            output_labels.append(ratio_class)
-
-        output = np.array(output_labels)
-        return output
-
-    def _shift_for_regression(self, data):
         data = data.drop(columns='date')
 
         output_values = []

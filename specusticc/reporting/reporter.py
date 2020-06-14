@@ -1,8 +1,5 @@
-import json
-
 import specusticc.utilities.directories as dirs
 from specusticc.configs_init.reporter_config import ReporterConfig
-from specusticc.reporting.classification_plotter import ClassificationPlotter
 from specusticc.reporting.regression_plotter import RegressionPlotter
 
 
@@ -26,12 +23,7 @@ class Reporter:
         self.model.save(save_path)
 
     def _save_prediction_plot(self):
-        target = self.config.machine_learning_target
-        if target == 'regression':
-            plotter = RegressionPlotter(self.config)
-        elif target == 'classification':
-            plotter = ClassificationPlotter(self.config)
-        else:
-            raise NotImplementedError
+        plotter = RegressionPlotter(self.config)
+
         plotter.draw_prediction_plot(self.test_results)
         plotter.save_prediction_plot('blank')

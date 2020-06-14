@@ -40,8 +40,6 @@
     "sequence_prediction_time": 30
   },
   "model": {
-    "target": "regression",
-    "type": "neural_network",
     "test_on_learning": true,
     "name": "TO_REPLACE!",
     "input_dim": "TO_REPLACE!"

@@ -6,7 +6,6 @@ from specusticc.configs_init.preprocessor_config import PreprocessorConfig
 from specusticc.data_preprocessing.data_holder import DataHolder
 from specusticc.data_preprocessing.neural_network_input_data_preprocessor import NeuralNetworkInputDataPreprocessor
 from specusticc.data_preprocessing.neural_network_output_data_preprocessor import NeuralNetworkOutputDataPreprocessor
-from specusticc.data_preprocessing.tree_data_processor import TreeDataProcessor
 
 
 class DataPreprocessor:
@@ -49,22 +48,6 @@ class DataPreprocessor:
                 self.test_context = _filter_history_by_dates(df, self.config.test_date)
 
     def _reshape_data_to_model_input_output(self):
-        model_type = self.config.model_type
-        if model_type == 'decision_tree':
-            self._reshape_data_to_tree()
-            #TODO complete Tree model
-        elif model_type == 'neural_network':
-            self._reshape_data_to_neural_network()
-        else:
-            raise NotImplementedError
-
-    def _reshape_data_to_tree(self):
-        dh = DataHolder()
-        data2i = TreeDataProcessor(self.config)
-        data2o = TreeDataProcessor(self.config)
-        # TODO complete Tree model
-
-    def _reshape_data_to_neural_network(self):
         dh = DataHolder()
         data2i = NeuralNetworkInputDataPreprocessor(self.config)
         data2o = NeuralNetworkOutputDataPreprocessor(self.config)
