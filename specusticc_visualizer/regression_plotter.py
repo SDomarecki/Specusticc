@@ -1,9 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 
 from specusticc.configs_init.reporter_config import ReporterConfig
-from specusticc.reporting.plotter import Plotter
+from specusticc_visualizer.plotter import Plotter
 
 
 class RegressionPlotter(Plotter):

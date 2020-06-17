@@ -1,4 +1,4 @@
-from specusticc.configs_init.load_config import load_and_preprocess_config
+from specusticc.configs_init.load_config import load_and_preprocess_config, save_config
 from specusticc.configs_init.loader_config import LoaderConfig
 from specusticc.configs_init.postprocessor_config import PostprocessorConfig
 from specusticc.configs_init.preprocessor_config import PreprocessorConfig
@@ -11,10 +11,13 @@ import specusticc.utilities.directories as dirs
 
 
 class Configer:
-    context_models_list = ['encoder-decoder', 'lstm-attention', 'transformer']
+    context_models_list = ['encoder-decoder', 'lstm-attention', 'transformer_classes']
 
     def __init__(self, config_path: str, model_name: str):
-        self.dict_config_from_json = load_and_preprocess_config(config_path, model_name)
+        self.save_dir = 'output/' + dirs.get_timestamp_dir()
+        dirs.create_save_dir(self.save_dir)
+
+        self.dict_config_from_json = load_and_preprocess_config(config_path, model_name, backup_path=self.save_dir)
         self.class_configs = {}
 
         self._create_all_class_configs()
@@ -98,5 +101,9 @@ class Configer:
         reporter_config.report_directory = 'output/' + dirs.get_timestamp_dir()
         self.class_configs['reporter'] = reporter_config
 
+
+
+
     def get_class_configs(self) -> dict:
         return self.class_configs
+

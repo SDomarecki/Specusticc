@@ -15,6 +15,7 @@ def _configure_logger():
 
 if __name__ == "__main__":
     start_time = time.time()
+
     _configure_logger()
     logging.info('Starting Specusticc')
 

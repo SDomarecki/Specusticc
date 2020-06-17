@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from specusticc.configs_init.reporter_config import ReporterConfig
-from specusticc.reporting.plotter import Plotter
+from specusticc_visualizer.plotter import Plotter
 
 
 class ClassificationPlotter(Plotter):

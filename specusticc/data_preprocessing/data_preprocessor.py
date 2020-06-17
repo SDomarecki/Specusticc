@@ -52,13 +52,13 @@ class DataPreprocessor:
         data2i = NeuralNetworkInputDataPreprocessor(self.config)
         data2o = NeuralNetworkOutputDataPreprocessor(self.config)
 
-        dh.train_input, dh.train_input_scaler = data2i.transform_input(self.train_input)
-        dh.train_output, dh.train_output_scaler = data2o.transform_output(self.train_output)
-        dh.test_input, dh.test_input_scaler = data2i.transform_input(self.test_input)
-        dh.test_output, dh.test_output_scaler = data2o.transform_output(self.test_output)
+        dh.train_input, dh.train_input_scaler, dh.train_input_columns, dh.train_input_dates = data2i.transform_input(self.train_input)
+        dh.train_output, dh.train_output_scaler, dh.train_output_columns, dh.train_output_dates = data2o.transform_output(self.train_output)
+        dh.test_input, dh.test_input_scaler, dh.test_input_columns, dh.test_input_dates = data2i.transform_input(self.test_input)
+        dh.test_output, dh.test_output_scaler, dh.test_output_columns, dh.test_output_dates = data2o.transform_output(self.test_output)
 
         if self.context:
-            dh.train_context, dh.train_context_scaler = data2i.transform_input(self.train_context)
+            dh.train_context, dh.train_context_scaler, dh.train_context_columns, dh.train_context_dates = data2i.transform_input(self.train_context)
             dh.test_context, dh.test_context_scaler = data2i.transform_input(self.test_context)
 
         self.data_holder = dh

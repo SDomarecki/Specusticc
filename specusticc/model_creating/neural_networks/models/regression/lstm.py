@@ -11,7 +11,7 @@ class LSTM(NeuralNetwork):
         self.epochs = 20
         self.batch_size = 500
 
-    def _build_model(self) -> None:
+    def _build_model(self):
         self.predictive_model = M.Sequential()
 
         self.predictive_model.add(L.LSTM(units=100, input_shape=(self.input_timesteps, self.input_features), return_sequences=True))
@@ -21,5 +21,5 @@ class LSTM(NeuralNetwork):
         self.predictive_model.add(L.Dropout(rate=0.2))
         self.predictive_model.add(L.Dense(units=self.output_timesteps, activation="linear"))
 
-    def _compile_model(self) -> None:
+    def _compile_model(self):
         self.predictive_model.compile(loss="mean_squared_error", optimizer="adam", metrics=["mean_squared_error"])

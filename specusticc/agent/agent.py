@@ -5,6 +5,7 @@ from specusticc.configs_init.configer import Configer
 from specusticc.data_loading.data_loader import DataLoader
 from specusticc.data_postprocessing.data_postprocessor import DataPostprocessor
 from specusticc.data_preprocessing.data_preprocessor import DataPreprocessor
+from specusticc.hyperparameter_optimization.optimizer import Optimizer
 from specusticc.model_creating.neural_networks.neural_network_builder import NeuralNetworkBuilder
 from specusticc.model_testing.tester import Tester
 from specusticc.model_training.trainer import Trainer
@@ -26,12 +27,17 @@ class Agent:
         self.postprocessed_data = None
 
         self.aml = False
+        self.hyperparam_optimization = True
 
     def run(self):
         # Basic pipeline, probably to change when AutoML will be implemented
         # TODO Planowany przebieg pipeline-u w log
         self._load_data()  #1
         self._preprocess_data() #2
+
+        if self.hyperparam_optimization:
+            self._perform_optimization()
+            return
 
         if self.aml:
             self._fit_predict_with_aml() #3-5
@@ -77,3 +83,7 @@ class Agent:
     def _print_report(self):
         r = Reporter(self.configs, self.postprocessed_data, self.model, self.configs['reporter'])
         r.print_report()
+
+    def _perform_optimization(self):
+        o = Optimizer(self.processed_data, self.configs['model_creator'])
+        o.optimize()

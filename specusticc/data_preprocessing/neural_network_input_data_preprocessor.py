@@ -13,6 +13,9 @@ class NeuralNetworkInputDataPreprocessor:
         self.features = config.features
 
     def transform_input(self, data):
+        org_columns = data.columns
+        org_date = data['date']
+
         data = data.drop(columns='date')
         data_np = []
         samples = int((len(data) - self.prediction - self.timestamps) / self.sample_time_diff)
@@ -31,4 +34,4 @@ class NeuralNetworkInputDataPreprocessor:
         else:
             data_np = data_np.reshape(samples, self.timestamps, self.features)
 
-        return data_np, scaler
+        return data_np, scaler, org_columns, org_date
