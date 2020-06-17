@@ -7,7 +7,7 @@ from tensorflow.keras.wrappers.scikit_learn import KerasRegressor
 from specusticc.data_preprocessing.data_holder import DataHolder
 from specusticc.hyperparameter_optimization.gan import GAN
 
-
+#TODO 17.06.20 Basically playground, grid search and GAN will be moved
 class Optimizer:
     def __init__(self, data: DataHolder, config: ModelCreatorConfig):
         self.data = data
