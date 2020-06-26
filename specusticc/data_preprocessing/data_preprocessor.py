@@ -9,22 +9,21 @@ from specusticc.data_preprocessing.neural_network_output_data_preprocessor impor
 
 
 class DataPreprocessor:
-    def __init__(self, data: dict, config: PreprocessorConfig) -> None:
+    def __init__(self, data: dict, config: PreprocessorConfig):
         self.config = config
         self.input = data['input']
         self.output = data['output']
         self.context = data['context']
 
-        self.data_holder = None
+        self.dh = None
 
     def get_data(self) -> DataHolder:
-        self._process_data()
-        return self.data_holder
+        return self.dh
 
-    def _process_data(self):
+    def preprocess_data(self):
         self._limit_columns()
         self._filter_by_dates()
-        self._reshape_data_to_model_input_output()
+        self._reshape_data_to_neural_network()
 
     def _limit_columns(self):
         for ticker, df in self.input.items():
@@ -36,32 +35,40 @@ class DataPreprocessor:
                 self.context[ticker] = df[self.config.context_columns]
 
     def _filter_by_dates(self):
+        self.train_input = {}
+        self.test_input = {}
+        self.train_output = {}
+        self.test_output = {}
+
         for ticker, df in self.input.items():
-            self.train_input = _filter_history_by_dates(df, self.config.train_date)
-            self.test_input = _filter_history_by_dates(df, self.config.test_date)
+            self.train_input[ticker] = _filter_history_by_dates(df, self.config.train_date)
+            self.test_input[ticker] = _filter_history_by_dates(df, self.config.test_date)
         for ticker, df in self.output.items():
-            self.train_output = _filter_history_by_dates(df, self.config.train_date)
-            self.test_output = _filter_history_by_dates(df, self.config.test_date)
+            self.train_output[ticker] = _filter_history_by_dates(df, self.config.train_date)
+            self.test_output[ticker] = _filter_history_by_dates(df, self.config.test_date)
         if self.context:
+            self.train_context = {}
+            self.test_context = {}
             for ticker, df in self.context.items():
-                self.train_context = _filter_history_by_dates(df, self.config.train_date)
-                self.test_context = _filter_history_by_dates(df, self.config.test_date)
+                self.train_context[ticker] = _filter_history_by_dates(df, self.config.train_date)
+                self.test_context[ticker] = _filter_history_by_dates(df, self.config.test_date)
 
-    def _reshape_data_to_model_input_output(self):
+    def _reshape_data_to_neural_network(self):
         dh = DataHolder()
-        data2i = NeuralNetworkInputDataPreprocessor(self.config)
-        data2o = NeuralNetworkOutputDataPreprocessor(self.config)
+        data2i_train = NeuralNetworkInputDataPreprocessor(self.config)
+        data2i_test = NeuralNetworkInputDataPreprocessor(self.config)
+        data2o_train = NeuralNetworkOutputDataPreprocessor(self.config)
+        data2o_test = NeuralNetworkOutputDataPreprocessor(self.config)
 
-        dh.train_input, dh.train_input_scaler, dh.train_input_columns, dh.train_input_dates = data2i.transform_input(self.train_input)
-        dh.train_output, dh.train_output_scaler, dh.train_output_columns, dh.train_output_dates = data2o.transform_output(self.train_output)
-        dh.test_input, dh.test_input_scaler, dh.test_input_columns, dh.test_input_dates = data2i.transform_input(self.test_input)
-        dh.test_output, dh.test_output_scaler, dh.test_output_columns, dh.test_output_dates = data2o.transform_output(self.test_output)
+        dh.train_input, dh.train_input_scaler, dh.train_input_columns, dh.train_input_dates = data2i_train.transform_input(self.train_input)
+        dh.train_output, dh.train_output_scaler, dh.train_output_columns, dh.train_output_dates = data2o_train.transform_output(self.train_output)
+        dh.test_input, dh.test_input_scaler, dh.test_input_columns, dh.test_input_dates = data2i_test.transform_input(self.test_input)
+        dh.test_output, dh.test_output_scaler, dh.test_output_columns, dh.test_output_dates = data2o_test.transform_output(self.test_output)
 
         if self.context:
-            dh.train_context, dh.train_context_scaler, dh.train_context_columns, dh.train_context_dates = data2i.transform_input(self.train_context)
-            dh.test_context, dh.test_context_scaler = data2i.transform_input(self.test_context)
-
-        self.data_holder = dh
+            dh.train_context, dh.train_context_scaler, dh.train_context_columns, dh.train_context_dates = data2i_train.transform_input(self.train_context, context=True)
+            dh.test_context, dh.test_context_scaler, _, _ = data2i_test.transform_input(self.test_context)
+        self.dh = dh
 
 
 def _filter_history_by_dates(df: pd.DataFrame, dates: dict) -> pd.DataFrame:
@@ -71,9 +78,19 @@ def _filter_history_by_dates(df: pd.DataFrame, dates: dict) -> pd.DataFrame:
     from_date = dates['from']
     to_date = dates['to']
 
-    # TODO funkcja sprawdzająca czy daty from_date, to_date leżą w zakresie df
-    from_index = _get_closest_date_index(df, from_date)
-    to_index = _get_closest_date_index(df, to_date)
+    first_available_date = df.iloc[0].date
+    last_available_date = df.iloc[-1].date
+
+    if from_date < first_available_date:
+        from_index = 0
+    else:
+        from_index = _get_closest_date_index(df, from_date)
+
+    if to_date > last_available_date:
+        to_index = -1
+    else:
+        to_index = _get_closest_date_index(df, to_date)
+
     filtered = df.iloc[from_index:to_index]
     return filtered
 

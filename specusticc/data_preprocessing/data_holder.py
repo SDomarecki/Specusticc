@@ -32,7 +32,7 @@ class DataHolder:
 
     def get_train_input(self):
         if self.train_context is not None:
-            return [self.train_input, self.train_context]
+            return [self.train_context, self.train_input]
         else:
             return self.train_input
 
@@ -41,7 +41,7 @@ class DataHolder:
 
     def get_test_input(self):
         if self.test_context is not None:
-            return [self.test_input, self.test_context]
+            return [self.test_context, self.test_input]
         else:
             return self.test_input
 

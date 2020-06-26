@@ -1,6 +1,5 @@
 import logging
 
-from specusticc.automated_ml.autokeras_predictor import AutokerasPredictor
 from specusticc.configs_init.configer import Configer
 from specusticc.data_loading.data_loader import DataLoader
 from specusticc.data_postprocessing.data_postprocessor import DataPostprocessor
@@ -26,8 +25,7 @@ class Agent:
         self.test_results = None
         self.postprocessed_data = None
 
-        self.aml = False
-        self.hyperparam_optimization = True
+        self.hyperparam_optimization = False
 
     def run(self):
         # Basic pipeline, probably to change when AutoML will be implemented
@@ -39,28 +37,22 @@ class Agent:
             self._perform_optimization()
             return
 
-        if self.aml:
-            self._fit_predict_with_aml() #3-5
-        else:
-            self._create_predictive_model() #3
-            self._train_model() #4
-            self._test_model() #5
+        self._create_predictive_model() #3
+        self._train_model() #4
+        self._test_model() #5
 
         self._postprocess_data() #6
         self._print_report() #7
 
     def _load_data(self):
         dl = DataLoader(self.configs['loader'])
+        dl.load_data()
         self.loaded_data = dl.get_data()
 
     def _preprocess_data(self):
         dp = DataPreprocessor(self.loaded_data, self.configs['preprocessor'])
+        dp.preprocess_data()
         self.processed_data = dp.get_data()
-
-    def _fit_predict_with_aml(self):
-        akp = AutokerasPredictor(self.processed_data)
-        akp.fit_predict()
-        self.test_results = akp.get_test_results()
 
     def _create_predictive_model(self):
         builder = NeuralNetworkBuilder(self.configs['model_creator'])

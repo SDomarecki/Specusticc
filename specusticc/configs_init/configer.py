@@ -71,12 +71,14 @@ class Configer:
 
         model_creator_config.name = self.dict_config_from_json['model']['name']
         model_creator_config.input_timesteps = self.dict_config_from_json['preprocessing']['sequence_length']
-        model_creator_config.input_features = len(self.dict_config_from_json['import']['input']['columns']) - 1 # minus data
+        features = (len(self.dict_config_from_json['import']['input']['columns']) - 1) * len(self.dict_config_from_json['import']['input']['tickers'])
+        model_creator_config.input_features = features
         model_creator_config.output_timesteps = self.dict_config_from_json['preprocessing']['sequence_prediction_time']
 
         if self.dict_config_from_json['model']['name'] in self.context_models_list:
             model_creator_config.context_timesteps = self.dict_config_from_json['preprocessing']['sequence_length']
-            model_creator_config.context_features = len(self.dict_config_from_json['import']['context']['columns']) - 1 # minus data
+            features = (len(self.dict_config_from_json['import']['context']['columns']) - 1) * len(self.dict_config_from_json['import']['context']['tickers'])
+            model_creator_config.context_features = features
 
         self.class_configs['model_creator'] = model_creator_config
 

@@ -16,22 +16,22 @@ class LSTMEncoderDecoder(NeuralNetwork):
 
     def _build_model(self) -> None:
         # define training encoder
-        encoder_inputs = L.Input(shape=(self.context_timesteps, self.context_features))
-        encoder = L.LSTM(100, return_state=True)
+        encoder_inputs = L.Input(shape=(self.context_timesteps, self.context_features), name='Encoder_input')
+        encoder = L.LSTM(100, return_state=True, name='Encoder_LSTM')
         encoder_outputs, state_h, state_c = encoder(encoder_inputs)
         # We discard `encoder_outputs` and only keep the states.
         encoder_states = [state_h, state_c]
 
         # Set up the decoder, using `encoder_states` as initial state.
-        decoder_inputs = L.Input(shape=(self.input_timesteps, self.input_features))
+        decoder_inputs = L.Input(shape=(self.input_timesteps, self.input_features), name='Decoder_input')
         # We set up our decoder to return full output sequences,
         # and to return internal states as well. We don't use the
         # return states in the training model, but we will use them in inference.
-        decoder_lstm = L.LSTM(100, return_sequences=True, return_state=True)
+        decoder_lstm = L.LSTM(100, return_sequences=True, return_state=True, name='Decoder_LSTM')
         decoder_outputs, _, _ = decoder_lstm(decoder_inputs,
                                              initial_state=encoder_states)
         decoder_outputs = L.Flatten()(decoder_outputs)
-        decoder_dense = L.Dense(self.output_timesteps, activation='linear')
+        decoder_dense = L.Dense(self.output_timesteps, activation='linear', name='Dense_output')
 
         decoder_outputs = decoder_dense(decoder_outputs)
 

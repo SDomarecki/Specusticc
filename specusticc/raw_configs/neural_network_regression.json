@@ -6,7 +6,11 @@
         "PKO"
       ],
       "columns": [
-        "close"
+        "open",
+        "high",
+        "low",
+        "close",
+        "vol"
       ]
     },
     "target": {
@@ -19,10 +23,22 @@
     },
     "context": {
       "tickers": [
-        "PZU"
+        "PZU",
+        "ALR",
+        "BHW",
+        "BOS",
+        "ING",
+        "MBK",
+        "MIL",
+        "PEO",
+        "SAN"
       ],
       "columns": [
-        "close"
+        "open",
+        "high",
+        "low",
+        "close",
+        "vol"
       ]
     },
     "train_date": {
@@ -40,7 +56,8 @@
     "sequence_prediction_time": 30
   },
   "model": {
-    "test_on_learning": true,
+    "hyperparam_optimization_method": "grid",
+    "horizon_prediction_method": "mimo",
     "name": "TO_REPLACE!",
     "input_dim": "TO_REPLACE!"
   }
