@@ -1,11 +1,16 @@
 import logging
 
 from specusticc.configs_init.configer import Configer
+from specusticc.configs_init.configs_wrapper import ConfigsWrapper
 from specusticc.data_loading.data_loader import DataLoader
+from specusticc.data_loading.loaded_data import LoadedData
 from specusticc.data_postprocessing.data_postprocessor import DataPostprocessor
+from specusticc.data_preprocessing.data_holder import DataHolder
 from specusticc.data_preprocessing.data_preprocessor import DataPreprocessor
 from specusticc.hyperparameter_optimization.optimizer import Optimizer
-from specusticc.model_creating.neural_networks.neural_network_builder import NeuralNetworkBuilder
+from specusticc.model_creating.neural_network_builder import NeuralNetworkBuilder
+
+from specusticc.model_creating.trained_network_builder import TrainedNetworkBuilder
 from specusticc.model_testing.tester import Tester
 from specusticc.model_training.trainer import Trainer
 from specusticc.reporting.reporter import Reporter
@@ -16,11 +21,11 @@ class Agent:
         logging.info('Agent start')
 
         configer = Configer(config_path, model_name)
-        self.configs = configer.get_class_configs()
+        self.configs: ConfigsWrapper = configer.get_class_configs()
         # TODO wypis configów do loga?
 
-        self.loaded_data = None
-        self.processed_data = None
+        self.loaded_data: LoadedData
+        self.processed_data: DataHolder
         self.model = None
         self.test_results = None
         self.postprocessed_data = None
@@ -33,49 +38,54 @@ class Agent:
         self._load_data()  #1
         self._preprocess_data() #2
 
-        if self.hyperparam_optimization:
-            self._perform_optimization()
-            return
-
-        self._create_predictive_model() #3
-        self._train_model() #4
+        self._create_and_train_model()
+        # if self.hyperparam_optimization:
+        #     self._perform_optimization()
+        #     return
+        #
+        # self._create_predictive_model() #3
+        # self._train_model() #4
         self._test_model() #5
 
         self._postprocess_data() #6
         self._print_report() #7
 
     def _load_data(self):
-        dl = DataLoader(self.configs['loader'])
+        dl = DataLoader(self.configs.loader)
         dl.load_data()
         self.loaded_data = dl.get_data()
 
     def _preprocess_data(self):
-        dp = DataPreprocessor(self.loaded_data, self.configs['preprocessor'])
+        dp = DataPreprocessor(self.loaded_data, self.configs.preprocessor)
         dp.preprocess_data()
         self.processed_data = dp.get_data()
 
+    def _create_and_train_model(self):
+        builder = TrainedNetworkBuilder(self.processed_data, self.configs.model_creator)
+        self.model = builder.build()
+
     def _create_predictive_model(self):
-        builder = NeuralNetworkBuilder(self.configs['model_creator'])
+        builder = NeuralNetworkBuilder(self.configs.model_creator)
         self.model = builder.build()
 
     def _train_model(self):
-        trainer = Trainer(self.model, self.processed_data, self.configs['training'])
+        trainer = Trainer(self.model, self.processed_data, self.configs.training)
         trainer.train()
         self.model = trainer.get_model()
 
     def _test_model(self):
-        tester = Tester(self.model, self.processed_data, self.configs['testing'])
+        tester = Tester(self.model, self.processed_data, self.configs.testing)
         tester.test()
         self.test_results = tester.get_test_results()
 
     def _postprocess_data(self):
-        dp = DataPostprocessor(self.processed_data, self.test_results, self.configs['postprocessor'])
+        dp = DataPostprocessor(self.processed_data, self.test_results, self.configs.postprocessor)
         self.postprocessed_data = dp.get_data()
 
     def _print_report(self):
-        r = Reporter(self.configs, self.postprocessed_data, self.model, self.configs['reporter'])
+        r = Reporter(self.configs, self.postprocessed_data, self.model, self.configs.reporter)
         r.print_report()
 
     def _perform_optimization(self):
-        o = Optimizer(self.processed_data, self.configs['model_creator'])
+        o = Optimizer(self.processed_data, self.configs.model_creator)
         o.optimize()

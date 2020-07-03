@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from specusticc.model_creating.neural_networks.models.regression.transformer_classes.multi_head_attention import \
+from specusticc.model_creating.models.transformer_classes.multi_head_attention import \
     MultiHeadAttention
 
 

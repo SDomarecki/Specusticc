@@ -2,10 +2,10 @@ import tensorflow.keras.layers as L
 import tensorflow.keras.models as M
 
 from specusticc.configs_init.model_creator_config import ModelCreatorConfig
-from specusticc.model_creating.neural_networks.models.regression.transformer_classes.decoder import Decoder
-from specusticc.model_creating.neural_networks.models.regression.transformer_classes.encoder import Encoder
+from specusticc.model_creating.models.transformer_classes.decoder import Decoder
+from specusticc.model_creating.models.transformer_classes.encoder import Encoder
 
-from specusticc.model_creating.neural_networks.neural_network import NeuralNetwork
+from specusticc.model_creating.neural_network import NeuralNetwork
 
 
 # see: Attention Is All You Need, url:https://arxiv.org/abs/1706.03762

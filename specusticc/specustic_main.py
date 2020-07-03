@@ -4,6 +4,7 @@ import time
 
 from specusticc.agent.agent import Agent
 
+
 def _configure_logger():
     # Create and configure logger
     logging.basicConfig(filename="newfile.log",
@@ -12,6 +13,7 @@ def _configure_logger():
 
     # Setting the threshold of logger to INFO (DEBUG sends some strange data)
     logging.getLogger().setLevel(logging.INFO)
+
 
 if __name__ == "__main__":
     start_time = time.time()

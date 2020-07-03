@@ -1,12 +1,11 @@
 from datetime import datetime, timedelta
+import numpy as np
+import matplotlib.pyplot as plt
 
 
 class Generator:
     @staticmethod
     def generate_test_data():
-        import numpy as np
-        import matplotlib.pyplot as plt
-
         fs = 10000  # sample rate
         f = 25  # the frequency of the signal
 

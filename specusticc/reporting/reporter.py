@@ -1,8 +1,9 @@
+from specusticc.configs_init.configs_wrapper import ConfigsWrapper
 from specusticc.configs_init.reporter_config import ReporterConfig
 
 
 class Reporter:
-    def __init__(self, configs: dict, test_results: dict, model, rep_config: ReporterConfig):
+    def __init__(self, configs: ConfigsWrapper, test_results: dict, model, rep_config: ReporterConfig):
         self.all_configs = configs
         self.test_results = test_results
         self.config = rep_config
@@ -13,7 +14,7 @@ class Reporter:
         self._save_results()
 
     def _save_model(self):
-        save_path = self.config.report_directory + "/model.h5"
+        save_path = f'{self.config.report_directory} /model.h5'
         self.model.save(save_path)
 
     def _save_results(self):

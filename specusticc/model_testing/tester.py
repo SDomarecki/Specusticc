@@ -11,11 +11,11 @@ class Tester:
         self.test_results = {}
 
     def test(self):
+        train_input = self.data.get_train_input()
+        self.test_results['learn'] = self.model.predict(train_input)
+
         test_input = self.data.get_test_input()
         self.test_results['test'] = self.model.predict(test_input)
-        if self.config.test_on_learning_base:
-            train_input = self.data.get_train_input()
-            self.test_results['learn'] = self.model.predict(train_input)
 
     def get_test_results(self) -> dict:
         return self.test_results

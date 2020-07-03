@@ -1,5 +1,5 @@
 from specusticc.configs_init.model_creator_config import ModelCreatorConfig
-from specusticc.model_creating.neural_networks.neural_network import NeuralNetwork
+from specusticc.model_creating.neural_network import NeuralNetwork
 
 
 class NeuralNetworkBuilder:
@@ -12,13 +12,13 @@ class NeuralNetworkBuilder:
         return self.model
 
     def _choose_network(self):
-        from specusticc.model_creating.neural_networks.models.regression.basic_net import BasicNet
-        from specusticc.model_creating.neural_networks.models.regression.cnn import CNN
-        from specusticc.model_creating.neural_networks.models.regression.lstm import LSTM
-        from specusticc.model_creating.neural_networks.models.regression.lstm_attention import LSTMAttention
-        from specusticc.model_creating.neural_networks.models.regression.mlp import MLP
-        from specusticc.model_creating.neural_networks.models.regression.lstm_enc_dec import LSTMEncoderDecoder
-        from specusticc.model_creating.neural_networks.models.regression.transformer import ModelTransformer
+        from specusticc.model_creating.models.basic_net import BasicNet
+        from specusticc.model_creating.models.cnn import CNN
+        from specusticc.model_creating.models.lstm import LSTM
+        from specusticc.model_creating.models.lstm_attention import LSTMAttention
+        from specusticc.model_creating.models.mlp import MLP
+        from specusticc.model_creating.models.lstm_enc_dec import LSTMEncoderDecoder
+        from specusticc.model_creating.models.transformer import ModelTransformer
 
         name = self.config.name
         if name == 'basic':

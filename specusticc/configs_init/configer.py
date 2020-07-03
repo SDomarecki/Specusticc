@@ -1,3 +1,4 @@
+from specusticc.configs_init.configs_wrapper import ConfigsWrapper
 from specusticc.configs_init.load_config import load_and_preprocess_config, save_config
 from specusticc.configs_init.loader_config import LoaderConfig
 from specusticc.configs_init.postprocessor_config import PostprocessorConfig
@@ -18,7 +19,7 @@ class Configer:
         dirs.create_save_dir(self.save_dir)
 
         self.dict_config_from_json = load_and_preprocess_config(config_path, model_name, backup_path=self.save_dir)
-        self.class_configs = {}
+        self.configs: ConfigsWrapper = ConfigsWrapper()
 
         self._create_all_class_configs()
 
@@ -39,7 +40,7 @@ class Configer:
             loader_config.context_tickers = self.dict_config_from_json['import']['context']['tickers']
         loader_config.source = 'mongodb'  # TODO to upgrade...someday
         loader_config.database_url = self.dict_config_from_json['import']['database_url']
-        self.class_configs['loader'] = loader_config
+        self.configs.loader = loader_config
 
     def _create_preprocessor_config(self):
         preprocessor_config = PreprocessorConfig()
@@ -64,7 +65,7 @@ class Configer:
         preprocessor_config.seq_prediction_time = self.dict_config_from_json['preprocessing']['sequence_prediction_time']
         preprocessor_config.sample_time_diff = self.dict_config_from_json['preprocessing']['sample_time_difference']
         preprocessor_config.features = len(self.dict_config_from_json['import']['input']['columns']) -1 # minus data
-        self.class_configs['preprocessor'] = preprocessor_config
+        self.configs.preprocessor = preprocessor_config
 
     def _create_model_creator_config(self):
         model_creator_config = ModelCreatorConfig()
@@ -80,32 +81,27 @@ class Configer:
             features = (len(self.dict_config_from_json['import']['context']['columns']) - 1) * len(self.dict_config_from_json['import']['context']['tickers'])
             model_creator_config.context_features = features
 
-        self.class_configs['model_creator'] = model_creator_config
+        self.configs.model_creator = model_creator_config
 
     def _create_training_config(self):
         training_config = TrainingConfig()
         # as of 10.04 nothing, still empty class for the sake of consistency
-        self.class_configs['training'] = training_config
+        self.configs.training = training_config
 
     def _create_testing_config(self):
         testing_config = TestingConfig()
-        testing_config.test_on_learning_base = self.dict_config_from_json['model']['test_on_learning']
-        self.class_configs['testing'] = testing_config
+        # as of 01.07 nothing
+        self.configs.testing = testing_config
 
     def _create_postprocessing_config(self):
         postprocessing_config = PostprocessorConfig()
-        postprocessing_config.test_on_learning_base = self.dict_config_from_json['model']['test_on_learning']
-        self.class_configs['postprocessor'] = postprocessing_config
+        # as of 01.07 nothing
+        self.configs.postprocessor = postprocessing_config
 
     def _create_reporter_config(self):
         reporter_config = ReporterConfig()
-        reporter_config.test_on_learning_base = self.dict_config_from_json['model']['test_on_learning']
         reporter_config.report_directory = 'output/' + dirs.get_timestamp_dir()
-        self.class_configs['reporter'] = reporter_config
+        self.configs.reporter = reporter_config
 
-
-
-
-    def get_class_configs(self) -> dict:
-        return self.class_configs
-
+    def get_class_configs(self) -> ConfigsWrapper:
+        return self.configs

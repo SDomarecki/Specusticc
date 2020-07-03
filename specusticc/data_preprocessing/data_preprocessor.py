@@ -3,22 +3,23 @@ from datetime import datetime, timedelta
 import pandas as pd
 
 from specusticc.configs_init.preprocessor_config import PreprocessorConfig
+from specusticc.data_loading.loaded_data import LoadedData
 from specusticc.data_preprocessing.data_holder import DataHolder
 from specusticc.data_preprocessing.neural_network_input_data_preprocessor import NeuralNetworkInputDataPreprocessor
 from specusticc.data_preprocessing.neural_network_output_data_preprocessor import NeuralNetworkOutputDataPreprocessor
 
 
 class DataPreprocessor:
-    def __init__(self, data: dict, config: PreprocessorConfig):
+    def __init__(self, data: LoadedData, config: PreprocessorConfig):
         self.config = config
-        self.input = data['input']
-        self.output = data['output']
-        self.context = data['context']
+        self.input = data.input
+        self.output = data.output
+        self.context = data.context
 
-        self.dh = None
+        self.data_holder : DataHolder
 
     def get_data(self) -> DataHolder:
-        return self.dh
+        return self.data_holder
 
     def preprocess_data(self):
         self._limit_columns()
@@ -68,7 +69,7 @@ class DataPreprocessor:
         if self.context:
             dh.train_context, dh.train_context_scaler, dh.train_context_columns, dh.train_context_dates = data2i_train.transform_input(self.train_context, context=True)
             dh.test_context, dh.test_context_scaler, _, _ = data2i_test.transform_input(self.test_context)
-        self.dh = dh
+        self.data_holder = dh
 
 
 def _filter_history_by_dates(df: pd.DataFrame, dates: dict) -> pd.DataFrame:

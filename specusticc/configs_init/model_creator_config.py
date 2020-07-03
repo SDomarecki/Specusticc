@@ -7,4 +7,6 @@ class ModelCreatorConfig:
 
         self.context_timesteps = 0
         self.context_features = 0
+
+        self.optimize_hyperparameters = True
         pass

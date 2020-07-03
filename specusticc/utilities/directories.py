@@ -5,7 +5,7 @@ def get_timestamp_dir() -> str:
     return save_dir
 
 
-def create_save_dir(save_dir: str) -> None:
+def create_save_dir(save_dir: str):
     import os
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)

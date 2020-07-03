@@ -3,13 +3,14 @@ import pymongo
 
 from specusticc.configs_init.loader_config import LoaderConfig
 from specusticc.data_loading.generator import Generator
+from specusticc.data_loading.loaded_data import LoadedData
 
 
 class DataLoader:
     def __init__(self, config: LoaderConfig):
         self._config = config
         self._collection = None
-        self._dataset = {'input':None, 'output':None, 'context':None}
+        self._dataset = LoadedData()
 
         self._set_collection()
 
@@ -18,7 +19,7 @@ class DataLoader:
         stocks_database = client['stocks']
         self._collection = stocks_database['prices']
 
-    def get_data(self) -> dict:
+    def get_data(self) -> LoadedData:
         return self._dataset
 
     def load_data(self):
@@ -35,7 +36,7 @@ class DataLoader:
             loaded = self._load_one_dataframe(ticker)
             input_data[ticker] = loaded
             print('[Loader] Loaded')
-        self._dataset['input'] = input_data
+        self._dataset.input = input_data
 
     def _load_output_data(self):
         output_data = {}
@@ -44,7 +45,7 @@ class DataLoader:
             loaded = self._load_one_dataframe(ticker)
             output_data[ticker] = loaded
             print('[Loader] Loaded')
-        self._dataset['output'] = output_data
+        self._dataset.output = output_data
 
     def _load_context_data(self):
         context_data = {}
@@ -53,10 +54,11 @@ class DataLoader:
             loaded = self._load_one_dataframe(ticker)
             context_data[ticker] = loaded
             print('[Loader] Loaded')
-        self._dataset['context'] = context_data
+        self._dataset.context = context_data
 
     # Loads whole financial history of one ticker
     def _load_one_dataframe(self, ticker: str) -> pd.DataFrame:
+        ticker = ticker.lower()
         if ticker == 'test':
             raw_history = Generator.generate_test_data()
         else:
