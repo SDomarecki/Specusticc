@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow.keras.callbacks as C
 
-from specusticc.configs_init.model_creator_config import ModelCreatorConfig
+from specusticc.configs_init.model.model_creator_config import ModelCreatorConfig
 from specusticc.data_preprocessing.data_holder import DataHolder
 from specusticc.utilities.timer import Timer
 

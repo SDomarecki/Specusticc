@@ -1,91 +1,45 @@
 import logging
 
-from specusticc.configs_init.configer import Configer
-from specusticc.configs_init.configs_wrapper import ConfigsWrapper
-from specusticc.data_loading.data_loader import DataLoader
-from specusticc.data_loading.loaded_data import LoadedData
+from specusticc.configs_init.model.agent_config import AgentConfig
 from specusticc.data_postprocessing.data_postprocessor import DataPostprocessor
 from specusticc.data_preprocessing.data_holder import DataHolder
-from specusticc.data_preprocessing.data_preprocessor import DataPreprocessor
-from specusticc.hyperparameter_optimization.optimizer import Optimizer
-from specusticc.model_creating.neural_network_builder import NeuralNetworkBuilder
-
 from specusticc.model_creating.trained_network_builder import TrainedNetworkBuilder
 from specusticc.model_testing.tester import Tester
-from specusticc.model_training.trainer import Trainer
 from specusticc.reporting.reporter import Reporter
 
 
 class Agent:
-    def __init__(self, config_path: str, model_name: str):
-        logging.info('Agent start')
+    def __init__(self, model_name: str, fold_number: int, data: DataHolder, config: AgentConfig):
+        self.config: AgentConfig = config
 
-        configer = Configer(config_path, model_name)
-        self.configs: ConfigsWrapper = configer.get_class_configs()
-        # TODO wypis configów do loga?
+        self._name = f'{model_name}_{fold_number}'
+        logging.info(f'Agent {self._name} start')
 
-        self.loaded_data: LoadedData
-        self.processed_data: DataHolder
-        self.model = None
-        self.test_results = None
-        self.postprocessed_data = None
-
-        self.hyperparam_optimization = False
+        self.model_name: str = model_name
+        self._fold_number: int = fold_number
+        self._data: DataHolder = data
 
     def run(self):
-        # Basic pipeline, probably to change when AutoML will be implemented
-        # TODO Planowany przebieg pipeline-u w log
-        self._load_data()  #1
-        self._preprocess_data() #2
-
         self._create_and_train_model()
-        # if self.hyperparam_optimization:
-        #     self._perform_optimization()
-        #     return
-        #
-        # self._create_predictive_model() #3
-        # self._train_model() #4
-        self._test_model() #5
+        self._test_model()
 
-        self._postprocess_data() #6
-        self._print_report() #7
-
-    def _load_data(self):
-        dl = DataLoader(self.configs.loader)
-        dl.load_data()
-        self.loaded_data = dl.get_data()
-
-    def _preprocess_data(self):
-        dp = DataPreprocessor(self.loaded_data, self.configs.preprocessor)
-        dp.preprocess_data()
-        self.processed_data = dp.get_data()
+        self._postprocess_data()
+        self._save_report()
 
     def _create_and_train_model(self):
-        builder = TrainedNetworkBuilder(self.processed_data, self.configs.model_creator)
-        self.model = builder.build()
-
-    def _create_predictive_model(self):
-        builder = NeuralNetworkBuilder(self.configs.model_creator)
-        self.model = builder.build()
-
-    def _train_model(self):
-        trainer = Trainer(self.model, self.processed_data, self.configs.training)
-        trainer.train()
-        self.model = trainer.get_model()
+        builder = TrainedNetworkBuilder(self._data, self.model_name, self.config)
+        self._model = builder.build()
 
     def _test_model(self):
-        tester = Tester(self.model, self.processed_data, self.configs.testing)
+        tester = Tester(self._model, self.model_name, self._data)
         tester.test()
-        self.test_results = tester.get_test_results()
+        self._test_results = tester.get_test_results()
 
     def _postprocess_data(self):
-        dp = DataPostprocessor(self.processed_data, self.test_results, self.configs.postprocessor)
-        self.postprocessed_data = dp.get_data()
+        postprocessor = DataPostprocessor(self._data, self._test_results)
+        self._postprocessed_data = postprocessor.get_data()
 
-    def _print_report(self):
-        r = Reporter(self.configs, self.postprocessed_data, self.model, self.configs.reporter)
-        r.print_report()
-
-    def _perform_optimization(self):
-        o = Optimizer(self.processed_data, self.configs.model_creator)
-        o.optimize()
+    def _save_report(self):
+        save_path = f'{self.config.market_save_path}/{self._name}'
+        r: Reporter = Reporter(self._postprocessed_data, save_path)
+        r.save_results()

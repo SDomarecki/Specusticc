@@ -1,16 +1,16 @@
-from tensorflow.keras.layers import BatchNormalization
-from tensorflow.keras.layers import Input, Dense, Reshape, Flatten
+from tensorflow.keras.layers import Input, Dense, Flatten
 from tensorflow.keras.layers import LeakyReLU
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.python.keras.layers import LSTM, Dropout
 
-from specusticc.configs_init.model_creator_config import ModelCreatorConfig
-
 import numpy as np
 
+from specusticc.configs_init.model.agent_config import AgentConfig
+
+
 class GAN:
-    def __init__(self, config: ModelCreatorConfig):
+    def __init__(self, config: AgentConfig):
         self.epochs = 200
         self.batch_size = 500
         self.input_timesteps = config.input_timesteps

@@ -3,19 +3,18 @@ from datetime import datetime
 import os
 
 
+def load_and_preprocess_config(config_path: str, backup_path: str) -> dict:
+    config = _load_config(config_path)
+    _backup_config(config, backup_path)
+    config = _preprocess_config(config)
+    return config
 
-def save_config(config: dict, save_path: str):
+
+def _backup_config(config: dict, save_path: str):
     path = os.getcwd()
     full_save_path = path + '/' + save_path + '/config.json'
     with open(full_save_path, 'w') as outfile:
         json.dump(config, outfile)
-
-
-def load_and_preprocess_config(config_path: str, model_name: str, backup_path: str) -> dict:
-    config = _load_config(config_path)
-    save_config(config, backup_path)
-    config = _preprocess_config(config, model_name)
-    return config
 
 
 def _load_config(config_path: str) -> dict:
@@ -23,10 +22,8 @@ def _load_config(config_path: str) -> dict:
     return json.load(file)
 
 
-def _preprocess_config(config: dict, model_name: str) -> dict:
+def _preprocess_config(config: dict) -> dict:
     config = _transform_datestring_to_datetime(config)
-    config['model']['name'] = model_name
-    config = _boost_config_with_model(config)
     return config
 
 
@@ -44,13 +41,4 @@ def _transform_datestring_to_datetime(config: dict) -> dict:
         import_test_date['from'] = datetime.strptime(import_test_date['from'], date_format)
         import_test_date['to'] = datetime.strptime(import_test_date['to'], date_format)
         config['import']['test_date'] = import_test_date
-    return config
-
-
-def _boost_config_with_model(config: dict) -> dict:
-    simple_dim_list = ['basic', 'mlp']
-    if config['model']['name'] in simple_dim_list:
-        config['model']['input_dim'] = 2
-    else:
-        config['model']['input_dim'] = 3
     return config

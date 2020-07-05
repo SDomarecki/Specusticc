@@ -55,10 +55,9 @@
     "sample_time_difference": 30,
     "sequence_prediction_time": 30
   },
-  "model": {
-    "hyperparam_optimization_method": "grid",
-    "horizon_prediction_method": "mimo",
-    "name": "TO_REPLACE!",
-    "input_dim": "TO_REPLACE!"
+  "agent": {
+    "folds": 10,
+    "hyperparam_optimization_method": "none",
+    "horizon_prediction_method": "mimo"
   }
 }

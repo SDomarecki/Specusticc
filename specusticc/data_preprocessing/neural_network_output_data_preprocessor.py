@@ -1,4 +1,4 @@
-from specusticc.configs_init.preprocessor_config import PreprocessorConfig
+from specusticc.configs_init.model.preprocessor_config import PreprocessorConfig
 
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler

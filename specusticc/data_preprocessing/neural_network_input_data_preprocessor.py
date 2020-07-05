@@ -1,4 +1,4 @@
-from specusticc.configs_init.preprocessor_config import PreprocessorConfig
+from specusticc.configs_init.model.preprocessor_config import PreprocessorConfig
 
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
@@ -46,9 +46,6 @@ class NeuralNetworkInputDataPreprocessor:
         scaler = MinMaxScaler(feature_range=(0, 1))
         data_np = scaler.fit_transform(data_np)
 
-        if self.config.input_dim == 2:
-            data_np = data_np.reshape(samples, self.timestamps * features)
-        else:
-            data_np = data_np.reshape(samples, self.timestamps, features)
+        data_np = data_np.reshape(samples, self.timestamps, features)
 
         return data_np, scaler, org_columns, self.org_date

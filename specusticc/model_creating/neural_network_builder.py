@@ -1,4 +1,4 @@
-from specusticc.configs_init.model_creator_config import ModelCreatorConfig
+from specusticc.configs_init.model.model_creator_config import ModelCreatorConfig
 from specusticc.model_creating.neural_network import NeuralNetwork
 
 

@@ -1,28 +1,20 @@
-from specusticc.configs_init.configs_wrapper import ConfigsWrapper
-from specusticc.configs_init.reporter_config import ReporterConfig
-
+import specusticc.utilities.directories as dirs
+from specusticc.data_postprocessing.postprocessed_data import PostprocessedData
+import pandas as pd
 
 class Reporter:
-    def __init__(self, configs: ConfigsWrapper, test_results: dict, model, rep_config: ReporterConfig):
-        self.all_configs = configs
-        self.test_results = test_results
-        self.config = rep_config
-        self.model = model
+    def __init__(self, test_results: PostprocessedData, save_path: str):
+        self._test_results = test_results
+        self._save_path = save_path
 
-    def print_report(self):
-        self._save_model()
-        self._save_results()
+    def save_results(self):
+        dirs.create_save_dir(self._save_path)
 
-    def _save_model(self):
-        save_path = f'{self.config.report_directory} /model.h5'
-        self.model.save(save_path)
+        self._save_one_data_csv(self._test_results.train_true_data, 'true_train_data.csv')
+        self._save_one_data_csv(self._test_results.train_prediction, 'prediction_train_data.csv')
+        self._save_one_data_csv(self._test_results.test_true_data, 'true_test_data.csv')
+        self._save_one_data_csv(self._test_results.test_prediction, 'prediction_test_data.csv')
 
-    def _save_results(self):
-        self._save_one_data_csv(self.test_results['learn']['true_data'], 'true_learn_data.csv')
-        self._save_one_data_csv(self.test_results['learn']['prediction'], 'prediction_learn_data.csv')
-        self._save_one_data_csv(self.test_results['test']['true_data'], 'true_test_data.csv')
-        self._save_one_data_csv(self.test_results['test']['prediction'], 'prediction_test_data.csv')
-
-    def _save_one_data_csv(self, data, path):
-        full_path = self.config.report_directory + '/' + path
+    def _save_one_data_csv(self, data: pd.DataFrame, filename: str):
+        full_path = f'{self._save_path}/{filename}'
         data.to_csv(full_path, index=False, header=True)

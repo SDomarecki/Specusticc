@@ -2,7 +2,7 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 
-from specusticc.configs_init.preprocessor_config import PreprocessorConfig
+from specusticc.configs_init.model.preprocessor_config import PreprocessorConfig
 from specusticc.data_loading.loaded_data import LoadedData
 from specusticc.data_preprocessing.data_holder import DataHolder
 from specusticc.data_preprocessing.neural_network_input_data_preprocessor import NeuralNetworkInputDataPreprocessor
@@ -16,7 +16,7 @@ class DataPreprocessor:
         self.output = data.output
         self.context = data.context
 
-        self.data_holder : DataHolder
+        self.data_holder: DataHolder
 
     def get_data(self) -> DataHolder:
         return self.data_holder

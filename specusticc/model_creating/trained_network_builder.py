@@ -1,33 +1,36 @@
 from sklearn.model_selection import GridSearchCV
 from tensorflow.python.keras.wrappers.scikit_learn import KerasRegressor
+import matplotlib.pyplot as plt
 
-from specusticc.configs_init.model_creator_config import ModelCreatorConfig
+from specusticc.configs_init.model.agent_config import AgentConfig
 from specusticc.data_preprocessing.data_holder import DataHolder
-
+from specusticc.utilities.timer import Timer
+import tensorflow.keras.callbacks as C
 
 class TrainedNetworkBuilder:
-    def __init__(self, data: DataHolder, config: ModelCreatorConfig):
+    def __init__(self, data: DataHolder, model_name: str, config: AgentConfig):
         self.data: DataHolder = data
-        self.config: ModelCreatorConfig = config
+        self.model_name = model_name
+        self.config: AgentConfig = config
         self.epochs: int = 20
 
     def build(self):
         self._choose_network()
-        if self.config.optimize_hyperparameters:
+        if self.config.hyperparam_optimization_method in ['grid', 'random', 'bayes']:
             return self._optimize_network()
         else:
-            return self._build_predefined_network()
+            return self._build_and_train_predefined_network()
 
     def _choose_network(self):
         from specusticc.model_creating.models.basic_net import BasicNet
-        from specusticc.model_creating.models.optimized.cnn import CNN
+        from specusticc.model_creating.models.cnn import CNN
         from specusticc.model_creating.models.lstm import LSTM
         from specusticc.model_creating.models.lstm_attention import LSTMAttention
         from specusticc.model_creating.models.mlp import MLP
         from specusticc.model_creating.models.lstm_enc_dec import LSTMEncoderDecoder
         from specusticc.model_creating.models.transformer import ModelTransformer
 
-        name = self.config.name
+        name = self.model_name
         if name == 'basic':
             self.model = BasicNet(self.config)
         elif name == 'cnn':
@@ -46,7 +49,16 @@ class TrainedNetworkBuilder:
             raise NotImplementedError
 
     def _optimize_network(self):
-        X = self.data.get_train_input()
+        method = self.config.hyperparam_optimization_method
+        if method == 'grid':
+            return self._grid_optimization()
+        elif method == 'random':
+            return self._random_optimization()
+        else:
+            return self._bayes_optimization()
+
+    def _grid_optimization(self):
+        X = self.data.get_train_input(self.model_name)
         Y = self.data.get_train_output()
         build_fn = self.model.build_model
         possible_params = self.model.possible_parameters
@@ -67,5 +79,63 @@ class TrainedNetworkBuilder:
         model.compile(loss="mean_squared_error", optimizer="adam", metrics=["mean_squared_error"])
         return model
 
+    def _random_optimization(self):
+        raise NotImplementedError
+
+    def _bayes_optimization(self):
+        raise NotImplementedError
+
+    def _build_and_train_predefined_network(self):
+        seq = self.model.build_model()
+        seq = self._train(seq)
+        return seq
+
     def _build_predefined_network(self):
         return self.model.build_model()
+
+    def _train(self, seq):
+        print('[Model] Training Started')
+        t = Timer()
+        t.start()
+
+        X = self.data.get_train_input(self.model_name)
+        Y = self.data.get_train_output()
+
+        save_fname = 'temp.h5'
+        callbacks = [
+            C.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=20),
+            C.ReduceLROnPlateau(monitor='loss', factor=0.3, min_delta=0.01, patience=5, verbose=1),
+            C.ModelCheckpoint(filepath=save_fname, monitor='loss', save_best_only=True, verbose=1),
+            # C.TensorBoard(),
+            # C.CSVLogger(filename='learning.log')
+        ]
+
+        seq.summary()
+        history = seq.fit(
+                X,
+                Y,
+                epochs=self.epochs,
+                callbacks=callbacks
+        )
+        self.save(seq, save_fname)
+        print('[Model] Training Completed')
+        t.stop()
+        t.print_time()
+
+        self._plot_history(history)
+
+        return seq
+
+    def save(self, seq, save_dir: str):
+        seq.save(save_dir)
+
+    def _plot_history(self, history):
+        # summarize history for accuracy
+        plt.plot(history.history['loss'])
+        # plt.plot(history.history['val_loss'])
+        plt.title('mean squared error')
+        plt.ylabel('error')
+        plt.xlabel('epoch')
+        plt.legend(['train', 'validation'], loc='upper left')
+        plt.grid()
+        plt.show()

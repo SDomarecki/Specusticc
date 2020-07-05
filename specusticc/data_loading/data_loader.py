@@ -1,7 +1,7 @@
 import pandas as pd
 import pymongo
 
-from specusticc.configs_init.loader_config import LoaderConfig
+from specusticc.configs_init.model.loader_config import LoaderConfig
 from specusticc.data_loading.generator import Generator
 from specusticc.data_loading.loaded_data import LoadedData
 
@@ -64,7 +64,7 @@ class DataLoader:
         else:
             raw_history = self._collection.find_one({"ticker": ticker})['history']
 
-        df_full_history = pd.DataFrame(raw_history)
+        history: pd.DataFrame = pd.DataFrame(raw_history)
         # transforms string date to datetime type
-        df_full_history['date'] = pd.to_datetime(df_full_history['date'], format='%Y-%m-%d')
-        return df_full_history
+        history['date'] = pd.to_datetime(history['date'], format='%Y-%m-%d')
+        return history

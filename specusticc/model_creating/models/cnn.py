@@ -1,27 +1,51 @@
 import tensorflow.keras.layers as L
 import tensorflow.keras.models as M
 
-from specusticc.configs_init.model_creator_config import ModelCreatorConfig
-from specusticc.model_creating.neural_network import NeuralNetwork
+from specusticc.configs_init.model.agent_config import AgentConfig
 
 
-class CNN(NeuralNetwork):
-    def __init__(self, config: ModelCreatorConfig):
-        super().__init__(config)
+class CNN:
+    def __init__(self, config: AgentConfig):
         self.epochs = 50
-        self.batch_size = 500
 
-    def _build_model(self) -> None:
-        self.predictive_model = M.Sequential()
+        self.input_timesteps = config.input_timesteps
+        self.input_features = config.input_features
+        self.output_timesteps = config.output_timesteps
 
-        self.predictive_model.add(L.Input(shape=(self.input_timesteps, self.input_features)))
-        self.predictive_model.add(L.Conv1D(filters=64, kernel_size=3, activation="sigmoid"))
-        self.predictive_model.add(L.Conv1D(filters=64, kernel_size=3, activation="relu"))
-        self.predictive_model.add(L.Dropout(rate=0.4))
-        self.predictive_model.add(L.AveragePooling1D(pool_size=2))
-        self.predictive_model.add(L.Flatten())
-        self.predictive_model.add(L.Dense(units=100))
-        self.predictive_model.add(L.Dense(units=self.output_timesteps, activation="linear"))
+        self.possible_parameters = {}
+        self._fetch_possible_parameters()
 
-    def _compile_model(self) -> None:
-        self.predictive_model.compile(loss="mean_squared_error", optimizer="adam", metrics=["mean_squared_error"])
+    def _fetch_possible_parameters(self):
+        batch_size = [10, 50]
+        optimizer = ['Adam']
+        neurons = [20, 100]
+        activation = ['relu']
+        dropout_rate = [0.2, 0.8]
+
+        self.possible_parameters = dict(
+            batch_size=batch_size,
+            dropout_rate=dropout_rate,
+            optimizer=optimizer,
+            neurons=neurons,
+            activation=activation)
+
+    def build_model(self,
+                    optimizer='adam',
+                    dropout_rate=0.0,
+                    neurons=20,
+                    activation='relu'):
+        model = M.Sequential()
+
+        model.add(L.Input(shape=(self.input_timesteps, self.input_features)))
+        model.add(L.Conv1D(filters=neurons, kernel_size=3, activation=activation))
+        model.add(L.Conv1D(filters=neurons, kernel_size=3, activation=activation))
+        model.add(L.Dropout(rate=dropout_rate))
+        model.add(L.AveragePooling1D(pool_size=2))
+        model.add(L.Flatten())
+        model.add(L.Dense(units=neurons))
+        model.add(L.Dense(units=self.output_timesteps, activation="linear"))
+
+        mape = 'mean_absolute_percentage_error'
+        model.compile(loss=mape, optimizer=optimizer, metrics=[mape])
+
+        return model

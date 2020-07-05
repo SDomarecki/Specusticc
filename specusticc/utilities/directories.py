@@ -1,4 +1,4 @@
-def get_timestamp_dir() -> str:
+def get_timestamp() -> str:
     from datetime import datetime
     now = datetime.now()
     save_dir = now.strftime('%Y-%m-%d_%H-%M-%S')

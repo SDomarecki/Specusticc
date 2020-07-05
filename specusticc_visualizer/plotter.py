@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from specusticc.configs_init.reporter_config import ReporterConfig
+from specusticc.configs_init.model.reporter_config import ReporterConfig
 
 
 class Plotter:

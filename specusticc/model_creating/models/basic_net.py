@@ -1,21 +1,44 @@
 import tensorflow.keras.layers as L
 import tensorflow.keras.models as M
 
-from specusticc.configs_init.model_creator_config import ModelCreatorConfig
-from specusticc.model_creating.neural_network import NeuralNetwork
+from specusticc.configs_init.model.agent_config import AgentConfig
 
 
-class BasicNet(NeuralNetwork):
-    def __init__(self, config: ModelCreatorConfig):
-        super().__init__(config)
+class BasicNet:
+    def __init__(self, config: AgentConfig):
         self.epochs = 50
-        self.batch_size = 500
 
-    def _build_model(self) -> None:
-        self.predictive_model = M.Sequential()
+        self.input_timesteps = config.input_timesteps
+        self.input_features = config.input_features
+        self.output_timesteps = config.output_timesteps
 
-        self.predictive_model.add(L.Dense(units=self.input_timesteps, input_dim=self.input_timesteps*self.input_features))
-        self.predictive_model.add(L.Dense(self.output_timesteps))
+        self.possible_parameters = {}
+        self._fetch_possible_parameters()
 
-    def _compile_model(self) -> None:
-        self.predictive_model.compile(loss="mean_squared_error", optimizer="adam", metrics=["mean_squared_error"])
+    def _fetch_possible_parameters(self):
+        batch_size = [10, 50]
+        optimizer = ['Adam']
+        neurons = [20, 100, 200]
+        activation = ['relu']
+
+        self.possible_parameters = dict(
+                batch_size=batch_size,
+                optimizer=optimizer,
+                neurons=neurons,
+                activation=activation)
+
+    def build_model(self,
+                    optimizer='adam',
+                    neurons=20,
+                    activation='relu'):
+        model = M.Sequential()
+
+        model.add(L.Input(shape=(self.input_timesteps, self.input_features)))
+        model.add(L.Flatten())
+        model.add(L.Dense(units=neurons, activation=activation))
+        model.add(L.Dense(self.output_timesteps, activation='linear'))
+
+        mape = 'mean_absolute_percentage_error'
+        model.compile(loss=mape, optimizer=optimizer, metrics=[mape])
+
+        return model

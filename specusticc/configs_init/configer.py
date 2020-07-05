@@ -1,24 +1,14 @@
-from specusticc.configs_init.configs_wrapper import ConfigsWrapper
-from specusticc.configs_init.load_config import load_and_preprocess_config, save_config
-from specusticc.configs_init.loader_config import LoaderConfig
-from specusticc.configs_init.postprocessor_config import PostprocessorConfig
-from specusticc.configs_init.preprocessor_config import PreprocessorConfig
-from specusticc.configs_init.model_creator_config import ModelCreatorConfig
-from specusticc.configs_init.training_config import TrainingConfig
-from specusticc.configs_init.testing_config import TestingConfig
-from specusticc.configs_init.reporter_config import ReporterConfig
-
-import specusticc.utilities.directories as dirs
-
+from specusticc.configs_init.model.agent_config import AgentConfig
+from specusticc.configs_init.model.configs_wrapper import ConfigsWrapper
+from specusticc.configs_init.load_config import load_and_preprocess_config
+from specusticc.configs_init.model.loader_config import LoaderConfig
+from specusticc.configs_init.model.market_config import MarketConfig
+from specusticc.configs_init.model.preprocessor_config import PreprocessorConfig
 
 class Configer:
-    context_models_list = ['encoder-decoder', 'lstm-attention', 'transformer_classes']
-
-    def __init__(self, config_path: str, model_name: str):
-        self.save_dir = 'output/' + dirs.get_timestamp_dir()
-        dirs.create_save_dir(self.save_dir)
-
-        self.dict_config_from_json = load_and_preprocess_config(config_path, model_name, backup_path=self.save_dir)
+    def __init__(self, config_path: str, market_save_path: str):
+        self.market_save_path = market_save_path
+        self.dict_config_from_json = load_and_preprocess_config(config_path, backup_path=self.market_save_path)
         self.configs: ConfigsWrapper = ConfigsWrapper()
 
         self._create_all_class_configs()
@@ -26,18 +16,14 @@ class Configer:
     def _create_all_class_configs(self):
         self._create_loader_config()
         self._create_preprocessor_config()
-        self._create_model_creator_config()
-        self._create_training_config()
-        self._create_testing_config()
-        self._create_postprocessing_config()
-        self._create_reporter_config()
+        self._create_agent_config()
+        self._create_market_config()
 
     def _create_loader_config(self):
         loader_config = LoaderConfig()
         loader_config.input_tickers = self.dict_config_from_json['import']['input']['tickers']
         loader_config.output_tickers = self.dict_config_from_json['import']['target']['tickers']
-        if self.dict_config_from_json['model']['name'] in self.context_models_list:
-            loader_config.context_tickers = self.dict_config_from_json['import']['context']['tickers']
+        loader_config.context_tickers = self.dict_config_from_json['import']['context']['tickers']
         loader_config.source = 'mongodb'  # TODO to upgrade...someday
         loader_config.database_url = self.dict_config_from_json['import']['database_url']
         self.configs.loader = loader_config
@@ -60,48 +46,34 @@ class Configer:
 
         preprocessor_config.train_date = self.dict_config_from_json['import']['train_date']
         preprocessor_config.test_date = self.dict_config_from_json['import']['test_date']
-        preprocessor_config.input_dim = self.dict_config_from_json['model']['input_dim']
         preprocessor_config.seq_length = self.dict_config_from_json['preprocessing']['sequence_length']
         preprocessor_config.seq_prediction_time = self.dict_config_from_json['preprocessing']['sequence_prediction_time']
         preprocessor_config.sample_time_diff = self.dict_config_from_json['preprocessing']['sample_time_difference']
         preprocessor_config.features = len(self.dict_config_from_json['import']['input']['columns']) -1 # minus data
         self.configs.preprocessor = preprocessor_config
 
-    def _create_model_creator_config(self):
-        model_creator_config = ModelCreatorConfig()
+    def _create_agent_config(self):
+        agent_config = AgentConfig()
+        agent_config.input_timesteps = self.dict_config_from_json['preprocessing']['sequence_length']
+        features = (len(self.dict_config_from_json['import']['input']['columns']) - 1) * len(
+                self.dict_config_from_json['import']['input']['tickers'])
+        agent_config.input_features = features
+        agent_config.output_timesteps = self.dict_config_from_json['preprocessing']['sequence_prediction_time']
 
-        model_creator_config.name = self.dict_config_from_json['model']['name']
-        model_creator_config.input_timesteps = self.dict_config_from_json['preprocessing']['sequence_length']
-        features = (len(self.dict_config_from_json['import']['input']['columns']) - 1) * len(self.dict_config_from_json['import']['input']['tickers'])
-        model_creator_config.input_features = features
-        model_creator_config.output_timesteps = self.dict_config_from_json['preprocessing']['sequence_prediction_time']
+        agent_config.context_timesteps = self.dict_config_from_json['preprocessing']['sequence_length']
+        features = (len(self.dict_config_from_json['import']['context']['columns']) - 1) * len(
+                self.dict_config_from_json['import']['context']['tickers'])
+        agent_config.context_features = features
 
-        if self.dict_config_from_json['model']['name'] in self.context_models_list:
-            model_creator_config.context_timesteps = self.dict_config_from_json['preprocessing']['sequence_length']
-            features = (len(self.dict_config_from_json['import']['context']['columns']) - 1) * len(self.dict_config_from_json['import']['context']['tickers'])
-            model_creator_config.context_features = features
+        agent_config.hyperparam_optimization_method = self.dict_config_from_json['agent']['hyperparam_optimization_method']
+        agent_config.horizon_prediction_method = self.dict_config_from_json['agent']['horizon_prediction_method']
+        agent_config.market_save_path = self.market_save_path
+        self.configs.agent = agent_config
 
-        self.configs.model_creator = model_creator_config
-
-    def _create_training_config(self):
-        training_config = TrainingConfig()
-        # as of 10.04 nothing, still empty class for the sake of consistency
-        self.configs.training = training_config
-
-    def _create_testing_config(self):
-        testing_config = TestingConfig()
-        # as of 01.07 nothing
-        self.configs.testing = testing_config
-
-    def _create_postprocessing_config(self):
-        postprocessing_config = PostprocessorConfig()
-        # as of 01.07 nothing
-        self.configs.postprocessor = postprocessing_config
-
-    def _create_reporter_config(self):
-        reporter_config = ReporterConfig()
-        reporter_config.report_directory = 'output/' + dirs.get_timestamp_dir()
-        self.configs.reporter = reporter_config
+    def _create_market_config(self):
+        market_config = MarketConfig()
+        market_config.n_folds = self.dict_config_from_json['agent']['folds']
+        self.configs.market = market_config
 
     def get_class_configs(self) -> ConfigsWrapper:
         return self.configs
