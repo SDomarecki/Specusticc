@@ -56,7 +56,7 @@
     "sequence_prediction_time": 30
   },
   "agent": {
-    "folds": 10,
+    "folds": 1,
     "hyperparam_optimization_method": "none",
     "horizon_prediction_method": "mimo"
   }

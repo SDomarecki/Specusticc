@@ -122,4 +122,6 @@ class GAN:
             g_loss = self.combined.train_on_batch(X, valid)
 
             # Plot the progress
-            print ("%d [D loss: %f, acc.: %.2f%%] [G loss: %f]" % (epoch, d_loss[0], 100*d_loss[1], g_loss))
+            print(f'{epoch} [D loss: {d_loss[0]}, acc.: {100*d_loss[1]}%] [G loss: {g_loss}]')
+
+        return self.generator

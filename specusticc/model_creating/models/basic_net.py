@@ -16,21 +16,24 @@ class BasicNet:
         self._fetch_possible_parameters()
 
     def _fetch_possible_parameters(self):
-        batch_size = [10, 50]
-        optimizer = ['Adam']
-        neurons = [20, 100, 200]
+        batch_size = [50]
+        epochs = [25]
+        optimizer = ['Nadam']
+        neurons = [100, 150, 200]
         activation = ['relu']
 
         self.possible_parameters = dict(
                 batch_size=batch_size,
+                epochs=epochs,
                 optimizer=optimizer,
                 neurons=neurons,
                 activation=activation)
 
     def build_model(self,
-                    optimizer='adam',
-                    neurons=20,
+                    optimizer='nadam',
+                    neurons=150,
                     activation='relu'):
+        print(f'Optimizer={optimizer}, neurons={neurons}, activation={activation}')
         model = M.Sequential()
 
         model.add(L.Input(shape=(self.input_timesteps, self.input_features)))

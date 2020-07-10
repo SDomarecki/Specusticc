@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="[R] MLP" type="PythonConfigurationType" factoryName="Python">
+  <configuration default="false" name="MLP" type="PythonConfigurationType" factoryName="Python" folderName="Prediction">
     <module name="MagisterkaProjekt" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />

@@ -1,76 +1,51 @@
 import tensorflow as tf
 
-from specusticc.model_creating.models.transformer_classes.multi_head_attention import \
-    MultiHeadAttention
+from specusticc.model_creating.models.transformer_classes.decoder_layer import DecoderLayer
 
 
-class Decoder(tf.keras.Model):
-    def __init__(self, output_size, model_size, num_layers, h):
+class Decoder(tf.keras.layers.Layer):
+    def __init__(self, output_size, num_layers, d_model, num_heads, dff, rate=0.1):
         super(Decoder, self).__init__()
-        self.model_size = model_size
+
+        # self.d_model = d_model
         self.num_layers = num_layers
-        self.h = h
-        # self.embedding = tf.keras.layers.Embedding(vocab_size, model_size)
-        self.attention_bot = [MultiHeadAttention(model_size, h) for _ in range(num_layers)]
-        self.attention_bot_norm = [tf.keras.layers.BatchNormalization() for _ in range(num_layers)]
-        self.attention_mid = [MultiHeadAttention(model_size, h) for _ in range(num_layers)]
-        self.attention_mid_norm = [tf.keras.layers.BatchNormalization() for _ in range(num_layers)]
 
-        self.dense_1 = [tf.keras.layers.Dense(model_size * 4, activation='relu') for _ in range(num_layers)]
-        self.dense_2 = [tf.keras.layers.Dense(model_size) for _ in range(num_layers)]
-        self.ffn_norm = [tf.keras.layers.BatchNormalization() for _ in range(num_layers)]
+        # self.embedding = tf.keras.layers.Embedding(target_vocab_size, d_model)
+        # self.pos_encoding = positional_encoding(maximum_position_encoding, d_model)
 
+        self.dec_layers = [DecoderLayer(d_model, num_heads, dff, rate)
+                           for _ in range(num_layers)]
+        self.dropout = tf.keras.layers.Dropout(rate)
+
+        self.flatten = tf.keras.layers.Flatten()
         self.dense = tf.keras.layers.Dense(output_size)
 
-    def call(self, sequence, encoder_output):
-        # EMBEDDING AND POSITIONAL EMBEDDING
-        # embed_out = []
-        # for i in range(sequence.shape[1]):
-        #     embed = self.embedding(tf.expand_dims(sequence[:, i], axis=1))
-        #     embed_out.append(embed + pes[i, :])
-        #
-        # embed_out = tf.concat(embed_out, axis=1)
-        #
-        # bot_sub_in = embed_out
-        bot_sub_in = sequence
+    def get_config(self):
+
+        config = super().get_config().copy()
+        config.update({
+            'num_layers': self.num_layers
+        })
+        return config
+
+    def call(self, x, enc_output):
+
+        # seq_len = tf.shape(x)[1]
+        # attention_weights = {}
+
+        # x = self.embedding(x)  # (batch_size, target_seq_len, d_model)
+        # x *= tf.math.sqrt(tf.cast(self.d_model, tf.float32))
+        # x += self.pos_encoding[:, :seq_len, :]
+
+        x = self.dropout(x)
 
         for i in range(self.num_layers):
-            # BOTTOM MULTIHEAD SUB LAYER
-            bot_sub_out = []
+            x, block1, block2 = self.dec_layers[i](x, enc_output)
 
-            for j in range(bot_sub_in.shape[1]):
-                values = bot_sub_in[:, :j, :]
-                attention = self.attention_bot[i](
-                        tf.expand_dims(bot_sub_in[:, j, :], axis=1), values)
+            # attention_weights['decoder_layer{}_block1'.format(i + 1)] = block1
+            # attention_weights['decoder_layer{}_block2'.format(i + 1)] = block2
 
-                bot_sub_out.append(attention)
-            bot_sub_out = tf.concat(bot_sub_out, axis=1)
-            bot_sub_out = bot_sub_in + bot_sub_out
-            bot_sub_out = self.attention_bot_norm[i](bot_sub_out)
-
-            # MIDDLE MULTIHEAD SUB LAYER
-            mid_sub_in = bot_sub_out
-
-            mid_sub_out = []
-            for j in range(mid_sub_in.shape[1]):
-                attention = self.attention_mid[i](
-                        tf.expand_dims(mid_sub_in[:, j, :], axis=1), encoder_output)
-
-                mid_sub_out.append(attention)
-
-            mid_sub_out = tf.concat(mid_sub_out, axis=1)
-            mid_sub_out = mid_sub_out + mid_sub_in
-            mid_sub_out = self.attention_mid_norm[i](mid_sub_out)
-
-            # FFN
-            ffn_in = mid_sub_out
-
-            ffn_out = self.dense_2[i](self.dense_1[i](ffn_in))
-            ffn_out = ffn_out + ffn_in
-            ffn_out = self.ffn_norm[i](ffn_out)
-
-            bot_sub_in = ffn_out
-
-        logits = self.dense(ffn_out)
-
-        return logits
+        # x.shape == (batch_size, target_seq_len, d_model)
+        x = self.flatten(x)
+        x = self.dense(x)
+        return x

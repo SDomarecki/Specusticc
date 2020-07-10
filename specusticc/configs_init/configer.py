@@ -5,6 +5,7 @@ from specusticc.configs_init.model.loader_config import LoaderConfig
 from specusticc.configs_init.model.market_config import MarketConfig
 from specusticc.configs_init.model.preprocessor_config import PreprocessorConfig
 
+
 class Configer:
     def __init__(self, config_path: str, market_save_path: str):
         self.market_save_path = market_save_path

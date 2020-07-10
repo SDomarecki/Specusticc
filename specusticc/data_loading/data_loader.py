@@ -25,9 +25,7 @@ class DataLoader:
     def load_data(self):
         self._load_input_data()
         self._load_output_data()
-        # Context will be empty in most of cases
-        if self._config.context_tickers:
-            self._load_context_data()
+        self._load_context_data()
 
     def _load_input_data(self):
         input_data = {}

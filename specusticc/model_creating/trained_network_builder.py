@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 
 from specusticc.configs_init.model.agent_config import AgentConfig
 from specusticc.data_preprocessing.data_holder import DataHolder
+
 from specusticc.utilities.timer import Timer
 import tensorflow.keras.callbacks as C
 
@@ -11,8 +12,8 @@ class TrainedNetworkBuilder:
     def __init__(self, data: DataHolder, model_name: str, config: AgentConfig):
         self.data: DataHolder = data
         self.model_name = model_name
+        self.model_builder = None
         self.config: AgentConfig = config
-        self.epochs: int = 20
 
     def build(self):
         self._choose_network()
@@ -29,22 +30,25 @@ class TrainedNetworkBuilder:
         from specusticc.model_creating.models.mlp import MLP
         from specusticc.model_creating.models.lstm_enc_dec import LSTMEncoderDecoder
         from specusticc.model_creating.models.transformer import ModelTransformer
+        from specusticc.model_creating.models.gan_wrapper import GANWrapper
 
         name = self.model_name
         if name == 'basic':
-            self.model = BasicNet(self.config)
+            self.model_builder = BasicNet(self.config)
         elif name == 'cnn':
-            self.model = CNN(self.config)
+            self.model_builder = CNN(self.config)
         elif name == 'lstm':
-            self.model = LSTM(self.config)
+            self.model_builder = LSTM(self.config)
         elif name == 'lstm-attention':
-            self.model = LSTMAttention(self.config)
+            self.model_builder = LSTMAttention(self.config)
         elif name == 'encoder-decoder':
-            self.model = LSTMEncoderDecoder(self.config)
+            self.model_builder = LSTMEncoderDecoder(self.config)
         elif name == 'mlp':
-            self.model = MLP(self.config)
+            self.model_builder = MLP(self.config)
         elif name == 'transformer':
-            self.model = ModelTransformer(self.config)
+            self.model_builder = ModelTransformer(self.config)
+        elif name == 'gan':
+            self.model_builder = GANWrapper(self.config)
         else:
             raise NotImplementedError
 
@@ -60,11 +64,11 @@ class TrainedNetworkBuilder:
     def _grid_optimization(self):
         X = self.data.get_train_input(self.model_name)
         Y = self.data.get_train_output()
-        build_fn = self.model.build_model
-        possible_params = self.model.possible_parameters
+        build_fn = self.model_builder.build_model
+        possible_params = self.model_builder.possible_parameters
 
         regressor = KerasRegressor(build_fn=build_fn, verbose=1)
-        grid = GridSearchCV(estimator=regressor, param_grid=possible_params, n_jobs=1, cv=3)
+        grid = GridSearchCV(estimator=regressor, param_grid=possible_params, n_jobs=1, cv=10)
         grid_result = grid.fit(X, Y)
 
         # summarize results
@@ -76,7 +80,8 @@ class TrainedNetworkBuilder:
             print("%f (%f) with: %r" % (-mean, stdev, param))
 
         model = grid_result.best_estimator_.model
-        model.compile(loss="mean_squared_error", optimizer="adam", metrics=["mean_squared_error"])
+        mape = 'mean_absolute_percentage_error'
+        model.compile(loss=mape, optimizer="adam", metrics=[mape])
         return model
 
     def _random_optimization(self):
@@ -86,45 +91,48 @@ class TrainedNetworkBuilder:
         raise NotImplementedError
 
     def _build_and_train_predefined_network(self):
-        seq = self.model.build_model()
-        seq = self._train(seq)
-        return seq
+        model = self.model_builder.build_model()
+        if self.model_name == 'gan':
+            X = self.data.get_train_input(self.model_name)
+            Y = self.data.get_train_output()
+            return model.train(X, Y)
 
-    def _build_predefined_network(self):
-        return self.model.build_model()
+        model = self._train(model)
+        return model
 
-    def _train(self, seq):
+    def _train(self, model):
         print('[Model] Training Started')
         t = Timer()
         t.start()
 
+        epochs = self.model_builder.epochs
         X = self.data.get_train_input(self.model_name)
         Y = self.data.get_train_output()
 
         save_fname = 'temp.h5'
         callbacks = [
-            C.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=20),
-            C.ReduceLROnPlateau(monitor='loss', factor=0.3, min_delta=0.01, patience=5, verbose=1),
+            # C.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=20),
+            # C.ReduceLROnPlateau(monitor='loss', factor=0.3, min_delta=0.01, patience=5, verbose=1),
             C.ModelCheckpoint(filepath=save_fname, monitor='loss', save_best_only=True, verbose=1),
             # C.TensorBoard(),
             # C.CSVLogger(filename='learning.log')
         ]
 
-        seq.summary()
-        history = seq.fit(
+        model.summary()
+        history = model.fit(
                 X,
                 Y,
-                epochs=self.epochs,
+                epochs=epochs,
                 callbacks=callbacks
         )
-        self.save(seq, save_fname)
+        self.save(model, save_fname)
         print('[Model] Training Completed')
         t.stop()
         t.print_time()
 
         self._plot_history(history)
 
-        return seq
+        return model
 
     def save(self, seq, save_dir: str):
         seq.save(save_dir)
@@ -133,7 +141,7 @@ class TrainedNetworkBuilder:
         # summarize history for accuracy
         plt.plot(history.history['loss'])
         # plt.plot(history.history['val_loss'])
-        plt.title('mean squared error')
+        plt.title('mean absolute percentage error')
         plt.ylabel('error')
         plt.xlabel('epoch')
         plt.legend(['train', 'validation'], loc='upper left')

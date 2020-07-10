@@ -16,7 +16,8 @@ class CNN:
         self._fetch_possible_parameters()
 
     def _fetch_possible_parameters(self):
-        batch_size = [10, 50]
+        batch_size = [50]
+        epochs = [25]
         optimizer = ['Adam']
         neurons = [20, 100]
         activation = ['relu']
@@ -24,6 +25,7 @@ class CNN:
 
         self.possible_parameters = dict(
             batch_size=batch_size,
+            epochs=epochs,
             dropout_rate=dropout_rate,
             optimizer=optimizer,
             neurons=neurons,

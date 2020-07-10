@@ -2,10 +2,9 @@ import tensorflow.keras.layers as L
 import tensorflow.keras.models as M
 
 from specusticc.configs_init.model.agent_config import AgentConfig
+
 from specusticc.model_creating.models.transformer_classes.decoder import Decoder
 from specusticc.model_creating.models.transformer_classes.encoder import Encoder
-
-
 
 
 # see: Attention Is All You Need, url:https://arxiv.org/abs/1706.03762
@@ -39,22 +38,28 @@ class ModelTransformer:
 
     def build_model(self,
                     optimizer='adam',
-                    dropout_rate=0.0,
+                    dropout_rate=0.2,
                     neurons=20,
                     activation='relu'):
-        H = 2
-        NUM_LAYERS = 2
-        MODEL_SIZE = self.input_timesteps
 
+        # Do opisania co to jest
+        #d_model
+        #num_heads
+        #dff
+
+        num_layers = 6 # number of encoder/decoder stacks
+
+        d_model = num_heads = dff = self.context_features
         encoder_inputs = L.Input(shape=(self.context_timesteps, self.context_features))
-        encoder = Encoder(MODEL_SIZE, NUM_LAYERS, H)
+        encoder = Encoder(num_layers, d_model, num_heads, dff, rate=dropout_rate)
         encoder_outputs = encoder(encoder_inputs)
 
+        d_model = num_heads = dff = self.input_features
         decoder_inputs = L.Input(shape=(self.input_timesteps, self.input_features))
-        decoder = Decoder(self.output_timesteps, MODEL_SIZE, NUM_LAYERS, H)
-        decoder_outputs = decoder(decoder_inputs, encoder_outputs)
+        decoder = Decoder(self.output_timesteps, num_layers, d_model, num_heads, dff, rate=dropout_rate)
+        dec_output = decoder(decoder_inputs, encoder_outputs)
 
-        model = M.Model([encoder_inputs, decoder_inputs], decoder_outputs)
+        model = M.Model([encoder_inputs, decoder_inputs], dec_output)
 
         mape = 'mean_absolute_percentage_error'
         model.compile(loss=mape, optimizer=optimizer, metrics=[mape])

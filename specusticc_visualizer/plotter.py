@@ -4,8 +4,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from specusticc.configs_init.model.reporter_config import ReporterConfig
-
 
 class Plotter:
     def __init__(self, config: ReporterConfig):
@@ -14,9 +12,6 @@ class Plotter:
 
     def _set_proper_numeric_xlim(self, ax, x_lim):
         ax.set_xlim([0, x_lim])
-
-    def _set_proper_date_xlim(self, ax, from_date: datetime, to_date: datetime):
-        ax.set_xlim([from_date, to_date])
 
     def save_prediction_plot(self, ticker: str):
         save_path = self.config.report_directory + '/' + ticker + '.png'

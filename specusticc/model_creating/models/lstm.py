@@ -16,28 +16,34 @@ class LSTM:
         self._fetch_possible_parameters()
 
     def _fetch_possible_parameters(self):
-        batch_size = [10, 50]
-        optimizer = ['Adam']
-        neurons = [20, 100]
-        dropout_rate = [0.2, 0.8]
+        batch_size = [50]
+        epochs = [25]
+        optimizer = ['adam']
+        neurons = [100, 200]
+        neurons2 = [20, 50, 100]
+        dropout_rate = [0.2, 0.5, 0.8]
 
         self.possible_parameters = dict(
                 batch_size=batch_size,
+                epochs=epochs,
                 dropout_rate=dropout_rate,
                 optimizer=optimizer,
-                neurons=neurons)
+                neurons=neurons,
+                neurons2=neurons2)
 
     def build_model(self,
                     optimizer='adam',
-                    dropout_rate=0.0,
-                    neurons=100):
+                    dropout_rate=0.5,
+                    neurons=100,
+                    neurons2=50):
+        print(f'Optimizer={optimizer}, dropout_rate={dropout_rate}, neurons={neurons}, neurons2={neurons2}')
         model = M.Sequential()
 
         model.add(L.Input(shape=(self.input_timesteps, self.input_features)))
         model.add(L.LSTM(units=neurons, return_sequences=True))
-        model.add(L.LSTM(units=neurons, return_sequences=True))
+        model.add(L.LSTM(units=neurons2, return_sequences=True))
         model.add(L.Dropout(rate=dropout_rate))
-        model.add(L.LSTM(units=neurons, return_sequences=False))
+        model.add(L.LSTM(units=neurons2, return_sequences=False))
         model.add(L.Dropout(rate=dropout_rate))
         model.add(L.Dense(units=self.output_timesteps, activation="linear"))
 

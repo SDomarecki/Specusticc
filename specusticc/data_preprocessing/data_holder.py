@@ -31,7 +31,7 @@ class DataHolder:
         self.test_context_dates = None
 
     def get_train_input(self, model_name: str):
-        if model_name not in ['basic', 'mlp', 'cnn', 'lstm']:
+        if model_name not in ['basic', 'mlp', 'cnn', 'lstm', 'gan']:
             return [self.train_context, self.train_input]
         else:
             return self.train_input
@@ -40,7 +40,7 @@ class DataHolder:
         return self.train_output
 
     def get_test_input(self, model_name: str):
-        if model_name not in ['basic', 'mlp', 'cnn', 'lstm']:
+        if model_name not in ['basic', 'mlp', 'cnn', 'lstm', 'gan']:
             return [self.test_context, self.test_input]
         else:
             return self.test_input
