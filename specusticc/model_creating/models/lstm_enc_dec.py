@@ -6,7 +6,7 @@ from specusticc.configs_init.model.agent_config import AgentConfig
 
 class LSTMEncoderDecoder:
     def __init__(self, config: AgentConfig):
-        self.epochs = 50
+        self.epochs = 100
 
         self.input_timesteps = config.input_timesteps
         self.input_features = config.input_features
@@ -39,7 +39,7 @@ class LSTMEncoderDecoder:
                     activation='relu'):
         # define training encoder
         encoder_inputs = L.Input(shape=(self.context_timesteps, self.context_features), name='Encoder_input')
-        encoder = L.LSTM(100, return_state=True, name='Encoder_LSTM')
+        encoder = L.LSTM(self.context_features, return_state=True, name='Encoder_LSTM')
         encoder_outputs, state_h, state_c = encoder(encoder_inputs)
         # We discard `encoder_outputs` and only keep the states.
         encoder_states = [state_h, state_c]
@@ -49,9 +49,8 @@ class LSTMEncoderDecoder:
         # We set up our decoder to return full output sequences,
         # and to return internal states as well. We don't use the
         # return states in the training model, but we will use them in inference.
-        decoder_lstm = L.LSTM(100, return_sequences=True, return_state=True, name='Decoder_LSTM')
-        decoder_outputs, _, _ = decoder_lstm(decoder_inputs,
-                                             initial_state=encoder_states)
+        decoder_lstm = L.LSTM(self.context_features, return_sequences=True, name='Decoder_LSTM')
+        decoder_outputs = decoder_lstm(decoder_inputs, initial_state=encoder_states)
         decoder_outputs = L.Flatten()(decoder_outputs)
         decoder_dense = L.Dense(self.output_timesteps, activation='linear', name='Dense_output')
 

@@ -12,25 +12,16 @@ class DataPostprocessor:
         self.test_results: PredictionResults = test_results
         self.postprocessed_data = PostprocessedData()
 
-    def get_data(self):
+    def get_data(self) -> PostprocessedData:
         self._postprocess()
         return self.postprocessed_data
 
     def _postprocess(self):
-        self._inverse_scales()
-        self._retrieve_dataframes()
-
-    def _inverse_scales(self):
         self._inverse_train_data_scale()
         self._inverse_test_data_scale()
 
-    def _inverse_test_data_scale(self):
-        test_scaler = self.processed_data.test_output_scaler
-        test_true_output_2D = test_scaler.inverse_transform(self.processed_data.test_output)
-        test_predicted_output_2D = test_scaler.inverse_transform(self.test_results.test_output)
-
-        self.postprocessed_data.test_true_data = test_true_output_2D.flatten()
-        self.postprocessed_data.test_prediction = test_predicted_output_2D.flatten()
+        self._retrieve_train_dataframe()
+        self._retrieve_test_dataframe()
 
     def _inverse_train_data_scale(self):
         train_scaler = self.processed_data.train_output_scaler
@@ -40,9 +31,13 @@ class DataPostprocessor:
         self.postprocessed_data.train_true_data = train_true_output_2D.flatten()
         self.postprocessed_data.train_prediction = train_predicted_output_2D.flatten()
 
-    def _retrieve_dataframes(self):
-        self._retrieve_train_dataframe()
-        self._retrieve_test_dataframe()
+    def _inverse_test_data_scale(self):
+        test_scaler = self.processed_data.test_output_scaler
+        test_true_output_2D = test_scaler.inverse_transform(self.processed_data.test_output)
+        test_predicted_output_2D = test_scaler.inverse_transform(self.test_results.test_output)
+
+        self.postprocessed_data.test_true_data = test_true_output_2D.flatten()
+        self.postprocessed_data.test_prediction = test_predicted_output_2D.flatten()
 
     def _retrieve_train_dataframe(self):
         df = pd.DataFrame(data=self.postprocessed_data.train_true_data,

@@ -6,7 +6,7 @@ from specusticc.configs_init.model.agent_config import AgentConfig
 
 class LSTM:
     def __init__(self, config: AgentConfig):
-        self.epochs = 50
+        self.epochs = 100
 
         self.input_timesteps = config.input_timesteps
         self.input_features = config.input_features
@@ -40,11 +40,13 @@ class LSTM:
         model = M.Sequential()
 
         model.add(L.Input(shape=(self.input_timesteps, self.input_features)))
-        model.add(L.LSTM(units=neurons, return_sequences=True))
-        model.add(L.LSTM(units=neurons2, return_sequences=True))
+        model.add(L.LSTM(units=self.input_features, return_sequences=True))
+        model.add(L.Dense(units=1))
+        model.add(L.LSTM(units=1, return_sequences=True))
         model.add(L.Dropout(rate=dropout_rate))
-        model.add(L.LSTM(units=neurons2, return_sequences=False))
+        model.add(L.LSTM(units=1, return_sequences=True))
         model.add(L.Dropout(rate=dropout_rate))
+        model.add(L.Flatten())
         model.add(L.Dense(units=self.output_timesteps, activation="linear"))
 
         mape = 'mean_absolute_percentage_error'

@@ -123,9 +123,11 @@ class TrainedNetworkBuilder:
                 X,
                 Y,
                 epochs=epochs,
+                shuffle=True,
+                validation_split=0.1,
                 callbacks=callbacks
         )
-        self.save(model, save_fname)
+        model.save(save_fname)
         print('[Model] Training Completed')
         t.stop()
         t.print_time()
@@ -134,16 +136,14 @@ class TrainedNetworkBuilder:
 
         return model
 
-    def save(self, seq, save_dir: str):
-        seq.save(save_dir)
-
     def _plot_history(self, history):
         # summarize history for accuracy
-        plt.plot(history.history['loss'])
-        # plt.plot(history.history['val_loss'])
+        plt.plot(history.history['mean_absolute_percentage_error'])
+        plt.plot(history.history['val_mean_absolute_percentage_error'])
         plt.title('mean absolute percentage error')
         plt.ylabel('error')
         plt.xlabel('epoch')
+        plt.yscale('log')
         plt.legend(['train', 'validation'], loc='upper left')
         plt.grid()
         plt.show()

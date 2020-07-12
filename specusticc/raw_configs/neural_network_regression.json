@@ -6,11 +6,7 @@
         "PKO"
       ],
       "columns": [
-        "open",
-        "high",
-        "low",
-        "close",
-        "vol"
+        "open", "high", "low", "close", "vol"
       ]
     },
     "target": {
@@ -23,22 +19,12 @@
     },
     "context": {
       "tickers": [
-        "PZU",
-        "ALR",
-        "BHW",
-        "BOS",
-        "ING",
-        "MBK",
-        "MIL",
-        "PEO",
-        "SAN"
+	    "PZU", "ALR", "BHW",
+	    "BOS", "ING", "MBK",
+	    "MIL", "PEO", "SAN"
       ],
       "columns": [
-        "open",
-        "high",
-        "low",
-        "close",
-        "vol"
+        "open", "high", "low", "close", "vol"
       ]
     },
     "train_date": {
