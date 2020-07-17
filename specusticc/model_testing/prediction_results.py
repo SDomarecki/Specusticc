@@ -1,4 +1,7 @@
+import numpy as np
+
+
 class PredictionResults:
     def __init__(self):
-        self.train_output = None
-        self.test_output = None
+        self.train_output: np.array = None
+        self.test_output: [np.array] = None

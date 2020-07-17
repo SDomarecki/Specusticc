@@ -3,5 +3,3 @@ class LoaderConfig:
         self.input_tickers: [] = []
         self.output_tickers: [] = []
         self.context_tickers: [] = []
-        self.source: str = ''
-        self.database_url: str = ''

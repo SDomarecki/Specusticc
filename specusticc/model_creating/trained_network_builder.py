@@ -3,14 +3,14 @@ from tensorflow.python.keras.wrappers.scikit_learn import KerasRegressor
 import matplotlib.pyplot as plt
 
 from specusticc.configs_init.model.agent_config import AgentConfig
-from specusticc.data_preprocessing.data_holder import DataHolder
+from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
 
 from specusticc.utilities.timer import Timer
 import tensorflow.keras.callbacks as C
 
 class TrainedNetworkBuilder:
-    def __init__(self, data: DataHolder, model_name: str, config: AgentConfig):
-        self.data: DataHolder = data
+    def __init__(self, data: PreprocessedData, model_name: str, config: AgentConfig):
+        self.data: PreprocessedData = data
         self.model_name = model_name
         self.model_builder = None
         self.config: AgentConfig = config
@@ -62,8 +62,8 @@ class TrainedNetworkBuilder:
             return self._bayes_optimization()
 
     def _grid_optimization(self):
-        X = self.data.get_train_input(self.model_name)
-        Y = self.data.get_train_output()
+        X = self.data.train_set.get_input(self.model_name)
+        Y = self.data.train_set.get_output()
         build_fn = self.model_builder.build_model
         possible_params = self.model_builder.possible_parameters
 
@@ -93,8 +93,8 @@ class TrainedNetworkBuilder:
     def _build_and_train_predefined_network(self):
         model = self.model_builder.build_model()
         if self.model_name == 'gan':
-            X = self.data.get_train_input(self.model_name)
-            Y = self.data.get_train_output()
+            X = self.data.train_set.get_input(self.model_name)
+            Y = self.data.train_set.get_output()
             return model.train(X, Y)
 
         model = self._train(model)
@@ -106,13 +106,13 @@ class TrainedNetworkBuilder:
         t.start()
 
         epochs = self.model_builder.epochs
-        X = self.data.get_train_input(self.model_name)
-        Y = self.data.get_train_output()
+        X = self.data.train_set.get_input(self.model_name)
+        Y = self.data.train_set.get_output()
 
         save_fname = 'temp.h5'
         callbacks = [
             # C.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=20),
-            # C.ReduceLROnPlateau(monitor='loss', factor=0.3, min_delta=0.01, patience=5, verbose=1),
+            C.ReduceLROnPlateau(monitor='loss', factor=0.3, min_delta=0.01, patience=10, verbose=1),
             C.ModelCheckpoint(filepath=save_fname, monitor='loss', save_best_only=True, verbose=1),
             # C.TensorBoard(),
             # C.CSVLogger(filename='learning.log')
@@ -139,7 +139,8 @@ class TrainedNetworkBuilder:
     def _plot_history(self, history):
         # summarize history for accuracy
         plt.plot(history.history['mean_absolute_percentage_error'])
-        plt.plot(history.history['val_mean_absolute_percentage_error'])
+        if 'val_mean_absolute_percentage_error' in history.history:
+            plt.plot(history.history['val_mean_absolute_percentage_error'])
         plt.title('mean absolute percentage error')
         plt.ylabel('error')
         plt.xlabel('epoch')

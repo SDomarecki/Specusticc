@@ -1,5 +1,6 @@
 import tensorflow.keras.layers as L
 import tensorflow.keras.models as M
+import tensorflow.keras.optimizers as O
 
 from specusticc.configs_init.model.agent_config import AgentConfig
 
@@ -10,7 +11,7 @@ from specusticc.model_creating.models.transformer_classes.encoder import Encoder
 # see: Attention Is All You Need, url:https://arxiv.org/abs/1706.03762
 class ModelTransformer:
     def __init__(self, config: AgentConfig):
-        self.epochs = 50
+        self.epochs = 100
 
         self.input_timesteps = config.input_timesteps
         self.input_features = config.input_features
@@ -61,7 +62,8 @@ class ModelTransformer:
 
         model = M.Model([encoder_inputs, decoder_inputs], dec_output)
 
+        opt = O.Adam(learning_rate=0.05)
         mape = 'mean_absolute_percentage_error'
-        model.compile(loss=mape, optimizer=optimizer, metrics=[mape])
+        model.compile(loss=mape, optimizer=opt, metrics=[mape])
 
         return model

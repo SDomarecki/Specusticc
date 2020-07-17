@@ -38,10 +38,10 @@
   "preprocessing": {
     "sequence_length": 200,
     "sample_time_difference": 30,
-    "sequence_prediction_time": 30
+    "sequence_prediction_time": 5
   },
   "agent": {
-    "folds": 2,
+    "folds": 10,
     "hyperparam_optimization_method": "none",
     "horizon_prediction_method": "mimo"
   }

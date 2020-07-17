@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="All networks" type="PythonConfigurationType" factoryName="Python" folderName="Prediction">
+  <configuration default="false" name="Test 3 [Horizon:5]" type="PythonConfigurationType" factoryName="Python" folderName="Tests">
     <module name="MagisterkaProjekt" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
@@ -7,13 +7,13 @@
       <env name="PYTHONUNBUFFERED" value="1" />
     </envs>
     <option name="SDK_HOME" value="C:\Users\Ja\Documents\--Magisterka--\venv\Scripts\python.exe" />
-    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/specusticc" />
+    <option name="WORKING_DIRECTORY" value="" />
     <option name="IS_MODULE_SDK" value="false" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="$PROJECT_DIR$/specusticc/specustic_main.py" />
-    <option name="PARAMETERS" value="neural_network_regression.json basic mlp cnn lstm lstm-attention encoder-decoder transformer" />
+    <option name="PARAMETERS" value="test3_5.json lstm-attention" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="false" />

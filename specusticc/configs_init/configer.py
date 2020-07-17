@@ -3,7 +3,7 @@ from specusticc.configs_init.model.configs_wrapper import ConfigsWrapper
 from specusticc.configs_init.load_config import load_and_preprocess_config
 from specusticc.configs_init.model.loader_config import LoaderConfig
 from specusticc.configs_init.model.market_config import MarketConfig
-from specusticc.configs_init.model.preprocessor_config import PreprocessorConfig
+from specusticc.configs_init.model.preprocessor_config import PreprocessorConfig, DateRange
 
 
 class Configer:
@@ -28,8 +28,6 @@ class Configer:
         loader_config.input_tickers = self._dict_config['import']['input']['tickers']
         loader_config.output_tickers = self._dict_config['import']['target']['tickers']
         loader_config.context_tickers = self._dict_config['import']['context']['tickers']
-        loader_config.source = 'mongodb'  # TODO to upgrade...someday
-        loader_config.database_url = self._dict_config['import']['database_url']
         self._configs.loader = loader_config
 
     def _create_preprocessor_config(self):
@@ -40,16 +38,22 @@ class Configer:
         preprocessor_config.output_columns = self._dict_config['import']['target']['columns']
         if 'date' not in preprocessor_config.output_columns:
             preprocessor_config.output_columns.append('date')
+        preprocessor_config.context_columns = self._dict_config['import']['context']['columns']
+        if 'date' not in preprocessor_config.context_columns:
+            preprocessor_config.context_columns.append('date')
 
-        if 'context' in self._dict_config['import']:
-            preprocessor_config.context_columns = self._dict_config['import']['context']['columns']
-            if 'date' not in preprocessor_config.context_columns:
-                preprocessor_config.context_columns.append('date')
         preprocessor_config.context_features = len(
                 self._dict_config['import']['context']['columns']) - 1  # minus data
 
-        preprocessor_config.train_date = self._dict_config['import']['train_date']
-        preprocessor_config.test_date = self._dict_config['import']['test_date']
+        train_date_range = DateRange(self._dict_config['import']['train_date']['from'],
+                                     self._dict_config['import']['train_date']['to'])
+        preprocessor_config.train_date = train_date_range
+        test_date_ranges = []
+        for test_date in self._dict_config['import']['test_date']:
+            date_range = DateRange(test_date['from'], test_date['to'])
+            test_date_ranges.append(date_range)
+        preprocessor_config.test_dates = test_date_ranges
+
         preprocessor_config.seq_length = self._dict_config['preprocessing']['sequence_length']
         preprocessor_config.seq_prediction_time = self._dict_config['preprocessing']['sequence_prediction_time']
         preprocessor_config.sample_time_diff = self._dict_config['preprocessing']['sample_time_difference']

@@ -9,7 +9,7 @@ class MLP:
         self.epochs = 50
 
         self.input_timesteps = config.input_timesteps
-        self.input_features = config.input_features
+        self.input_features = config.input_features + config.context_features
         self.output_timesteps = config.output_timesteps
 
         self.possible_parameters = {}

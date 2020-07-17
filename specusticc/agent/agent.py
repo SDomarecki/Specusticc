@@ -2,14 +2,14 @@ import logging
 
 from specusticc.configs_init.model.agent_config import AgentConfig
 from specusticc.data_postprocessing.data_postprocessor import DataPostprocessor
-from specusticc.data_preprocessing.data_holder import DataHolder
+from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
 from specusticc.model_creating.trained_network_builder import TrainedNetworkBuilder
 from specusticc.model_testing.tester import Tester
 from specusticc.reporting.reporter import Reporter
 
 
 class Agent:
-    def __init__(self, model_name: str, fold_number: int, data: DataHolder, config: AgentConfig):
+    def __init__(self, model_name: str, fold_number: int, data: PreprocessedData, config: AgentConfig):
         self.config: AgentConfig = config
 
         self._name = f'{model_name}_{fold_number}'
@@ -17,7 +17,7 @@ class Agent:
 
         self.model_name: str = model_name
         self._fold_number: int = fold_number
-        self._data: DataHolder = data
+        self._data: PreprocessedData = data
 
     def run(self):
         self._create_and_train_model()

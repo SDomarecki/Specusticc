@@ -14,7 +14,7 @@ class GAN:
         self.epochs = 200
         self.batch_size = 500
         self.input_timesteps = config.input_timesteps
-        self.input_features = config.input_features
+        self.input_features = config.input_features + config.context_features
         self.output_timesteps = config.output_timesteps
 
         optimizer = Adam(0.0002, 0.5)
@@ -42,6 +42,7 @@ class GAN:
         # Trains the generator to fool the discriminator
         self.combined = Model(real_input, validity)
         self.combined.compile(loss='binary_crossentropy', optimizer=optimizer)
+
 
 
     def build_generator(self):

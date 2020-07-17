@@ -15,7 +15,7 @@ class DataLoader:
         self._set_collection()
 
     def _set_collection(self):
-        client = pymongo.MongoClient(self._config.database_url)
+        client = pymongo.MongoClient("mongodb://localhost:27017/")
         stocks_database = client['stocks']
         self._collection = stocks_database['prices']
 

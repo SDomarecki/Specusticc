@@ -28,11 +28,11 @@
       ]
     },
     "train_date": {
-      "from": "2011-01-01", "to": "2016-12-31"
+      "from": "2006-01-01", "to": "2017-12-31"
     },
     "test_date": [
-      {"from": "2017-01-01", "to": "2019-06-30"},
-      {"from": "2009-01-01", "to": "2010-12-31"}
+      {"from": "2018-01-01", "to": "2019-06-30"},
+      {"from": "2004-01-01", "to": "2005-12-31"}
     ]
   },
   "preprocessing": {
@@ -41,7 +41,7 @@
     "sequence_prediction_time": 30
   },
   "agent": {
-    "folds": 2,
+    "folds": 10,
     "hyperparam_optimization_method": "none",
     "horizon_prediction_method": "mimo"
   }

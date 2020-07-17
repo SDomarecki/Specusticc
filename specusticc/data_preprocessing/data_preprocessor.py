@@ -2,9 +2,10 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 
-from specusticc.configs_init.model.preprocessor_config import PreprocessorConfig
+from specusticc.configs_init.model.preprocessor_config import PreprocessorConfig, DateRange
 from specusticc.data_loading.loaded_data import LoadedData
-from specusticc.data_preprocessing.data_holder import DataHolder
+from specusticc.data_preprocessing.data_set import DataSet
+from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
 from specusticc.data_preprocessing.input_data_preprocessor import InputDataPreprocessor
 from specusticc.data_preprocessing.output_data_preprocessor import OutputDataPreprocessor
 
@@ -20,10 +21,10 @@ class DataPreprocessor:
         self.output_df: pd.DataFrame = None
         self.context_df: pd.DataFrame = None
 
-        self.data_holder: DataHolder
+        self.preprocessed_data: PreprocessedData = PreprocessedData()
 
-    def get_data(self) -> DataHolder:
-        return self.data_holder
+    def get_data(self) -> PreprocessedData:
+        return self.preprocessed_data
 
     def preprocess_data(self):
         self._limit_columns()
@@ -52,46 +53,56 @@ class DataPreprocessor:
             unified_df = unified_df.merge(df, left_on='date', right_on='date', how='outer')
         unified_df = unified_df.sort_values(by=['date'])\
             .interpolate()\
-            .fillna(0.0)\
+            .fillna(1.0)\
             .reset_index(drop=True)
         return unified_df
 
     def _filter_by_dates(self):
-        self.train_input = _filter_history_by_dates(self.input_df, self.config.train_date)
-        self.test_input = _filter_history_by_dates(self.input_df, self.config.test_date)
-        self.train_output = _filter_history_by_dates(self.output_df, self.config.train_date)
-        self.test_output = _filter_history_by_dates(self.output_df, self.config.test_date)
-        self.train_context = _filter_history_by_dates(self.context_df, self.config.train_date)
-        self.test_context = _filter_history_by_dates(self.context_df, self.config.test_date)
+        self.train_ioc = {}
+        self.train_ioc['input'] = _filter_history_by_dates(self.input_df, self.config.train_date)
+        self.train_ioc['output'] = _filter_history_by_dates(self.output_df, self.config.train_date)
+        self.train_ioc['context'] = _filter_history_by_dates(self.context_df, self.config.train_date)
+
+        self.test_iocs = []
+        for date_range in self.config.test_dates:
+            test_ioc = {}
+            test_ioc['input'] = _filter_history_by_dates(self.input_df, date_range)
+            test_ioc['output'] = _filter_history_by_dates(self.output_df, date_range)
+            test_ioc['context'] = _filter_history_by_dates(self.context_df, date_range)
+            self.test_iocs.append(test_ioc)
 
     def _limit_context_dates_by_input_dates(self):
-        self.train_context = self.train_context[self.train_context['date'].isin(self.train_input['date'])]
-        self.test_context = self.test_context[self.test_context['date'].isin(self.test_input['date'])]
+        self.train_ioc['context'] = self.train_ioc['context'][self.train_ioc['context']['date'].isin(self.train_ioc['input']['date'])]
+        for test_ioc in self.test_iocs:
+            test_ioc['context'] = test_ioc['context'][test_ioc['context']['date'].isin(test_ioc['input']['date'])]
 
     def _reshape_data_to_neural_network(self):
-        dh = DataHolder()
-        data2i_train = InputDataPreprocessor(self.config)
-        data2i_test = InputDataPreprocessor(self.config)
-        data2o_train = OutputDataPreprocessor(self.config)
-        data2o_test = OutputDataPreprocessor(self.config)
+        ph = self.preprocessed_data
+        data2i = InputDataPreprocessor(self.config)
+        data2o = OutputDataPreprocessor(self.config)
 
-        dh.train_input = data2i_train.transform_input(self.train_input)
-        dh.train_output, dh.train_output_scaler, dh.train_output_columns, dh.train_output_dates = data2o_train.transform_output(self.train_output)
-        dh.test_input = data2i_test.transform_input(self.test_input)
-        dh.test_output, dh.test_output_scaler, dh.test_output_columns, dh.test_output_dates = data2o_test.transform_output(self.test_output)
+        data_set = DataSet()
+        data_set.input = data2i.transform_input(self.train_ioc['input'])
+        data_set.context = data2i.transform_input(self.train_ioc['context'])
+        data_set.output, data_set.output_scaler, data_set.output_columns, data_set.output_dates = data2o.transform_output(self.train_ioc['output'])
+        ph.train_set = data_set
 
-        if self.context:
-            dh.train_context = data2i_train.transform_input(self.train_context)
-            dh.test_context = data2i_test.transform_input(self.test_context)
-        self.data_holder = dh
+        for test_ioc in self.test_iocs:
+            data_set = DataSet()
+            data_set.input = data2i.transform_input(test_ioc['input'])
+            data_set.context = data2i.transform_input(test_ioc['context'])
+            data_set.output, data_set.output_scaler, data_set.output_columns, data_set.output_dates = data2o.transform_output(test_ioc['output'])
+            ph.test_sets.append(data_set)
+
+        self.preprocessed_data = ph
 
 
-def _filter_history_by_dates(df: pd.DataFrame, dates: dict) -> pd.DataFrame:
+def _filter_history_by_dates(df: pd.DataFrame, dates: DateRange) -> pd.DataFrame:
     if dates is None:
         return df
 
-    from_date = dates['from']
-    to_date = dates['to']
+    from_date = dates.from_date
+    to_date = dates.to_date
 
     first_available_date = df.iloc[0].date
     last_available_date = df.iloc[-1].date
