@@ -1,5 +1,5 @@
-import sys
 import logging
+import sys
 import time
 
 from specusticc.market.market import Market

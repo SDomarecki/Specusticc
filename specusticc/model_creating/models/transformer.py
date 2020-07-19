@@ -3,7 +3,6 @@ import tensorflow.keras.models as M
 import tensorflow.keras.optimizers as O
 
 from specusticc.configs_init.model.agent_config import AgentConfig
-
 from specusticc.model_creating.models.transformer_classes.decoder import Decoder
 from specusticc.model_creating.models.transformer_classes.encoder import Encoder
 

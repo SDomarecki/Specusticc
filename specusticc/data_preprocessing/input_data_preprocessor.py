@@ -1,8 +1,8 @@
+import numpy as np
+import pandas as pd
+
 from specusticc.configs_init.model.preprocessor_config import PreprocessorConfig
 
-import pandas as pd
-from sklearn.preprocessing import MinMaxScaler
-import numpy as np
 
 class InputDataPreprocessor:
     def __init__(self, config: PreprocessorConfig):

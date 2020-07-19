@@ -1,10 +1,9 @@
+import numpy as np
 from tensorflow.keras.layers import Input, Dense, Flatten
 from tensorflow.keras.layers import LeakyReLU
 from tensorflow.keras.models import Sequential, Model
 from tensorflow.keras.optimizers import Adam
 from tensorflow.python.keras.layers import LSTM, Dropout
-
-import numpy as np
 
 from specusticc.configs_init.model.agent_config import AgentConfig
 

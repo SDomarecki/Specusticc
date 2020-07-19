@@ -1,12 +1,12 @@
+import matplotlib.pyplot as plt
+import tensorflow.keras.callbacks as C
 from sklearn.model_selection import GridSearchCV
 from tensorflow.python.keras.wrappers.scikit_learn import KerasRegressor
-import matplotlib.pyplot as plt
 
 from specusticc.configs_init.model.agent_config import AgentConfig
 from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
-
 from specusticc.utilities.timer import Timer
-import tensorflow.keras.callbacks as C
+
 
 class TrainedNetworkBuilder:
     def __init__(self, data: PreprocessedData, model_name: str, config: AgentConfig):

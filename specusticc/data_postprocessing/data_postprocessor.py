@@ -1,8 +1,8 @@
+import numpy as np
+import pandas as pd
+
 from specusticc.data_postprocessing.postprocessed_data import PostprocessedData
 from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
-
-import pandas as pd
-import numpy as np
 from specusticc.model_testing.prediction_results import PredictionResults
 
 

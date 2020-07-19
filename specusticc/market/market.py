@@ -1,14 +1,13 @@
 import logging
 
+import specusticc.utilities.directories as dirs
 from specusticc.agent.agent import Agent
 from specusticc.configs_init.configer import Configer
 from specusticc.configs_init.model.configs_wrapper import ConfigsWrapper
 from specusticc.data_loading.data_loader import DataLoader
 from specusticc.data_loading.loaded_data import LoadedData
-from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
 from specusticc.data_preprocessing.data_preprocessor import DataPreprocessor
-
-import specusticc.utilities.directories as dirs
+from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
 
 
 class Market:

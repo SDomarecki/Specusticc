@@ -40,6 +40,6 @@ class Agent:
         self._postprocessed_data = postprocessor.get_data()
 
     def _save_report(self):
-        save_path = f'{self.config.market_save_path}/{self._name}'
-        r: Reporter = Reporter(self._postprocessed_data, save_path)
+        save_path = f'{self.config.market_save_path}'
+        r: Reporter = Reporter(self._postprocessed_data, save_path, self._name)
         r.save_results()

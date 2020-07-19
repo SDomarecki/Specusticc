@@ -1,6 +1,6 @@
-from specusticc.model_creating.models.transformer_classes.multi_head_attention import MultiHeadAttention
 import tensorflow as tf
 
+from specusticc.model_creating.models.transformer_classes.multi_head_attention import MultiHeadAttention
 from specusticc.model_creating.models.transformer_classes.point_wise import point_wise_feed_forward_network
 
 
