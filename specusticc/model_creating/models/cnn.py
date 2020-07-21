@@ -16,12 +16,13 @@ class CNN:
         self._fetch_possible_parameters()
 
     def _fetch_possible_parameters(self):
-        batch_size = [50]
-        epochs = [25]
+        batch_size = [20, 50, 100]
+        epochs = [10, 25, 50, 100]
         optimizer = ['Adam']
-        neurons = [20, 100]
-        activation = ['relu']
-        dropout_rate = [0.2, 0.8]
+        neurons = [20, 50, 100, 150, 200]
+        activation = ['relu', 'softmax', 'linear', 'tanh']
+        dropout_rate = [0.2, 0.4, 0.6, 0.8]
+        kernel_size = [2, 4, 6, 8, 10]
 
         self.possible_parameters = dict(
             batch_size=batch_size,
@@ -29,20 +30,23 @@ class CNN:
             dropout_rate=dropout_rate,
             optimizer=optimizer,
             neurons=neurons,
+            kernel_size=kernel_size,
             activation=activation)
 
     def build_model(self,
                     optimizer='adam',
                     dropout_rate=0.0,
                     neurons=20,
+                    kernel_size=4,
                     activation='relu'):
         model = M.Sequential()
 
         model.add(L.Input(shape=(self.input_timesteps, self.input_features)))
-        model.add(L.Conv1D(filters=neurons, kernel_size=3, activation=activation))
-        model.add(L.Conv1D(filters=neurons, kernel_size=3, activation=activation))
+        model.add(L.Conv1D(filters=neurons, kernel_size=kernel_size, activation=activation))
+        model.add(L.AveragePooling1D(pool_size=kernel_size))
+        model.add(L.Conv1D(filters=neurons, kernel_size=kernel_size, activation=activation))
+        model.add(L.AveragePooling1D(pool_size=kernel_size))
         model.add(L.Dropout(rate=dropout_rate))
-        model.add(L.AveragePooling1D(pool_size=2))
         model.add(L.Flatten())
         model.add(L.Dense(units=neurons))
         model.add(L.Dense(units=self.output_timesteps, activation="linear"))

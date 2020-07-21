@@ -4,9 +4,9 @@ import tensorflow.keras.models as M
 from specusticc.configs_init.model.agent_config import AgentConfig
 
 
-class MLP:
+class CNNLSTM:
     def __init__(self, config: AgentConfig):
-        self.epochs = 50
+        self.epochs = 100
 
         self.input_timesteps = config.input_timesteps
         self.input_features = config.input_features + config.context_features
@@ -19,11 +19,10 @@ class MLP:
         batch_size = [20, 50, 100]
         epochs = [10, 25, 50, 100]
         optimizer = ['Adam']
-        neurons = [100, 150, 200]
-        neurons2 = [20, 50, 100]
+        neurons = [20, 50, 100, 150, 200]
         activation = ['relu', 'softmax', 'linear', 'tanh']
-        activation2 = ['relu', 'softmax', 'linear', 'tanh']
         dropout_rate = [0.2, 0.4, 0.6, 0.8]
+        kernel_size = [2, 4, 6, 8, 10]
 
         self.possible_parameters = dict(
             batch_size=batch_size,
@@ -31,27 +30,30 @@ class MLP:
             dropout_rate=dropout_rate,
             optimizer=optimizer,
             neurons=neurons,
-            neurons2=neurons2,
-            activation=activation,
-            activation2=activation2)
+            kernel_size=kernel_size,
+            activation=activation)
 
     def build_model(self,
                     optimizer='adam',
-                    dropout_rate=0.2,
-                    neurons=200,
-                    neurons2=20,
-                    activation='relu',
-                    activation2='relu'):
-        print(f'Optimizer={optimizer}, dropout_rate={dropout_rate}, neurons={neurons}, neurons2={neurons2}, activation={activation}, activation2={activation2}')
+                    dropout_rate=0.1,
+                    neurons=20,
+                    kernel_size=4,
+                    activation='relu'):
         model = M.Sequential()
 
         model.add(L.Input(shape=(self.input_timesteps, self.input_features)))
-        model.add(L.Flatten())
-        model.add(L.Dense(units=neurons, activation=activation))
-        model.add(L.Dense(units=neurons2, activation=activation2))
+        model.add(L.Conv1D(filters=neurons, kernel_size=kernel_size, activation=activation))
+        model.add(L.AveragePooling1D(pool_size=kernel_size))
+        model.add(L.Conv1D(filters=neurons, kernel_size=kernel_size, activation=activation))
+        model.add(L.AveragePooling1D(pool_size=kernel_size))
         model.add(L.Dropout(rate=dropout_rate))
-        model.add(L.Dense(units=neurons2, activation=activation))
-        model.add(L.Dense(self.output_timesteps, activation='linear'))
+        model.add(L.LSTM(units=5, return_sequences=True))
+        model.add(L.Dropout(rate=dropout_rate))
+        model.add(L.LSTM(units=1, return_sequences=True))
+        model.add(L.Dropout(rate=dropout_rate))
+        model.add(L.Flatten())
+        model.add(L.Dense(units=neurons))
+        model.add(L.Dense(units=self.output_timesteps, activation="linear"))
 
         mape = 'mean_absolute_percentage_error'
         model.compile(loss=mape, optimizer=optimizer, metrics=[mape])

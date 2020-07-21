@@ -26,6 +26,7 @@ class TrainedNetworkBuilder:
         from specusticc.model_creating.models.basic_net import BasicNet
         from specusticc.model_creating.models.cnn import CNN
         from specusticc.model_creating.models.lstm import LSTM
+        from specusticc.model_creating.models.cnnlstm import CNNLSTM
         from specusticc.model_creating.models.lstm_attention import LSTMAttention
         from specusticc.model_creating.models.mlp import MLP
         from specusticc.model_creating.models.lstm_enc_dec import LSTMEncoderDecoder
@@ -39,6 +40,9 @@ class TrainedNetworkBuilder:
             self.model_builder = CNN(self.config)
         elif name == 'lstm':
             self.model_builder = LSTM(self.config)
+        elif name == 'cnn-lstm':
+
+            self.model_builder = CNNLSTM(self.config)
         elif name == 'lstm-attention':
             self.model_builder = LSTMAttention(self.config)
         elif name == 'encoder-decoder':

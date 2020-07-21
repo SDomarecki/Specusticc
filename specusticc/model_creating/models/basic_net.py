@@ -16,11 +16,11 @@ class BasicNet:
         self._fetch_possible_parameters()
 
     def _fetch_possible_parameters(self):
-        batch_size = [50]
-        epochs = [25]
-        optimizer = ['Nadam']
-        neurons = [100, 150, 200]
-        activation = ['relu']
+        batch_size = [20, 50, 100]
+        epochs = [10, 25, 50, 100]
+        optimizer = ['Adam']
+        neurons = [20, 50, 100, 150, 200]
+        activation = ['relu', 'softmax', 'linear', 'tanh']
 
         self.possible_parameters = dict(
                 batch_size=batch_size,

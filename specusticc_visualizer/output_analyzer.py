@@ -23,6 +23,8 @@ class OutputAnalyzer:
     def analyze_one_prediction(self, dir):
         full_path = self.output_path + '/' + dir
         files = listdir(full_path)
+        if 'plots' in files:
+            files.remove('plots')
         self.load_all_files(files, full_path)
 
     def load_all_files(self, files: [], path_to_files: str):
@@ -51,7 +53,7 @@ class OutputAnalyzer:
         print('Testing data errors')
         tabular_error.count_errors(true_data, preds_groupped)
 
-        sp = SummaryPlotter(true_data, preds_to_plot, self.config)
+        sp = SummaryPlotter(true_data, preds_to_plot, self.config, save_path=path_to_files)
         sp.draw_plots()
 
     def _load_config(self, config_path: str) -> dict:

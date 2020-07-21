@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-
+import os
 
 class SummaryPlotter:
     first_plot = ['basic', 'mlp', 'gan']
@@ -18,9 +18,11 @@ class SummaryPlotter:
         'transformer': 'dodgerblue'
     }
 
-    def __init__(self, true_data: pd.DataFrame, preds: dict, config: dict):
+    def __init__(self, true_data: pd.DataFrame, preds: dict, config: dict, save_path: str):
         self.true_data = true_data
         self.preds = preds
+        self.save_path = save_path + '/plots'
+        os.makedirs(self.save_path, exist_ok=True)
 
         self.sample_time_difference = config['preprocessing']['sample_time_difference']
         self.sequence_prediction_time = config['preprocessing']['sequence_prediction_time']
@@ -31,16 +33,16 @@ class SummaryPlotter:
         self.draw_third_plot()
 
     def draw_first_plot(self):
-        self.draw_one_plot(SummaryPlotter.first_plot)
+        self.draw_one_plot(SummaryPlotter.first_plot, 'first')
 
     def draw_second_plot(self):
-        self.draw_one_plot(SummaryPlotter.second_plot)
+        self.draw_one_plot(SummaryPlotter.second_plot, 'second')
 
     def draw_third_plot(self):
-        self.draw_one_plot(SummaryPlotter.third_plot)
+        self.draw_one_plot(SummaryPlotter.third_plot, 'third')
 
-    def draw_one_plot(self, selected_cols: [str]):
-        plt.figure(facecolor='white', figsize=(14.4, 9.6))
+    def draw_one_plot(self, selected_cols: [str], plot_name: str):
+        fig = plt.figure(facecolor='white', figsize=(6.4, 4.8))
         true_date = self.true_data['date']
         target = self.true_data.iloc[:, 0]
         plt.plot(true_date, target, linewidth=1, alpha=1.0, label='True data')
@@ -48,6 +50,7 @@ class SummaryPlotter:
         first_date = self.true_data.iloc[0, 1]
         last_date = self.true_data.iloc[-1, 1]
         plt.xlim([first_date, last_date])
+        plt.xticks(rotation=45)
 
         for name, one_pred in self.preds.items():
             pred_data = one_pred.iloc[:, 0]
@@ -66,4 +69,6 @@ class SummaryPlotter:
 
         plt.grid()
         plt.legend()
-        plt.show()
+        plt_save_path = self.save_path + '/' + plot_name + '.png'
+        fig.tight_layout()
+        fig.savefig(plt_save_path)

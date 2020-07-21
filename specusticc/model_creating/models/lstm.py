@@ -17,8 +17,8 @@ class LSTM:
         self._fetch_possible_parameters()
 
     def _fetch_possible_parameters(self):
-        batch_size = [50]
-        epochs = [25]
+        batch_size = [20, 50, 100]
+        epochs = [10, 25, 50, 100]
         optimizer = ['adam']
         neurons = [100, 200]
         neurons2 = [20, 50, 100]

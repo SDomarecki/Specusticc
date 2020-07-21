@@ -9,7 +9,8 @@ class TabularError:
         print('name, mape, mse, mae, r^2')
         for model_name, model_preds in prediction_data.items():
             mean_errors = self.count_one_model_errors(true_data, model_preds)
-            print(f'{model_name}: {mean_errors}')
+            errors_str = ' & '.join(str(x) for x in mean_errors)
+            print(f'{model_name} & {errors_str} \\\\')
 
     def count_one_model_errors(self, true_data: pd.DataFrame, one_model_predictions: pd.DataFrame):
         one_model_predictions = one_model_predictions.drop(columns=['date'])
