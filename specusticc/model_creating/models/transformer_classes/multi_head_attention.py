@@ -1,5 +1,6 @@
 import tensorflow as tf
 
+# source: https://www.tensorflow.org/tutorials/text/transformer#multi-head_attention
 class MultiHeadAttention(tf.keras.layers.Layer):
     def __init__(self, d_model, num_heads):
         super(MultiHeadAttention, self).__init__()

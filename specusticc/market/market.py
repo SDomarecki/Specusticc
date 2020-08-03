@@ -1,6 +1,5 @@
 import logging
 
-import specusticc.utilities.directories as dirs
 from specusticc.agent.agent import Agent
 from specusticc.configs_init.configer import Configer
 from specusticc.configs_init.model.configs_wrapper import ConfigsWrapper
@@ -11,12 +10,10 @@ from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
 
 
 class Market:
-    def __init__(self, config_path: str, models: [str]):
+    def __init__(self, config_path: str, models: [str], save_path: str):
         logging.info('Market start')
 
-        timestamp = dirs.get_timestamp()
-        self.market_save_path = f'output/{timestamp}'
-        dirs.create_save_dir(self.market_save_path)
+        self.market_save_path = save_path
 
         self._models: [str] = models
         configer = Configer(config_path, self.market_save_path)

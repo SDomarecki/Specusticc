@@ -1,12 +1,13 @@
 import tensorflow.keras.layers as L
 import tensorflow.keras.models as M
+import tensorflow.keras.optimizers as O
 
 from specusticc.configs_init.model.agent_config import AgentConfig
 
 
 class MLP:
     def __init__(self, config: AgentConfig):
-        self.epochs = 50
+        self.epochs = 100
 
         self.input_timesteps = config.input_timesteps
         self.input_features = config.input_features + config.context_features
@@ -37,23 +38,23 @@ class MLP:
 
     def build_model(self,
                     optimizer='adam',
-                    dropout_rate=0.2,
+                    dropout_rate=0.05,
                     neurons=200,
-                    neurons2=20,
                     activation='relu',
-                    activation2='relu'):
-        print(f'Optimizer={optimizer}, dropout_rate={dropout_rate}, neurons={neurons}, neurons2={neurons2}, activation={activation}, activation2={activation2}')
+                    fnn_stacks=5):
+        print(f'Optimizer={optimizer}, dropout_rate={dropout_rate}, neurons={neurons}, activation={activation}')
         model = M.Sequential()
 
         model.add(L.Input(shape=(self.input_timesteps, self.input_features)))
         model.add(L.Flatten())
-        model.add(L.Dense(units=neurons, activation=activation))
-        model.add(L.Dense(units=neurons2, activation=activation2))
-        model.add(L.Dropout(rate=dropout_rate))
-        model.add(L.Dense(units=neurons2, activation=activation))
+        for i in range(fnn_stacks):
+            model.add(L.Dense(units=neurons, activation=activation))
+            model.add(L.Dropout(rate=dropout_rate))
+            model.add(L.BatchNormalization())
         model.add(L.Dense(self.output_timesteps, activation='linear'))
 
+        opt = O.Adam(learning_rate=0.1)
         mape = 'mean_absolute_percentage_error'
-        model.compile(loss=mape, optimizer=optimizer, metrics=[mape])
+        model.compile(loss=mape, optimizer=opt, metrics=[mape])
 
         return model

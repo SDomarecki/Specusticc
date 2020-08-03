@@ -15,7 +15,7 @@ class DataSet:
         if model_name not in ['basic', 'mlp', 'cnn', 'cnn-lstm', 'lstm', 'gan']:
             return [self.context, self.input]
         else:
-            return [np.dstack((self.context, self.input))]
+            return np.dstack((self.context, self.input))
 
     def get_output(self) -> np.array:
         return self.output

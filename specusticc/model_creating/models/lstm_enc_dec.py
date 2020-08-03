@@ -21,43 +21,45 @@ class LSTMEncoderDecoder:
     def _fetch_possible_parameters(self):
         batch_size = [10, 50]
         optimizer = ['Adam']
-        neurons = [20, 100]
-        activation = ['relu']
-        dropout_rate = [0.2, 0.8]
+        dropout_rate = [0.0, 0.2, 0.8]
+        middle_layers = [0, 1, 2, 4]
 
         self.possible_parameters = dict(
                 batch_size=batch_size,
                 dropout_rate=dropout_rate,
                 optimizer=optimizer,
-                neurons=neurons,
-                activation=activation)
+                middle_layers=middle_layers)
 
     def build_model(self,
                     optimizer='adam',
-                    dropout_rate=0.0,
-                    neurons=20,
-                    activation='relu'):
+                    middle_layers=1,
+                    dropout_rate=0.2):
         # define training encoder
         encoder_inputs = L.Input(shape=(self.context_timesteps, self.context_features), name='Encoder_input')
+        middle_encoder = encoder_inputs
+        for i in range(middle_layers):
+            lstm = L.LSTM(self.context_features, return_sequences=True)
+            middle_encoder = lstm(middle_encoder)
+            middle_encoder = L.Dropout(dropout_rate)(middle_encoder)
         encoder = L.LSTM(self.context_features, return_state=True, name='Encoder_LSTM')
-        encoder_outputs, state_h, state_c = encoder(encoder_inputs)
-        # We discard `encoder_outputs` and only keep the states.
+        encoder_outputs, state_h, state_c = encoder(middle_encoder)
         encoder_states = [state_h, state_c]
 
-        # Set up the decoder, using `encoder_states` as initial state.
+
         decoder_inputs = L.Input(shape=(self.input_timesteps, self.input_features), name='Decoder_input')
-        # We set up our decoder to return full output sequences,
-        # and to return internal states as well. We don't use the
-        # return states in the training model, but we will use them in inference.
+        middle_decoder = decoder_inputs
+        for i in range(middle_layers):
+            lstm = L.LSTM(self.input_features, return_sequences=True)
+            middle_decoder = lstm(middle_decoder)
+            middle_decoder = L.Dropout(dropout_rate)(middle_decoder)
+
         decoder_lstm = L.LSTM(self.context_features, return_sequences=True, name='Decoder_LSTM')
-        decoder_outputs = decoder_lstm(decoder_inputs, initial_state=encoder_states)
+        decoder_outputs = decoder_lstm(middle_decoder, initial_state=encoder_states)
         decoder_outputs = L.Flatten()(decoder_outputs)
         decoder_dense = L.Dense(self.output_timesteps, activation='linear', name='Dense_output')
 
         decoder_outputs = decoder_dense(decoder_outputs)
 
-        # Define the model that will turn
-        # `encoder_input_data` & `decoder_input_data` into `decoder_target_data`
         model = M.Model([encoder_inputs, decoder_inputs], decoder_outputs)
 
         mape = 'mean_absolute_percentage_error'

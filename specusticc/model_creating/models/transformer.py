@@ -10,7 +10,7 @@ from specusticc.model_creating.models.transformer_classes.encoder import Encoder
 # see: Attention Is All You Need, url:https://arxiv.org/abs/1706.03762
 class ModelTransformer:
     def __init__(self, config: AgentConfig):
-        self.epochs = 100
+        self.epochs = 60
 
         self.input_timesteps = config.input_timesteps
         self.input_features = config.input_features
@@ -37,26 +37,26 @@ class ModelTransformer:
                 activation=activation)
 
     def build_model(self,
-                    optimizer='adam',
-                    dropout_rate=0.2,
+                    dropout_rate=0.01,
                     neurons=20,
-                    activation='relu'):
+                    num_stacks=4):
 
         # Do opisania co to jest
         #d_model
         #num_heads
         #dff
 
-        num_layers = 6 # number of encoder/decoder stacks
+        d_model = self.context_features
+        num_heads = d_model // 4
+        dff = self.context_features
 
-        d_model = num_heads = dff = self.context_features
         encoder_inputs = L.Input(shape=(self.context_timesteps, self.context_features))
-        encoder = Encoder(num_layers, d_model, num_heads, dff, rate=dropout_rate)
+        encoder = Encoder(num_stacks, d_model, num_heads, dff, rate=dropout_rate)
         encoder_outputs = encoder(encoder_inputs)
 
         d_model = num_heads = dff = self.input_features
         decoder_inputs = L.Input(shape=(self.input_timesteps, self.input_features))
-        decoder = Decoder(self.output_timesteps, num_layers, d_model, num_heads, dff, rate=dropout_rate)
+        decoder = Decoder(self.output_timesteps, num_stacks, d_model, num_heads, dff, rate=dropout_rate)
         dec_output = decoder(decoder_inputs, encoder_outputs)
 
         model = M.Model([encoder_inputs, decoder_inputs], dec_output)

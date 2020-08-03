@@ -1,9 +1,7 @@
 import numpy as np
-from tensorflow.keras.layers import Input, Dense, Flatten
-from tensorflow.keras.layers import LeakyReLU
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.optimizers import Adam
-from tensorflow.python.keras.layers import LSTM, Dropout
+import tensorflow.keras.layers as L
+import tensorflow.keras.models as M
+import tensorflow.keras.optimizers as O
 
 from specusticc.configs_init.model.agent_config import AgentConfig
 
@@ -11,24 +9,27 @@ from specusticc.configs_init.model.agent_config import AgentConfig
 class GAN:
     def __init__(self, config: AgentConfig):
         self.epochs = 200
-        self.batch_size = 500
+        self.batch_size = 50
         self.input_timesteps = config.input_timesteps
         self.input_features = config.input_features + config.context_features
         self.output_timesteps = config.output_timesteps
 
-        optimizer = Adam(0.0002, 0.5)
+        G_optimizer = O.Adam(learning_rate=0.005)
+        D_optimizer = O.Adam(learning_rate=0.001)
 
-        # Build and compile the discriminator
         self.discriminator = self.build_discriminator()
         self.discriminator.compile(loss='binary_crossentropy',
-            optimizer=optimizer,
+            optimizer=D_optimizer,
             metrics=['accuracy'])
 
-        # Build the generator
+        mape = 'mean_absolute_percentage_error'
         self.generator = self.build_generator()
+        self.generator.compile(loss=mape,
+            optimizer=G_optimizer,
+            metrics=[mape])
 
         # The generator takes noise as input and generates imgs
-        real_input = Input(shape=(self.input_timesteps, self.input_features))
+        real_input = L.Input(shape=(self.input_timesteps, self.input_features))
         predictions = self.generator(real_input)
 
         # For the combined model we will only train the generator
@@ -39,62 +40,54 @@ class GAN:
 
         # The combined model  (stacked generator and discriminator)
         # Trains the generator to fool the discriminator
-        self.combined = Model(real_input, validity)
-        self.combined.compile(loss='binary_crossentropy', optimizer=optimizer)
-
-
+        self.combined = M.Model(real_input, validity)
+        self.combined.compile(loss='binary_crossentropy',
+                              optimizer=D_optimizer,
+                              metrics=['accuracy'])
 
     def build_generator(self):
+        dropout_rate = 0.1
+        G = M.Sequential(name='Generator')
+        G.add(L.Input(shape=(self.input_timesteps, self.input_features)))
+        G.add(L.LSTM(units=20, return_sequences=True))
+        G.add(L.Dropout(dropout_rate))
+        G.add(L.LSTM(units=10, return_sequences=True))
+        G.add(L.Dropout(dropout_rate))
+        G.add(L.LSTM(units=1, return_sequences=True))
+        G.add(L.Dropout(dropout_rate))
 
-        model = Sequential()
+        G.add(L.Flatten())
+        G.add(L.Dense(units=self.output_timesteps, activation="linear"))
 
-##########
-        model.add(LSTM(units=100, input_shape=(self.input_timesteps, self.input_features), return_sequences=True))
-        model.add(LSTM(units=100, return_sequences=True))
-        model.add(Dropout(rate=0.2))
-        model.add(LSTM(units=100, return_sequences=False))
-        model.add(Dropout(rate=0.2))
-        model.add(Dense(units=self.output_timesteps, activation="linear"))
+        G.summary()
 
-        # model.add(Dense(256))
-        # model.add(LeakyReLU(alpha=0.2))
-        # model.add(BatchNormalization(momentum=0.8))
-        # model.add(Dense(512))
-        # model.add(LeakyReLU(alpha=0.2))
-        # model.add(BatchNormalization(momentum=0.8))
-        # model.add(Dense(1024))
-        # model.add(LeakyReLU(alpha=0.2))
-        # model.add(BatchNormalization(momentum=0.8))
-        # model.add(Dense(np.prod(self.output_timesteps), activation='tanh'))
-        # model.add(Reshape(self.output_timesteps))
-##########
-        real_data = Input(shape=(self.input_timesteps, self.input_features))
-        predictions = model(real_data)
-
-        model.summary()
-
-        return Model(real_data, predictions)
+        return G
 
     def build_discriminator(self):
+        dropout_rate = 0.1
+        activation = 'relu'
 
-        model = Sequential()
-##########
-        model.add(Flatten())
-        model.add(Dense(512))
-        model.add(LeakyReLU(alpha=0.2))
-        model.add(Dense(256))
-        model.add(LeakyReLU(alpha=0.2))
-        model.add(Dense(1, activation='sigmoid'))
-##########
-        predictions = Input(shape=self.output_timesteps)
-        validity = model(predictions)
+        D = M.Sequential(name='Discriminator')
+        D.add(L.Input(shape=self.output_timesteps))
+        D.add(L.Reshape(target_shape=(self.output_timesteps, 1)))
 
-        model.summary()
+        D.add(L.Conv1D(filters=20, kernel_size=3, activation=activation))
+        D.add(L.Conv1D(filters=20, kernel_size=3, activation=activation))
+        D.add(L.AveragePooling1D(pool_size=2))
+        D.add(L.Dropout(rate=dropout_rate))
+        D.add(L.Conv1D(filters=20, kernel_size=3, activation=activation))
+        D.add(L.Conv1D(filters=20, kernel_size=3, activation=activation))
+        D.add(L.AveragePooling1D(pool_size=2))
+        D.add(L.Dropout(rate=dropout_rate))
 
-        return Model(predictions, validity)
+        D.add(L.Flatten())
+        D.add(L.Dense(1, activation='sigmoid'))
+
+        D.summary()
+
+        return D
 
     def train(self, X, Y):
-
         # Adversarial ground truths
         valid = np.ones((len(Y), 1))
         fake = np.zeros((len(Y), 1))
@@ -105,11 +98,8 @@ class GAN:
             #  Train Discriminator
             # ---------------------
 
-            # Generate a batch of new images
-            # gen_imgs = Y_pred
             Y_pred = self.generator.predict(X)
 
-            # Train the discriminator
             d_loss_real = self.discriminator.train_on_batch(Y, valid)
             d_loss_fake = self.discriminator.train_on_batch(Y_pred, fake)
             d_loss = 0.5 * np.add(d_loss_real, d_loss_fake)
@@ -121,7 +111,6 @@ class GAN:
             # Train the generator (to have the discriminator label samples as valid)
             g_loss = self.combined.train_on_batch(X, valid)
 
-            # Plot the progress
             print(f'{epoch} [D loss: {d_loss[0]}, acc.: {100*d_loss[1]}%] [G loss: {g_loss}]')
 
         return self.generator

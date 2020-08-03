@@ -16,6 +16,7 @@ class OutputAnalyzer:
     def analyze_predictions(self):
         dirs = listdir(self.output_path)
         dirs.remove('config.json')
+        dirs.remove('log.log')
 
         for dir in dirs:
             self.analyze_one_prediction(dir)
@@ -46,11 +47,12 @@ class OutputAnalyzer:
                 preds_groupped[name] = csv
                 preds_to_plot[name] = csv
             else:
+                csv.columns = [col+'_'+str(nr) for col in csv.columns if col != 'date'] + ['date']
                 preds_groupped[name] = preds_groupped[name].merge(csv, left_on='date', right_on='date', how='outer')
 
         tabular_error = TabularError()
         print('============================')
-        print('Testing data errors')
+        print(f'Errors for dir: {path_to_files}')
         tabular_error.count_errors(true_data, preds_groupped)
 
         sp = SummaryPlotter(true_data, preds_to_plot, self.config, save_path=path_to_files)

@@ -3,11 +3,12 @@ import sys
 import time
 
 from specusticc.market.market import Market
+import specusticc.utilities.directories as dirs
 
 
-def _configure_logger():
+def _configure_logger(save_path: str):
     # Create and configure logger
-    logging.basicConfig(filename='newfile.log',
+    logging.basicConfig(filename=f'{save_path}/log.log',
                         format='%(asctime)s %(message)s',
                         filemode='w')
 
@@ -18,7 +19,12 @@ def _configure_logger():
 if __name__ == "__main__":
     start_time = time.time()
 
-    _configure_logger()
+    # timestamp = dirs.get_timestamp()
+    # save_path = f'output/{timestamp}'
+    save_path = f'output/test3_10'
+    dirs.create_save_dir(save_path)
+
+    _configure_logger(save_path)
     logging.info('Starting Specusticc')
 
     config_file = sys.argv[1]
@@ -28,7 +34,7 @@ if __name__ == "__main__":
     logging.info(f'Predictive model name: {model_names}')
 
     config_path = 'raw_configs/' + config_file
-    market = Market(config_path=config_path, models=model_names)
+    market = Market(config_path=config_path, models=model_names, save_path=save_path)
     market.run()
 
     end_time = time.time()

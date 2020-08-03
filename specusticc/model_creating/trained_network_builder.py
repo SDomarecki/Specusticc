@@ -115,8 +115,8 @@ class TrainedNetworkBuilder:
 
         save_fname = 'temp.h5'
         callbacks = [
-            # C.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=20),
-            C.ReduceLROnPlateau(monitor='loss', factor=0.3, min_delta=0.01, patience=10, verbose=1),
+            C.EarlyStopping(monitor='loss', mode='min', verbose=1, patience=10),
+            C.ReduceLROnPlateau(monitor='loss', factor=0.3, min_delta=0.01, patience=5, verbose=1),
             C.ModelCheckpoint(filepath=save_fname, monitor='loss', save_best_only=True, verbose=1),
             # C.TensorBoard(),
             # C.CSVLogger(filename='learning.log')

@@ -35,21 +35,23 @@ class CNNLSTM:
 
     def build_model(self,
                     optimizer='adam',
-                    dropout_rate=0.1,
-                    neurons=20,
-                    kernel_size=4,
-                    activation='relu'):
+                    dropout_rate=0.005,
+                    neurons=50,
+                    kernel_size=3,
+                    pool_size=2,
+                    activation='relu',
+                    conv_stacks=3):
         model = M.Sequential()
 
         model.add(L.Input(shape=(self.input_timesteps, self.input_features)))
-        model.add(L.Conv1D(filters=neurons, kernel_size=kernel_size, activation=activation))
-        model.add(L.AveragePooling1D(pool_size=kernel_size))
-        model.add(L.Conv1D(filters=neurons, kernel_size=kernel_size, activation=activation))
-        model.add(L.AveragePooling1D(pool_size=kernel_size))
+        for i in range(conv_stacks):
+            model.add(L.Conv1D(filters=neurons, kernel_size=kernel_size, activation=activation))
+            model.add(L.Conv1D(filters=neurons, kernel_size=kernel_size, activation=activation))
+            model.add(L.AveragePooling1D(pool_size=pool_size))
+            model.add(L.Dropout(rate=dropout_rate))
+        model.add(L.LSTM(units=20, return_sequences=True))
         model.add(L.Dropout(rate=dropout_rate))
         model.add(L.LSTM(units=5, return_sequences=True))
-        model.add(L.Dropout(rate=dropout_rate))
-        model.add(L.LSTM(units=1, return_sequences=True))
         model.add(L.Dropout(rate=dropout_rate))
         model.add(L.Flatten())
         model.add(L.Dense(units=neurons))

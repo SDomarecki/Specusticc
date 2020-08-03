@@ -18,10 +18,7 @@
     },
     "context": {
       "tickers": [
-	    "PZU", "ALR", "BHW",
-	    "BOS", "ING", "MBK",
-	    "MIL", "PEO", "WIG",
-        "^DAX", "^NDQ", "^SPX"
+        "PKO"
       ],
       "columns": [
         "open", "high", "low", "close", "vol"
