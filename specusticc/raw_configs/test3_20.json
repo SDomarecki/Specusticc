@@ -21,7 +21,7 @@
 	    "PZU", "ALR", "BHW",
 	    "BOS", "ING", "MBK",
 	    "MIL", "PEO", "WIG",
-        "^DAX", "^NDQ", "^SPX"
+        "^SPX"
       ],
       "columns": [
         "open", "high", "low", "close", "vol"
@@ -36,7 +36,7 @@
   },
   "preprocessing": {
     "sequence_length": 200,
-    "sample_time_difference": 30,
+    "sample_time_difference": 20,
     "sequence_prediction_time": 20
   },
   "agent": {

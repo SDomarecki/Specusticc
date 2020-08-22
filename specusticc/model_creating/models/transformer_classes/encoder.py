@@ -3,7 +3,7 @@ import tensorflow as tf
 from specusticc.model_creating.models.transformer_classes.encoder_layer import EncoderLayer
 
 
-class Encoder(tf.keras.layers.Layer):
+class Encoder(tf.keras.models.Model):
     def __init__(self, num_layers, d_model, num_heads, dff, rate=0.1):
         super(Encoder, self).__init__()
 

@@ -47,7 +47,7 @@ class ModelTransformer:
         #dff
 
         d_model = self.context_features
-        num_heads = d_model // 4
+        num_heads = self.context_features
         dff = self.context_features
 
         encoder_inputs = L.Input(shape=(self.context_timesteps, self.context_features))

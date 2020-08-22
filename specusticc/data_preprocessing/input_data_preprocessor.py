@@ -11,9 +11,6 @@ class InputDataPreprocessor:
         self.sample_time_diff = config.sample_time_diff
 
     def transform_input(self, data: pd.DataFrame):
-        org_columns = data.columns
-        org_date = data[['date']]
-
         data = data.drop(columns='date')
         input_samples = pd.DataFrame()
         features = len(data.columns)
@@ -24,9 +21,6 @@ class InputDataPreprocessor:
             input_samples = input_samples.append(data.iloc[start_index: end_index])
 
         input_samples = input_samples.to_numpy()
-
-        # scaler = MinMaxScaler(feature_range=(0, 1))
-        # input_samples = scaler.fit_transform(input_samples)
 
         output = input_samples.reshape(samples, self.timestamps, features)
         output, scaler = self.detrend(output)

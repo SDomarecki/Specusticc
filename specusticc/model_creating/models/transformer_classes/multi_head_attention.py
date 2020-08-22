@@ -61,8 +61,6 @@ def scaled_dot_product_attention(q, k, v):
       q: query shape == (..., seq_len_q, depth)
       k: key shape == (..., seq_len_k, depth)
       v: value shape == (..., seq_len_v, depth_v)
-      mask: Float tensor with shape broadcastable
-            to (..., seq_len_q, seq_len_k). Defaults to None.
 
     Returns:
       output, attention_weights

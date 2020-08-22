@@ -21,7 +21,7 @@
 	    "PZU", "ALR", "BHW",
 	    "BOS", "ING", "MBK",
 	    "MIL", "PEO", "WIG",
-        "^DAX", "^NDQ", "^SPX"
+        "^SPX"
       ],
       "columns": [
         "open", "high", "low", "close", "vol"

@@ -3,20 +3,29 @@ import pandas as pd
 import os
 
 class SummaryPlotter:
-    first_plot = ['basic', 'mlp', 'gan']
-    second_plot = ['cnn', 'lstm', 'cnn-lstm']
-    third_plot = ['encoder-decoder', 'lstm-attention', 'transformer']
-    colors = {
-        'basic': 'red',
-        'mlp': 'orange',
-        'gan': 'green',
-        'cnn': 'lime',
-        'lstm': 'orangered',
-        'cnn-lstm': 'black',
-        'encoder-decoder': 'indigo',
-        'lstm-attention': 'brown',
-        'transformer': 'dodgerblue'
-    }
+    first_plot = ['mlp', 'gan', 'cnn']
+    second_plot = ['lstm', 'encoder-decoder', 'transformer']
+    third_plot = ['cnn-lstm', 'lstm-attention']
+
+    first_test_flag = False
+
+    if first_test_flag:
+        colors = {
+            'true': 'red',
+            'mlp': 'dodgerblue',
+            'gan': 'green',
+            'cnn': 'orange',
+            'lstm': 'orangered',
+            'encoder-decoder': 'indigo',
+            'transformer': 'dodgerblue',
+            'cnn-lstm': 'black',
+            'lstm-attention': 'brown'
+        }
+    else:
+        colors = {
+            'true': 'dodgerblue',
+            'lstm-attention': 'red'
+        }
 
     def __init__(self, true_data: pd.DataFrame, preds: dict, config: dict, save_path: str):
         self.true_data = true_data
@@ -45,7 +54,9 @@ class SummaryPlotter:
         fig = plt.figure(facecolor='white', figsize=(6.4, 4.8))
         true_date = self.true_data['date']
         target = self.true_data.iloc[:, 0]
-        plt.plot(true_date, target, linewidth=1.5, alpha=1.0, label='True data')
+
+        if not self.first_test_flag:
+            plt.plot(true_date, target, linewidth=1.5, alpha=1.0, color=self.colors['true'], label='True data')
 
         first_date = self.true_data.iloc[0, 1]
         last_date = self.true_data.iloc[-1, 1]
@@ -54,7 +65,7 @@ class SummaryPlotter:
 
         max_val = self.true_data.iloc[:, 0].max()
         min_val = self.true_data.iloc[:, 0].min()
-        plt.ylim([min_val*0.95, max_val*1.05])
+        plt.ylim([min_val*0.9, max_val*1.1])
 
         for name, one_pred in self.preds.items():
             pred_data = one_pred.iloc[:, 0]
@@ -65,14 +76,20 @@ class SummaryPlotter:
 
                 if name in selected_cols:
                     if i == 0:
-                        plt.plot(x, y, linewidth=1, alpha=1.0, label=name, color=self.colors[name])
+                        plt.plot(x, y, linewidth=1, alpha=0.8, label=name, color=self.colors[name])
                     else:
-                        plt.plot(x, y, linewidth=1, alpha=1.0, color=self.colors[name])
+                        plt.plot(x, y, linewidth=1, alpha=0.8, color=self.colors[name])
                 else:
-                    plt.plot(x, y, linewidth=0.7, alpha=0.3, color=self.colors[name])
+                    plt.plot(x, y, linewidth=0.7, alpha=0.1, color=self.colors[name])
+
+        if self.first_test_flag:
+            plt.plot(true_date, target, linewidth=1.5, alpha=1.0, color=self.colors['true'], label='True data')
 
         plt.grid()
-        plt.legend()
+        plt.legend(loc='upper left')
         plt_save_path = self.save_path + '/' + plot_name + '.png'
         fig.tight_layout()
+
         fig.savefig(plt_save_path)
+        fig.show()
+

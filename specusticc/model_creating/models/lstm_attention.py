@@ -65,7 +65,7 @@ class LSTMAttention:
         attn_out = L.GlobalAveragePooling1D()(attn_out)
         decoder_concat = L.Concatenate(name='concat_layer')([decoder_out, attn_out])
 
-        decoder_concat = L.Flatten()(decoder_concat)
+        # decoder_concat = L.Flatten()(decoder_concat)
         decoder_dense = L.Dense(self.output_timesteps, activation='linear')
 
         decoder_out = decoder_dense(decoder_concat)

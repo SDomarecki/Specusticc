@@ -12,7 +12,7 @@ def load_and_preprocess_config(config_path: str, backup_path: str) -> dict:
 
 def _backup_config(config: dict, save_path: str):
     path = os.getcwd()
-    full_save_path = path + '/' + save_path + '/config.json'
+    full_save_path = f'{path}/{save_path}/config.json'
     with open(full_save_path, 'w') as outfile:
         json.dump(config, outfile)
 

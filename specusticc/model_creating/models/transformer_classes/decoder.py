@@ -3,7 +3,7 @@ import tensorflow as tf
 from specusticc.model_creating.models.transformer_classes.decoder_layer import DecoderLayer
 
 
-class Decoder(tf.keras.layers.Layer):
+class Decoder(tf.keras.models.Model):
     def __init__(self, output_size, num_layers, d_model, num_heads, dff, rate=0.1):
         super(Decoder, self).__init__()
 

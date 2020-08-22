@@ -16,7 +16,6 @@ class OutputAnalyzer:
     def analyze_predictions(self):
         dirs = listdir(self.output_path)
         dirs.remove('config.json')
-        dirs.remove('log.log')
 
         for dir in dirs:
             self.analyze_one_prediction(dir)

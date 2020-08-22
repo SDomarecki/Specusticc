@@ -1,5 +1,3 @@
-import logging
-
 from specusticc.agent.agent import Agent
 from specusticc.configs_init.configer import Configer
 from specusticc.configs_init.model.configs_wrapper import ConfigsWrapper
@@ -11,8 +9,6 @@ from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
 
 class Market:
     def __init__(self, config_path: str, models: [str], save_path: str):
-        logging.info('Market start')
-
         self.market_save_path = save_path
 
         self._models: [str] = models

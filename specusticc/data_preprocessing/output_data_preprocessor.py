@@ -25,8 +25,6 @@ class OutputDataPreprocessor:
             output_dates = output_dates.append(org_date.iloc[start_index: end_index])
         output_values = output_values.to_numpy()
 
-        # scaler = MinMaxScaler(feature_range=(0, 1))
-        # output_values = scaler.fit_transform(output_values)
         output = output_values.reshape(samples, self.prediction)
         output, scaler = self.detrend(output)
 

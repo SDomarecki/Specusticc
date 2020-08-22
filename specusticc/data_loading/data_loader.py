@@ -30,28 +30,28 @@ class DataLoader:
     def _load_input_data(self):
         input_data = {}
         for ticker in self._config.input_tickers:
-            print('[Loader] Loading %s from MongoDB as input data' % ticker)
+            print(f'Loading {ticker} from MongoDB as input data...', end='')
             loaded = self._load_one_dataframe(ticker)
             input_data[ticker] = loaded
-            print('[Loader] Loaded')
+            print('Loaded')
         self._dataset.input = input_data
 
     def _load_output_data(self):
         output_data = {}
         for ticker in self._config.output_tickers:
-            print('[Loader] Loading %s from MongoDB as output data' % ticker)
+            print(f'Loading {ticker} from MongoDB as output data...', end='')
             loaded = self._load_one_dataframe(ticker)
             output_data[ticker] = loaded
-            print('[Loader] Loaded')
+            print('Loaded')
         self._dataset.output = output_data
 
     def _load_context_data(self):
         context_data = {}
         for ticker in self._config.context_tickers:
-            print('[Loader] Loading %s from MongoDB as context data' % ticker)
+            print(f'Loading {ticker} from MongoDB as context data...', end='')
             loaded = self._load_one_dataframe(ticker)
             context_data[ticker] = loaded
-            print('[Loader] Loaded')
+            print('Loaded')
         self._dataset.context = context_data
 
     # Loads whole financial history of one ticker

@@ -11,3 +11,5 @@ class AgentConfig:
         self.horizon_prediction_method: str = 'mimo'
 
         self.market_save_path: str = ''
+
+        self.epochs = 1
