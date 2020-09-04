@@ -33,8 +33,8 @@ class SummaryPlotter:
         self.save_path = save_path + '/plots'
         os.makedirs(self.save_path, exist_ok=True)
 
-        self.sample_time_difference = config['preprocessing']['sample_time_difference']
-        self.sequence_prediction_time = config['preprocessing']['sequence_prediction_time']
+        self.rolling = config['preprocessing']['rolling']
+        self.horizon = config['preprocessing']['horizon']
 
     def draw_plots(self):
         self.draw_first_plot()
@@ -70,9 +70,9 @@ class SummaryPlotter:
         for name, one_pred in self.preds.items():
             pred_data = one_pred.iloc[:, 0]
             date = one_pred['date']
-            for i in range(0, len(date), self.sample_time_difference):
-                x = date[i:i+self.sequence_prediction_time]
-                y = pred_data[i:i+self.sequence_prediction_time]
+            for i in range(0, len(date), self.rolling):
+                x = date[i:i+self.horizon]
+                y = pred_data[i:i+self.horizon]
 
                 if name in selected_cols:
                     if i == 0:

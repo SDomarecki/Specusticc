@@ -1,17 +1,21 @@
-from specusticc_visualizer.output_analyzer import OutputAnalyzer
+from specusticc_visualizer.results_analyzer import ResultsAnalyzer
 
+"""
+Shortcut paths to visualize
+    results_path = '../examples/regular_test'
+    results_path = '../examples/test_no_context_data'
+    results_path = '../examples/test_correlated_data'
+    results_path = '../examples/test_non_correlated_data'
+    results_path = '../examples/past_future_test'
+    results_path = '../examples/horizon_5'
+    results_path = '../examples/horizon_10'
+    results_path = '../examples/horizon_15'
+    results_path = '../examples/horizon_20'
+    results_path = '../examples/horizon_25'
+    results_path = '../examples/horizon_30'
+"""
 
 if __name__ == "__main__":
-    # output_path = 'output/test1_no_additional_data'
-    # output_path = 'output/test1_correlated'
-    # output_path = 'output/test1_non_correlated'
-    output_path = 'output/test2'
-    # output_path = 'output/test3_5'
-    # output_path = 'output/test3_10'
-    # output_path = 'output/test3_15'
-    # output_path = 'output/test3_20'
-    # output_path = 'output/test3_25'
-    # output_path = 'output/test3_30'
-    # output_path = '../specusticc/output/test'
-    analyzer = OutputAnalyzer(output_path)
+    results_path = '../examples/regular_test'
+    analyzer = ResultsAnalyzer(results_path)
     analyzer.analyze_predictions()

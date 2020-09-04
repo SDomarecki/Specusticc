@@ -1,19 +1,17 @@
-from specusticc.agent.agent import Agent
-from specusticc.configs_init.configer import Configer
-from specusticc.configs_init.model.configs_wrapper import ConfigsWrapper
-from specusticc.data_loading.data_loader import DataLoader
-from specusticc.data_loading.loaded_data import LoadedData
-from specusticc.data_preprocessing.data_preprocessor import DataPreprocessor
-from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
+from agent.agent import Agent
+from configs_init.configer import Configer
+from configs_init.model.configs_wrapper import ConfigsWrapper
+from data_loading.data_loader import DataLoader
+from data_loading.loaded_data import LoadedData
+from data_preprocessing.data_preprocessor import DataPreprocessor
+from data_preprocessing.preprocessed_data import PreprocessedData
 
 
 class Market:
-    def __init__(self, config_path: str, models: [str], save_path: str):
-        self.market_save_path = save_path
-
+    def __init__(self, example_path: str, models: [str]):
         self._models: [str] = models
-        configer = Configer(config_path, self.market_save_path)
-        self._configs: ConfigsWrapper = configer.get_configs_wrapper()
+        _configer = Configer(save_path=example_path)
+        self._configs: ConfigsWrapper = _configer.get_configs_wrapper()
 
         self.loaded_data: LoadedData
         self.preprocessed_data: PreprocessedData
@@ -37,8 +35,8 @@ class Market:
         n_folds: int = self._configs.market.n_folds
         for model in self._models:
             for i in range(n_folds):
-                agent: Agent = Agent(model_name=model,
-                                     fold_number=i+1,
-                                     data=self.preprocessed_data,
-                                     config=self._configs.agent)
+                agent = Agent(model_name=model,
+                              fold_number=i+1,
+                              data=self.preprocessed_data,
+                              config=self._configs.agent)
                 agent.run()

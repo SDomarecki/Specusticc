@@ -1,22 +1,22 @@
 import numpy as np
 import pandas as pd
 
-from specusticc.configs_init.model.preprocessor_config import PreprocessorConfig
+from configs_init.model.preprocessor_config import PreprocessorConfig
 
 
 class InputDataPreprocessor:
     def __init__(self, config: PreprocessorConfig):
-        self.timestamps = config.seq_length
-        self.prediction = config.seq_prediction_time
-        self.sample_time_diff = config.sample_time_diff
+        self.timestamps = config.window_length
+        self.prediction = config.horizon
+        self.rolling = config.rolling
 
     def transform_input(self, data: pd.DataFrame):
         data = data.drop(columns='date')
         input_samples = pd.DataFrame()
         features = len(data.columns)
-        samples = int((len(data) - self.prediction - self.timestamps) / self.sample_time_diff)
+        samples = int((len(data) - self.prediction - self.timestamps) / self.rolling)
         for i in range(samples):
-            start_index = i * self.sample_time_diff
+            start_index = i * self.rolling
             end_index = start_index + self.timestamps
             input_samples = input_samples.append(data.iloc[start_index: end_index])
 

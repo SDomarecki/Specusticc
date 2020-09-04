@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from specusticc.model_creating.models.transformer_classes.encoder_layer import EncoderLayer
+from model_creating.models.transformer_classes.encoder_layer import EncoderLayer
 
 
 class Encoder(tf.keras.models.Model):

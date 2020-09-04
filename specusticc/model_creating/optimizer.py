@@ -1,8 +1,8 @@
-from specusticc.model_creating.choose_network import choose_network
+from model_creating.choose_network import choose_network
 from sklearn.model_selection import GridSearchCV
 from tensorflow.python.keras.wrappers.scikit_learn import KerasRegressor
-from specusticc.configs_init.model.agent_config import AgentConfig
-from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
+from configs_init.model.agent_config import AgentConfig
+from data_preprocessing.preprocessed_data import PreprocessedData
 
 class Optimizer:
     def __init__(self, data: PreprocessedData, model_name: str, config: AgentConfig):

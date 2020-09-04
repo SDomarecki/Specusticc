@@ -1,2 +1,0 @@
-pylama ./specusticc
-PAUSE

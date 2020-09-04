@@ -1,13 +1,11 @@
-import logging
-
-from specusticc.configs_init.model.agent_config import AgentConfig
-from specusticc.data_postprocessing.data_postprocessor import DataPostprocessor
-from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
-from specusticc.model_creating.network_builder import NetworkBuilder
-from specusticc.model_creating.optimizer import Optimizer
-from specusticc.model_testing.tester import Tester
-from specusticc.model_training.trainer import Trainer
-from specusticc.reporting.reporter import Reporter
+from configs_init.model.agent_config import AgentConfig
+from data_postprocessing.data_postprocessor import DataPostprocessor
+from data_preprocessing.preprocessed_data import PreprocessedData
+from model_creating.network_builder import NetworkBuilder
+from model_creating.optimizer import Optimizer
+from model_testing.tester import Tester
+from model_training.trainer import Trainer
+from reporting.reporter import Reporter
 
 
 class Agent:
@@ -53,6 +51,6 @@ class Agent:
         self._postprocessed_data = postprocessor.get_data()
 
     def _save_report(self):
-        save_path = f'{self.config.market_save_path}'
-        r: Reporter = Reporter(self._postprocessed_data, save_path, self._name)
-        r.save_results()
+        save_path = self.config.save_path
+        reporter = Reporter(self._postprocessed_data, save_path, self._name)
+        reporter.save_results()

@@ -1,9 +1,9 @@
 import matplotlib.pyplot as plt
 import tensorflow.keras.callbacks as C
 
-from specusticc.configs_init.model.agent_config import AgentConfig
-from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
-from specusticc.utilities.timer import Timer
+from configs_init.model.agent_config import AgentConfig
+from data_preprocessing.preprocessed_data import PreprocessedData
+from utilities.timer import Timer
 
 
 class Trainer:
@@ -42,7 +42,7 @@ class Trainer:
                 validation_split=0.1,
                 callbacks=self.callbacks
         )
-        model.save(self.save_fname)
+        # model.save(self.save_fname)
         t.stop()
         t.print_time()
 

@@ -7,7 +7,7 @@ import pandas as pd
 from specusticc_visualizer.tabular_error import TabularError
 
 
-class OutputAnalyzer:
+class ResultsAnalyzer:
     def __init__(self, output_path: str):
         self.output_path = output_path
         config_path = self.output_path + '/config.json'

@@ -1,5 +1,6 @@
 {
   "import": {
+    "datasource": "mongodb",
     "input": {
       "tickers": [
         "PKO"
@@ -35,9 +36,9 @@
     ]
   },
   "preprocessing": {
-    "sequence_length": 200,
-    "sample_time_difference": 30,
-    "sequence_prediction_time": 30
+    "window_length": 200,
+    "rolling": 5,
+    "horizon": 5
   },
   "agent": {
     "folds": 10,

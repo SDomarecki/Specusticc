@@ -1,5 +1,6 @@
 {
   "import": {
+    "datasource": "mongodb",
     "input": {
       "tickers": [
         "PKO"
@@ -18,10 +19,7 @@
     },
     "context": {
       "tickers": [
-	    "PZU", "ALR", "BHW",
-	    "BOS", "ING", "MBK",
-	    "MIL", "PEO", "WIG",
-        "^SPX"
+        "PKO"
       ],
       "columns": [
         "open", "high", "low", "close", "vol"
@@ -35,9 +33,9 @@
     ]
   },
   "preprocessing": {
-    "sequence_length": 200,
-    "sample_time_difference": 10,
-    "sequence_prediction_time": 10
+    "window_length": 200,
+    "rolling": 30,
+    "horizon": 30
   },
   "agent": {
     "folds": 10,

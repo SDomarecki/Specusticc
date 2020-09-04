@@ -1,8 +1,9 @@
 {
   "import": {
+    "datasource": "mongodb",
     "input": {
       "tickers": [
-        "ING"
+        "PKO"
       ],
       "columns": [
         "open", "high", "low", "close", "vol"
@@ -10,7 +11,7 @@
     },
     "target": {
       "tickers": [
-        "ING"
+        "PKO"
       ],
       "columns": [
         "close"
@@ -18,24 +19,26 @@
     },
     "context": {
       "tickers": [
-	    "PKO", "WIG", "^SPX"
+	    "PZU", "ALR", "BHW",
+	    "BOS", "ING", "MBK",
+	    "MIL", "PEO", "WIG",
+        "^SPX"
       ],
       "columns": [
         "open", "high", "low", "close", "vol"
       ]
     },
     "train_date": {
-      "from": "2008-01-01", "to": "2016-12-31"
+      "from": "2004-01-01", "to": "2017-12-31"
     },
     "test_date": [
-      {"from": "2017-01-01", "to": "2019-12-31"},
-      {"from": "2005-01-01", "to": "2007-12-31"}
+      {"from": "2018-01-01", "to": "2019-06-30"}
     ]
   },
   "preprocessing": {
-    "sequence_length": 200,
-    "sample_time_difference": 30,
-    "sequence_prediction_time": 30
+    "window_length": 200,
+    "rolling": 10,
+    "horizon": 10
   },
   "agent": {
     "folds": 10,

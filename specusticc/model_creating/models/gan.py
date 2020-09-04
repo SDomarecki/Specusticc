@@ -4,7 +4,7 @@ import tensorflow.keras.models as M
 import tensorflow.keras.optimizers as O
 import matplotlib.pyplot as plt
 
-from specusticc.configs_init.model.agent_config import AgentConfig
+from configs_init.model.agent_config import AgentConfig
 
 
 class GAN:

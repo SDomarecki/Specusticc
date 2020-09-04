@@ -1,6 +1,6 @@
 import tensorflow.keras.layers as L
 import tensorflow.keras.models as M
-from specusticc.configs_init.model.agent_config import AgentConfig
+from configs_init.model.agent_config import AgentConfig
 
 
 class CNN:

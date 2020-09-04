@@ -2,21 +2,21 @@ import os
 
 import pandas as pd
 
-import specusticc.utilities.directories as dirs
-from specusticc.data_postprocessing.postprocessed_data import PostprocessedData
+import utilities.directories as dirs
+from data_postprocessing.postprocessed_data import PostprocessedData
 
 
 class Reporter:
     def __init__(self, test_results: PostprocessedData, save_path: str, model_name: str):
         self._test_results = test_results
-        self._save_path = save_path #only timestamp
-        self.model_name = model_name
+        self._save_path = save_path
+        self._model_name = model_name
 
     def save_results(self):
         dirs.create_save_dir(self._save_path)
 
         self._save_one_data_csv(self._test_results.train_true_data, 'train/true_data.csv')
-        self._save_one_data_csv(self._test_results.train_prediction, f'train/{self.model_name}.csv')
+        self._save_one_data_csv(self._test_results.train_prediction, f'train/{self._model_name}.csv')
 
         for i in range(len(self._test_results.test_true_datas)):
             true_data = self._test_results.test_true_datas[i]
@@ -25,7 +25,7 @@ class Reporter:
 
         for i in range(len(self._test_results.test_predictions)):
             prediction = self._test_results.test_predictions[i]
-            filename = f'test_{i}/{self.model_name}.csv'
+            filename = f'test_{i}/{self._model_name}.csv'
             self._save_one_data_csv(prediction, filename)
 
     def _save_one_data_csv(self, data: pd.DataFrame, filename: str):

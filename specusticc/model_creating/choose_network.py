@@ -1,16 +1,16 @@
-from specusticc.configs_init.model.agent_config import AgentConfig
+from configs_init.model.agent_config import AgentConfig
 
 
 def choose_network(model_name: str, config: AgentConfig):
-    from specusticc.model_creating.models.basic_net import BasicNet
-    from specusticc.model_creating.models.cnn import CNN
-    from specusticc.model_creating.models.lstm import LSTM
-    from specusticc.model_creating.models.cnnlstm import CNNLSTM
-    from specusticc.model_creating.models.lstm_attention import LSTMAttention
-    from specusticc.model_creating.models.mlp import MLP
-    from specusticc.model_creating.models.lstm_enc_dec import LSTMEncoderDecoder
-    from specusticc.model_creating.models.transformer import ModelTransformer
-    from specusticc.model_creating.models.gan_wrapper import GANWrapper
+    from model_creating.models.basic_net import BasicNet
+    from model_creating.models.cnn import CNN
+    from model_creating.models.lstm import LSTM
+    from model_creating.models.cnnlstm import CNNLSTM
+    from model_creating.models.lstm_attention import LSTMAttention
+    from model_creating.models.mlp import MLP
+    from model_creating.models.lstm_enc_dec import LSTMEncoderDecoder
+    from model_creating.models.transformer import ModelTransformer
+    from model_creating.models.gan_wrapper import GANWrapper
 
     if model_name == 'basic':
         return BasicNet(config)

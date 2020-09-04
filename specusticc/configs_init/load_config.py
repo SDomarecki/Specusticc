@@ -1,20 +1,11 @@
 import json
-import os
 from datetime import datetime
 
 
-def load_and_preprocess_config(config_path: str, backup_path: str) -> dict:
+def load_and_preprocess_config(config_path: str) -> dict:
     config = _load_config(config_path)
-    _backup_config(config, backup_path)
     config = _preprocess_config(config)
     return config
-
-
-def _backup_config(config: dict, save_path: str):
-    path = os.getcwd()
-    full_save_path = f'{path}/{save_path}/config.json'
-    with open(full_save_path, 'w') as outfile:
-        json.dump(config, outfile)
 
 
 def _load_config(config_path: str) -> dict:

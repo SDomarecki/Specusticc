@@ -1,15 +1,16 @@
-from specusticc.configs_init.load_config import load_and_preprocess_config
-from specusticc.configs_init.model.agent_config import AgentConfig
-from specusticc.configs_init.model.configs_wrapper import ConfigsWrapper
-from specusticc.configs_init.model.loader_config import LoaderConfig
-from specusticc.configs_init.model.market_config import MarketConfig
-from specusticc.configs_init.model.preprocessor_config import PreprocessorConfig, DateRange
+from configs_init.load_config import load_and_preprocess_config
+from configs_init.model.agent_config import AgentConfig
+from configs_init.model.configs_wrapper import ConfigsWrapper
+from configs_init.model.loader_config import LoaderConfig
+from configs_init.model.market_config import MarketConfig
+from configs_init.model.preprocessor_config import PreprocessorConfig, DateRange
 
 
 class Configer:
-    def __init__(self, config_path: str, market_save_path: str):
-        self.market_save_path = market_save_path
-        self._dict_config = load_and_preprocess_config(config_path, backup_path=self.market_save_path)
+    def __init__(self, save_path: str):
+        self.save_path = save_path
+        _config_path = f'{save_path}/config.json'
+        self._dict_config = load_and_preprocess_config(_config_path)
         self._configs: ConfigsWrapper = ConfigsWrapper()
 
         self._create_all_configs()
@@ -25,6 +26,7 @@ class Configer:
 
     def _create_loader_config(self):
         loader_config = LoaderConfig()
+        loader_config.datasource = self._dict_config['import']['datasource']
         loader_config.input_tickers = self._dict_config['import']['input']['tickers']
         loader_config.output_tickers = self._dict_config['import']['target']['tickers']
         loader_config.context_tickers = self._dict_config['import']['context']['tickers']
@@ -54,28 +56,28 @@ class Configer:
             test_date_ranges.append(date_range)
         preprocessor_config.test_dates = test_date_ranges
 
-        preprocessor_config.seq_length = self._dict_config['preprocessing']['sequence_length']
-        preprocessor_config.seq_prediction_time = self._dict_config['preprocessing']['sequence_prediction_time']
-        preprocessor_config.sample_time_diff = self._dict_config['preprocessing']['sample_time_difference']
+        preprocessor_config.window_length = self._dict_config['preprocessing']['window_length']
+        preprocessor_config.horizon = self._dict_config['preprocessing']['horizon']
+        preprocessor_config.rolling = self._dict_config['preprocessing']['rolling']
         preprocessor_config.features = len(self._dict_config['import']['input']['columns']) -1 # minus data
         self._configs.preprocessor = preprocessor_config
 
     def _create_agent_config(self):
         agent_config = AgentConfig()
-        agent_config.input_timesteps = self._dict_config['preprocessing']['sequence_length']
+        agent_config.input_timesteps = self._dict_config['preprocessing']['window_length']
         features = (len(self._dict_config['import']['input']['columns']) - 1) * len(
                 self._dict_config['import']['input']['tickers'])
         agent_config.input_features = features
-        agent_config.output_timesteps = self._dict_config['preprocessing']['sequence_prediction_time']
+        agent_config.output_timesteps = self._dict_config['preprocessing']['horizon']
 
-        agent_config.context_timesteps = self._dict_config['preprocessing']['sequence_length']
+        agent_config.context_timesteps = self._dict_config['preprocessing']['window_length']
         features = (len(self._dict_config['import']['context']['columns']) - 1) * len(
                 self._dict_config['import']['context']['tickers'])
         agent_config.context_features = features
 
         agent_config.hyperparam_optimization_method = self._dict_config['agent']['hyperparam_optimization_method']
         agent_config.horizon_prediction_method = self._dict_config['agent']['horizon_prediction_method']
-        agent_config.market_save_path = self.market_save_path
+        agent_config.save_path = self.save_path
         self._configs.agent = agent_config
 
     def _create_market_config(self):

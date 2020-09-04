@@ -1,9 +1,9 @@
 import numpy as np
 import pandas as pd
 
-from specusticc.data_postprocessing.postprocessed_data import PostprocessedData
-from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
-from specusticc.model_testing.prediction_results import PredictionResults
+from data_postprocessing.postprocessed_data import PostprocessedData
+from data_preprocessing.preprocessed_data import PreprocessedData
+from model_testing.prediction_results import PredictionResults
 
 
 class DataPostprocessor:

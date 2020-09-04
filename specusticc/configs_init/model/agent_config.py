@@ -10,6 +10,6 @@ class AgentConfig:
         self.hyperparam_optimization_method: str = ''
         self.horizon_prediction_method: str = 'mimo'
 
-        self.market_save_path: str = ''
+        self.save_path: str = ''
 
         self.epochs = 1
