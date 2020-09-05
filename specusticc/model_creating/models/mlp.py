@@ -7,7 +7,7 @@ from configs_init.model.agent_config import AgentConfig
 
 class MLP:
     def __init__(self, config: AgentConfig):
-        self.epochs = 100
+        self.epochs = 200
 
         self.input_timesteps = config.input_timesteps
         self.input_features = config.input_features + config.context_features
@@ -38,7 +38,7 @@ class MLP:
 
     def build_model(self,
                     optimizer='adam',
-                    dropout_rate=0.05,
+                    dropout_rate=0.1,
                     neurons=200,
                     activation='relu',
                     fnn_stacks=5):
@@ -50,10 +50,10 @@ class MLP:
         for i in range(fnn_stacks):
             model.add(L.Dense(units=neurons, activation=activation))
             model.add(L.Dropout(rate=dropout_rate))
-            model.add(L.BatchNormalization())
+            # model.add(L.BatchNormalization())
         model.add(L.Dense(self.output_timesteps, activation='linear'))
 
-        opt = O.Adam(learning_rate=0.1)
+        opt = O.Adam(learning_rate=0.05)
         mape = 'mean_absolute_percentage_error'
         model.compile(loss=mape, optimizer=opt, metrics=[mape])
 

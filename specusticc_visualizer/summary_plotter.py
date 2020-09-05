@@ -7,7 +7,7 @@ class SummaryPlotter:
     second_plot = ['lstm', 'encoder-decoder', 'transformer']
     third_plot = ['cnn-lstm', 'lstm-attention']
 
-    first_test_flag = False
+    first_test_flag = True
 
     if first_test_flag:
         colors = {

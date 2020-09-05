@@ -76,7 +76,6 @@ class Configer:
         agent_config.context_features = features
 
         agent_config.hyperparam_optimization_method = self._dict_config['agent']['hyperparam_optimization_method']
-        agent_config.horizon_prediction_method = self._dict_config['agent']['horizon_prediction_method']
         agent_config.save_path = self.save_path
         self._configs.agent = agent_config
 

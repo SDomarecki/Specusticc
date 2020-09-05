@@ -42,7 +42,6 @@
   },
   "agent": {
     "folds": 10,
-    "hyperparam_optimization_method": "none",
-    "horizon_prediction_method": "mimo"
+    "hyperparam_optimization_method": "none"
   }
 }

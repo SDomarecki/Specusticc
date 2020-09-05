@@ -5,11 +5,9 @@
       <sourceFolder url="file://$MODULE_DIR$/specusticc" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/specusticc_visualizer" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/mongo_integration" isTestSource="false" />
-      <excludeFolder url="file://$MODULE_DIR$/database/html_sources" />
-      <excludeFolder url="file://$MODULE_DIR$/database/stooq_original" />
       <excludeFolder url="file://$MODULE_DIR$/venv" />
     </content>
-    <orderEntry type="inheritedJdk" />
+    <orderEntry type="jdk" jdkName="Python 3.8 (Specusticc)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="TestRunnerService">

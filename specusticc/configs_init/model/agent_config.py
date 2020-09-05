@@ -8,8 +8,6 @@ class AgentConfig:
         self.context_features: int = 0
 
         self.hyperparam_optimization_method: str = ''
-        self.horizon_prediction_method: str = 'mimo'
-
         self.save_path: str = ''
 
         self.epochs = 1
