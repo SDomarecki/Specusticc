@@ -7,25 +7,17 @@ class SummaryPlotter:
     second_plot = ['lstm', 'encoder-decoder', 'transformer']
     third_plot = ['cnn-lstm', 'lstm-attention']
 
-    first_test_flag = True
-
-    if first_test_flag:
-        colors = {
-            'true': 'red',
-            'mlp': 'dodgerblue',
-            'gan': 'green',
-            'cnn': 'orange',
-            'lstm': 'orangered',
-            'encoder-decoder': 'indigo',
-            'transformer': 'dodgerblue',
-            'cnn-lstm': 'black',
-            'lstm-attention': 'brown'
-        }
-    else:
-        colors = {
-            'true': 'dodgerblue',
-            'lstm-attention': 'red'
-        }
+    colors = {
+        'true': 'red',
+        'mlp': 'dodgerblue',
+        'gan': 'green',
+        'cnn': 'orange',
+        'lstm': 'orangered',
+        'encoder-decoder': 'indigo',
+        'transformer': 'dodgerblue',
+        'cnn-lstm': 'black',
+        'lstm-attention': 'brown'
+    }
 
     def __init__(self, true_data: pd.DataFrame, preds: dict, config: dict, save_path: str):
         self.true_data = true_data
@@ -55,8 +47,6 @@ class SummaryPlotter:
         true_date = self.true_data['date']
         target = self.true_data.iloc[:, 0]
 
-        if not self.first_test_flag:
-            plt.plot(true_date, target, linewidth=1.5, alpha=1.0, color=self.colors['true'], label='True data')
 
         first_date = self.true_data.iloc[0, 1]
         last_date = self.true_data.iloc[-1, 1]
@@ -76,14 +66,13 @@ class SummaryPlotter:
 
                 if name in selected_cols:
                     if i == 0:
-                        plt.plot(x, y, linewidth=1, alpha=0.8, label=name, color=self.colors[name])
+                        plt.plot(x, y, linewidth=1, alpha=1.0, label=name, color=self.colors[name])
                     else:
-                        plt.plot(x, y, linewidth=1, alpha=0.8, color=self.colors[name])
+                        plt.plot(x, y, linewidth=1, alpha=1.0, color=self.colors[name])
                 else:
                     plt.plot(x, y, linewidth=0.7, alpha=0.1, color=self.colors[name])
 
-        if self.first_test_flag:
-            plt.plot(true_date, target, linewidth=1.5, alpha=1.0, color=self.colors['true'], label='True data')
+        plt.plot(true_date, target, linewidth=1.5, alpha=1.0, color=self.colors['true'], label='True data')
 
         plt.grid()
         plt.legend(loc='upper left')

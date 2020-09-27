@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Test 3 [Horizon:25]" type="PythonConfigurationType" factoryName="Python" folderName="Tests">
+  <configuration default="false" name="Test 3 [Horizon:25]" type="PythonConfigurationType" factoryName="Python" folderName="Examples">
     <module name="MagisterkaProjekt" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
