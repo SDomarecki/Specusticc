@@ -22,12 +22,12 @@ Specusticc uses various neural net architectures such as:
 
 #### Regular run
 Main part of the application can be executed by:
-```bash
+```
 $ python specusticc\\specustic_main.py {test_directory} [networks]
 ```
 where {test_directory} must have a config.json file and networks is a list of models to use,
 e.g.
-```bash
+```
 $ python specusticc\\specustic_main.py regular_test mlp cnn lstm
 ```
 
@@ -37,7 +37,7 @@ Available networks: `basic, mlp, cnn, lstm, cnn-lstm, encoder-decoder, lstm-atte
 To draw plots of prediction:
 - point `results_path` in `specusticc_visualizer/visualizer_main.py` to valid results,
 - run
-```bash
+```
 $ python specusticc_visualizer\visualizer_main.py
 ```
 To reduce noise on plots in grand tests (with all of the architectures) only 3 networks at a time are drawn with full opacity.
@@ -45,55 +45,55 @@ See `summary_plotter.py` to change its behaviour to suit your needs.
 
 #### Config.json
 List of all of the options:
-```json
+```bash
 "import": {
-    "datasource": "csv", //available 'mongodb' or 'csv'
-    "input": { //input of neural network
+    "datasource": "csv", #available 'mongodb' or 'csv'
+    "input": { #input of neural network
       "tickers": [ 
         "PKO"
       ],
-      "columns": [ //OHLCV or OHLC for indexes
+      "columns": [ #OHLCV or OHLC for indexes
         "open", "high", "low", "close", "vol"
       ]
     },
-    "target": { //output of neural network
+    "target": { #output of neural network
       "tickers": [
         "PKO"
       ],
-      "columns": [ //OHLCV
+      "columns": [ #OHLCV
         "close"
       ]
     },
-    "context": { //additional info, 
-                 //used mainly in encoder-decoder architectures, 
-                 //can be ommited
+    "context": { #additional info, 
+                 #used mainly in encoder-decoder architectures, 
+                 #can be ommited
       "tickers": [
         "PZU", "ALR", "BHW",
         "BOS", "ING", "MBK",
         "MIL", "PEO", "WIG",
         "^SPX"
       ],
-      "columns": [ //OHLCV
+      "columns": [ #OHLCV
         "open", "high", "low", "close", "vol"
       ]
     },
-    "train_date": { //RRRR-MM-DD
+    "train_date": { #RRRR-MM-DD
       "from": "2004-01-01", "to": "2017-12-31"
     },
-    "test_date": [ //RRRR-MM-DD, can handle multiple data ranges
+    "test_date": [ #RRRR-MM-DD, multiple data ranges are handled
       {"from": "2018-01-01", "to": "2019-06-30"}
     ]
   },
   "preprocessing": {
-    "window_length": 200, //length of one sample
-    "rolling": 5, //subsample shift
-    "horizon": 5 //prediction horizon, Specusticc will predict all of the values 
-                 //from end_of_sample to end_of_sample+horizon
+    "window_length": 200, #length of one sample
+    "rolling": 5, #subsample shift
+    "horizon": 5 #prediction horizon, Specusticc will predict all of the values 
+                 #from end_of_sample to end_of_sample+horizon
   },
   "agent": {
-    "folds": 10, //
-    "hyperparam_optimization_method": "none" //atm. "grid" is supported for grid search
-                                             //if used, set folds to 1, otherwise it will optimize folds times
+    "folds": 10, #number of separate folds to compute mean error
+    "hyperparam_optimization_method": "none" #atm. "grid" is supported for grid search
+                                             #if used, set folds to 1, otherwise it will optimize folds times
   }
 ```
 
@@ -135,7 +135,7 @@ Supervised learning algorithm using financial data. Focuses mainly on SVM.
 
 ## License
 
-Project created as base for master thesis "Application of machine learning methods to prediction of stock exchange prices" written @ AGH UST 2020.
+Project created as base for master thesis "Application of machine learning methods in prediction of stock exchange prices" written @ AGH UST 2020.
 
 This project is released under the MIT Licence. See the bundled LICENSE file for details.
 
