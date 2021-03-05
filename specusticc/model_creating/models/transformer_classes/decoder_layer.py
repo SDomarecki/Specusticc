@@ -1,7 +1,7 @@
 import tensorflow as tf
 
-from model_creating.models.transformer_classes.multi_head_attention import MultiHeadAttention
-from model_creating.models.transformer_classes.point_wise import point_wise_feed_forward_network
+from specusticc.model_creating.models.transformer_classes.multi_head_attention import MultiHeadAttention
+from specusticc.model_creating.models.transformer_classes.point_wise import point_wise_feed_forward_network
 
 
 class DecoderLayer(tf.keras.layers.Layer):

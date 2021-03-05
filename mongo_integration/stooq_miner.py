@@ -3,8 +3,8 @@ import os
 
 import pymongo
 import pandas as pd
-from mongo_integration.price_history import PriceHistory
-from mongo_integration.price_record import PriceRecord
+from specusticc.mongo_integration.price_history import PriceHistory
+from specusticc.mongo_integration.price_record import PriceRecord
 
 
 class StooqMiner:

@@ -1,4 +1,4 @@
-from data_preprocessing.data_set import DataSet
+from specusticc.data_preprocessing.data_set import DataSet
 
 
 class PreprocessedData:

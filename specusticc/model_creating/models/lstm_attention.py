@@ -1,7 +1,7 @@
 import tensorflow.keras.layers as L
 import tensorflow.keras.models as M
 
-from configs_init.model.agent_config import AgentConfig
+from specusticc.configs_init.model.agent_config import AgentConfig
 
 
 class LSTMAttention:

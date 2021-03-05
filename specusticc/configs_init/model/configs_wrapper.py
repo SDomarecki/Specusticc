@@ -1,7 +1,7 @@
-from configs_init.model.agent_config import AgentConfig
-from configs_init.model.loader_config import LoaderConfig
-from configs_init.model.market_config import MarketConfig
-from configs_init.model.preprocessor_config import PreprocessorConfig
+from specusticc.configs_init.model.agent_config import AgentConfig
+from specusticc.configs_init.model.loader_config import LoaderConfig
+from specusticc.configs_init.model.market_config import MarketConfig
+from specusticc.configs_init.model.preprocessor_config import PreprocessorConfig
 
 
 class ConfigsWrapper:

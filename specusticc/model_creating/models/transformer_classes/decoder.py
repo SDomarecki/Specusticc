@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from model_creating.models.transformer_classes.decoder_layer import DecoderLayer
+from specusticc.model_creating.models.transformer_classes.decoder_layer import DecoderLayer
 
 
 class Decoder(tf.keras.layers.Layer):

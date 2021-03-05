@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="Model Transformer" type="PythonConfigurationType" factoryName="Python" folderName="Prediction">
-    <module name="MagisterkaProjekt" />
+    <module name="Specusticc" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
     <envs>

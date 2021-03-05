@@ -1,4 +1,4 @@
-from database.price_record import PriceRecord
+from specusticc.mongo_integration.price_record import PriceRecord
 
 
 class PriceHistory:

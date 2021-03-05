@@ -1,11 +1,11 @@
-from configs_init.model.agent_config import AgentConfig
-from data_postprocessing.data_postprocessor import DataPostprocessor
-from data_preprocessing.preprocessed_data import PreprocessedData
-from model_creating.network_builder import NetworkBuilder
-from model_creating.optimizer import Optimizer
-from model_testing.tester import Tester
-from model_training.trainer import Trainer
-from reporting.reporter import Reporter
+from specusticc.configs_init.model.agent_config import AgentConfig
+from specusticc.data_postprocessing.data_postprocessor import DataPostprocessor
+from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
+from specusticc.model_creating.network_builder import NetworkBuilder
+from specusticc.model_creating.optimizer import Optimizer
+from specusticc.model_testing.tester import Tester
+from specusticc.model_training.trainer import Trainer
+from specusticc.reporting.reporter import Reporter
 
 
 class Agent:

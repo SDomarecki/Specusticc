@@ -1,9 +1,9 @@
 import pandas as pd
 import pymongo
 
-from configs_init.model.loader_config import LoaderConfig
-from data_loading.generator import Generator
-from data_loading.loaded_data import LoadedData
+from specusticc.configs_init.model.loader_config import LoaderConfig
+from specusticc.data_loading.generator import Generator
+from specusticc.data_loading.loaded_data import LoadedData
 
 
 class DataLoader:

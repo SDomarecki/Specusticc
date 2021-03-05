@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from configs_init.model.preprocessor_config import PreprocessorConfig
+from specusticc.configs_init.model.preprocessor_config import PreprocessorConfig
 
 
 class InputDataPreprocessor:

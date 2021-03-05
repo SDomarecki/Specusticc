@@ -2,8 +2,8 @@ import os
 
 import pandas as pd
 
-import utilities.directories as dirs
-from data_postprocessing.postprocessed_data import PostprocessedData
+import specusticc.utilities.directories as dirs
+from specusticc.data_postprocessing.postprocessed_data import PostprocessedData
 
 
 class Reporter:

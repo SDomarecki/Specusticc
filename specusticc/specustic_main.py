@@ -1,6 +1,6 @@
 import sys
 
-from market.market import Market
+from specusticc.market.market import Market
 
 if __name__ == "__main__":
     example_directory = sys.argv[1]

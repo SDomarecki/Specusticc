@@ -1,10 +1,10 @@
-from agent.agent import Agent
-from configs_init.configer import Configer
-from configs_init.model.configs_wrapper import ConfigsWrapper
-from data_loading.data_loader import DataLoader
-from data_loading.loaded_data import LoadedData
-from data_preprocessing.data_preprocessor import DataPreprocessor
-from data_preprocessing.preprocessed_data import PreprocessedData
+from specusticc.agent.agent import Agent
+from specusticc.configs_init.configer import Configer
+from specusticc.configs_init.model.configs_wrapper import ConfigsWrapper
+from specusticc.data_loading.data_loader import DataLoader
+from specusticc.data_loading.loaded_data import LoadedData
+from specusticc.data_preprocessing.data_preprocessor import DataPreprocessor
+from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
 
 
 class Market:

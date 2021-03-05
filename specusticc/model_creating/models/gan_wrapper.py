@@ -1,5 +1,5 @@
-from configs_init.model.agent_config import AgentConfig
-from model_creating.models.gan import GAN
+from specusticc.configs_init.model.agent_config import AgentConfig
+from specusticc.model_creating.models.gan import GAN
 
 
 class GANWrapper:

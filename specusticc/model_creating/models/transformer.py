@@ -2,9 +2,9 @@ import tensorflow.keras.layers as L
 import tensorflow.keras.models as M
 import tensorflow.keras.optimizers as O
 
-from configs_init.model.agent_config import AgentConfig
-from model_creating.models.transformer_classes.decoder import Decoder
-from model_creating.models.transformer_classes.encoder import Encoder
+from specusticc.configs_init.model.agent_config import AgentConfig
+from specusticc.model_creating.models.transformer_classes.decoder import Decoder
+from specusticc.model_creating.models.transformer_classes.encoder import Encoder
 
 
 # see: Attention Is All You Need, url:https://arxiv.org/abs/1706.03762
