@@ -21,3 +21,6 @@ class DateRange:
     def __init__(self, from_date: datetime, to_date: datetime):
         self.from_date: datetime = from_date
         self.to_date: datetime = to_date
+
+    def __eq__(self, other):
+        return self.from_date == other.from_date and self.to_date == other.to_date

@@ -10,8 +10,9 @@ from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
 class Market:
     def __init__(self, example_path: str, models: [str]):
         self._models: [str] = models
-        _configer = Configer(save_path=example_path)
-        self._configs: ConfigsWrapper = _configer.get_configs_wrapper()
+        configer = Configer(save_path=example_path)
+        configer.create_all_configs()
+        self._configs: ConfigsWrapper = configer.get_configs_wrapper()
 
         self.loaded_data: LoadedData
         self.preprocessed_data: PreprocessedData
