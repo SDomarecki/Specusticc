@@ -1,5 +1,6 @@
 from datetime import datetime
 
+
 class PreprocessorConfig:
     def __init__(self):
         self.input_columns: [] = []

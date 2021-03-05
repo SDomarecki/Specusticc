@@ -2,11 +2,16 @@ from datetime import datetime, timedelta
 
 import pandas as pd
 
-from specusticc.configs_init.model.preprocessor_config import PreprocessorConfig, DateRange
+from specusticc.configs_init.model.preprocessor_config import (
+    PreprocessorConfig,
+    DateRange,
+)
 from specusticc.data_loading.loaded_data import LoadedData
 from specusticc.data_preprocessing.data_set import DataSet
 from specusticc.data_preprocessing.input_data_preprocessor import InputDataPreprocessor
-from specusticc.data_preprocessing.output_data_preprocessor import OutputDataPreprocessor
+from specusticc.data_preprocessing.output_data_preprocessor import (
+    OutputDataPreprocessor,
+)
 from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
 
 
@@ -47,34 +52,50 @@ class DataPreprocessor:
         self.context_df = self._dict_to_merged_dataframe(self.context)
 
     def _dict_to_merged_dataframe(self, data: dict) -> pd.DataFrame:
-        unified_df = pd.DataFrame(columns=['date'])
+        unified_df = pd.DataFrame(columns=["date"])
         for ticker, df in data.items():
-            df.columns = [ticker + '_' + str(col) for col in df.columns if col != 'date'] + ['date']
-            unified_df = unified_df.merge(df, left_on='date', right_on='date', how='outer')
-        unified_df = unified_df.sort_values(by=['date'])\
-            .interpolate()\
-            .fillna(1.0)\
+            df.columns = [
+                ticker + "_" + str(col) for col in df.columns if col != "date"
+            ] + ["date"]
+            unified_df = unified_df.merge(
+                df, left_on="date", right_on="date", how="outer"
+            )
+        unified_df = (
+            unified_df.sort_values(by=["date"])
+            .interpolate()
+            .fillna(1.0)
             .reset_index(drop=True)
+        )
         return unified_df
 
     def _filter_by_dates(self):
         self.train_ioc = {}
-        self.train_ioc['input'] = _filter_history_by_dates(self.input_df, self.config.train_date)
-        self.train_ioc['output'] = _filter_history_by_dates(self.output_df, self.config.train_date)
-        self.train_ioc['context'] = _filter_history_by_dates(self.context_df, self.config.train_date)
+        self.train_ioc["input"] = _filter_history_by_dates(
+            self.input_df, self.config.train_date
+        )
+        self.train_ioc["output"] = _filter_history_by_dates(
+            self.output_df, self.config.train_date
+        )
+        self.train_ioc["context"] = _filter_history_by_dates(
+            self.context_df, self.config.train_date
+        )
 
         self.test_iocs = []
         for date_range in self.config.test_dates:
             test_ioc = {}
-            test_ioc['input'] = _filter_history_by_dates(self.input_df, date_range)
-            test_ioc['output'] = _filter_history_by_dates(self.output_df, date_range)
-            test_ioc['context'] = _filter_history_by_dates(self.context_df, date_range)
+            test_ioc["input"] = _filter_history_by_dates(self.input_df, date_range)
+            test_ioc["output"] = _filter_history_by_dates(self.output_df, date_range)
+            test_ioc["context"] = _filter_history_by_dates(self.context_df, date_range)
             self.test_iocs.append(test_ioc)
 
     def _limit_context_dates_by_input_dates(self):
-        self.train_ioc['context'] = self.train_ioc['context'][self.train_ioc['context']['date'].isin(self.train_ioc['input']['date'])]
+        self.train_ioc["context"] = self.train_ioc["context"][
+            self.train_ioc["context"]["date"].isin(self.train_ioc["input"]["date"])
+        ]
         for test_ioc in self.test_iocs:
-            test_ioc['context'] = test_ioc['context'][test_ioc['context']['date'].isin(test_ioc['input']['date'])]
+            test_ioc["context"] = test_ioc["context"][
+                test_ioc["context"]["date"].isin(test_ioc["input"]["date"])
+            ]
 
     def _reshape_data_to_neural_network(self):
         ph = self.preprocessed_data
@@ -82,16 +103,26 @@ class DataPreprocessor:
         data2o = OutputDataPreprocessor(self.config)
 
         data_set = DataSet()
-        data_set.input = data2i.transform_input(self.train_ioc['input'])
-        data_set.context = data2i.transform_input(self.train_ioc['context'])
-        data_set.output, data_set.output_scaler, data_set.output_columns, data_set.output_dates = data2o.transform_output(self.train_ioc['output'])
+        data_set.input = data2i.transform_input(self.train_ioc["input"])
+        data_set.context = data2i.transform_input(self.train_ioc["context"])
+        (
+            data_set.output,
+            data_set.output_scaler,
+            data_set.output_columns,
+            data_set.output_dates,
+        ) = data2o.transform_output(self.train_ioc["output"])
         ph.train_set = data_set
 
         for test_ioc in self.test_iocs:
             data_set = DataSet()
-            data_set.input = data2i.transform_input(test_ioc['input'])
-            data_set.context = data2i.transform_input(test_ioc['context'])
-            data_set.output, data_set.output_scaler, data_set.output_columns, data_set.output_dates = data2o.transform_output(test_ioc['output'])
+            data_set.input = data2i.transform_input(test_ioc["input"])
+            data_set.context = data2i.transform_input(test_ioc["context"])
+            (
+                data_set.output,
+                data_set.output_scaler,
+                data_set.output_columns,
+                data_set.output_dates,
+            ) = data2o.transform_output(test_ioc["output"])
             ph.test_sets.append(data_set)
 
         self.preprocessed_data = ph
@@ -125,7 +156,7 @@ def _get_closest_date_index(df: pd.DataFrame, date: datetime) -> int:
     closest_index = None
     while closest_index is None:
         try:
-            closest_index = df.index[df['date'] == date][0]
+            closest_index = df.index[df["date"] == date][0]
         except Exception:
             pass
         date = date - timedelta(days=1)

@@ -1,7 +1,11 @@
 import tensorflow as tf
 
-from specusticc.model_creating.models.transformer_classes.multi_head_attention import MultiHeadAttention
-from specusticc.model_creating.models.transformer_classes.point_wise import point_wise_feed_forward_network
+from specusticc.model_creating.models.transformer_classes.multi_head_attention import (
+    MultiHeadAttention,
+)
+from specusticc.model_creating.models.transformer_classes.point_wise import (
+    point_wise_feed_forward_network,
+)
 
 
 class DecoderLayer(tf.keras.layers.Layer):
@@ -24,16 +28,22 @@ class DecoderLayer(tf.keras.layers.Layer):
     def call(self, x, enc_output):
         # enc_output.shape == (batch_size, input_seq_len, d_model)
 
-        attn1, attn_weights_block1 = self.mha1(x, x, x)  # (batch_size, target_seq_len, d_model)
+        attn1, attn_weights_block1 = self.mha1(
+            x, x, x
+        )  # (batch_size, target_seq_len, d_model)
         attn1 = self.dropout1(attn1)
         out1 = self.layernorm1(attn1 + x)
 
-        attn2, attn_weights_block2 = self.mha2(enc_output, enc_output, out1)  # (batch_size, target_seq_len, d_model)
+        attn2, attn_weights_block2 = self.mha2(
+            enc_output, enc_output, out1
+        )  # (batch_size, target_seq_len, d_model)
         attn2 = self.dropout2(attn2)
         out2 = self.layernorm2(attn2 + out1)  # (batch_size, target_seq_len, d_model)
 
         ffn_output = self.ffn(out2)  # (batch_size, target_seq_len, d_model)
         ffn_output = self.dropout3(ffn_output)
-        out3 = self.layernorm3(ffn_output + out2)  # (batch_size, target_seq_len, d_model)
+        out3 = self.layernorm3(
+            ffn_output + out2
+        )  # (batch_size, target_seq_len, d_model)
 
         return out3, attn_weights_block1, attn_weights_block2

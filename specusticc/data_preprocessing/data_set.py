@@ -12,7 +12,7 @@ class DataSet:
         self.output_dates = None
 
     def get_input(self, model_name: str) -> []:
-        if model_name not in ['basic', 'mlp', 'cnn', 'cnn-lstm', 'lstm', 'gan']:
+        if model_name not in ["basic", "mlp", "cnn", "cnn-lstm", "lstm", "gan"]:
             return [self.context, self.input]
         else:
             return np.dstack((self.context, self.input))

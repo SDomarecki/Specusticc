@@ -18,30 +18,28 @@ class BasicNet:
     def _fetch_possible_parameters(self):
         batch_size = [20, 50, 100]
         epochs = [10, 25, 50, 100]
-        optimizer = ['Adam']
+        optimizer = ["Adam"]
         neurons = [20, 50, 100, 150, 200]
-        activation = ['relu', 'softmax', 'linear', 'tanh']
+        activation = ["relu", "softmax", "linear", "tanh"]
 
         self.possible_parameters = dict(
-                batch_size=batch_size,
-                epochs=epochs,
-                optimizer=optimizer,
-                neurons=neurons,
-                activation=activation)
+            batch_size=batch_size,
+            epochs=epochs,
+            optimizer=optimizer,
+            neurons=neurons,
+            activation=activation,
+        )
 
-    def build_model(self,
-                    optimizer='nadam',
-                    neurons=150,
-                    activation='relu'):
-        print(f'Optimizer={optimizer}, neurons={neurons}, activation={activation}')
+    def build_model(self, optimizer="nadam", neurons=150, activation="relu"):
+        print(f"Optimizer={optimizer}, neurons={neurons}, activation={activation}")
         model = M.Sequential()
 
         model.add(L.Input(shape=(self.input_timesteps, self.input_features)))
         model.add(L.Flatten())
         model.add(L.Dense(units=neurons, activation=activation))
-        model.add(L.Dense(self.output_timesteps, activation='linear'))
+        model.add(L.Dense(self.output_timesteps, activation="linear"))
 
-        mape = 'mean_absolute_percentage_error'
+        mape = "mean_absolute_percentage_error"
         model.compile(loss=mape, optimizer=optimizer, metrics=[mape])
 
         return model

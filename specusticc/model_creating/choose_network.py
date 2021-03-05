@@ -11,23 +11,23 @@ from specusticc.model_creating.models.gan_wrapper import GANWrapper
 
 
 def choose_network(model_name: str, config: AgentConfig):
-    if model_name == 'basic':
+    if model_name == "basic":
         return BasicNet(config)
-    elif model_name == 'cnn':
+    elif model_name == "cnn":
         return CNN(config)
-    elif model_name == 'lstm':
+    elif model_name == "lstm":
         return LSTM(config)
-    elif model_name == 'cnn-lstm':
+    elif model_name == "cnn-lstm":
         return CNNLSTM(config)
-    elif model_name == 'lstm-attention':
+    elif model_name == "lstm-attention":
         return LSTMAttention(config)
-    elif model_name == 'encoder-decoder':
+    elif model_name == "encoder-decoder":
         return LSTMEncoderDecoder(config)
-    elif model_name == 'mlp':
+    elif model_name == "mlp":
         return MLP(config)
-    elif model_name == 'transformer':
+    elif model_name == "transformer":
         return ModelTransformer(config)
-    elif model_name == 'gan':
+    elif model_name == "gan":
         return GANWrapper(config)
     else:
         raise NotImplementedError

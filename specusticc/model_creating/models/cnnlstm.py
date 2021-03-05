@@ -18,9 +18,9 @@ class CNNLSTM:
     def _fetch_possible_parameters(self):
         batch_size = [20, 50, 100]
         epochs = [10, 25, 50, 100]
-        optimizer = ['Adam']
+        optimizer = ["Adam"]
         neurons = [20, 50, 100, 150, 200]
-        activation = ['relu', 'softmax', 'linear', 'tanh']
+        activation = ["relu", "softmax", "linear", "tanh"]
         dropout_rate = [0.2, 0.4, 0.6, 0.8]
         kernel_size = [2, 4, 6, 8, 10]
 
@@ -31,22 +31,33 @@ class CNNLSTM:
             optimizer=optimizer,
             neurons=neurons,
             kernel_size=kernel_size,
-            activation=activation)
+            activation=activation,
+        )
 
-    def build_model(self,
-                    optimizer='adam',
-                    dropout_rate=0.005,
-                    neurons=50,
-                    kernel_size=3,
-                    pool_size=2,
-                    activation='relu',
-                    conv_stacks=3):
+    def build_model(
+        self,
+        optimizer="adam",
+        dropout_rate=0.005,
+        neurons=50,
+        kernel_size=3,
+        pool_size=2,
+        activation="relu",
+        conv_stacks=3,
+    ):
         model = M.Sequential()
 
         model.add(L.Input(shape=(self.input_timesteps, self.input_features)))
         for i in range(conv_stacks):
-            model.add(L.Conv1D(filters=neurons, kernel_size=kernel_size, activation=activation))
-            model.add(L.Conv1D(filters=neurons, kernel_size=kernel_size, activation=activation))
+            model.add(
+                L.Conv1D(
+                    filters=neurons, kernel_size=kernel_size, activation=activation
+                )
+            )
+            model.add(
+                L.Conv1D(
+                    filters=neurons, kernel_size=kernel_size, activation=activation
+                )
+            )
             model.add(L.AveragePooling1D(pool_size=pool_size))
             model.add(L.Dropout(rate=dropout_rate))
         model.add(L.LSTM(units=20, return_sequences=True))
@@ -57,7 +68,7 @@ class CNNLSTM:
         model.add(L.Dense(units=neurons))
         model.add(L.Dense(units=self.output_timesteps, activation="linear"))
 
-        mape = 'mean_absolute_percentage_error'
+        mape = "mean_absolute_percentage_error"
         model.compile(loss=mape, optimizer=optimizer, metrics=[mape])
 
         return model

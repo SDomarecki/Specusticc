@@ -1,6 +1,8 @@
 import tensorflow as tf
 
-from specusticc.model_creating.models.transformer_classes.decoder_layer import DecoderLayer
+from specusticc.model_creating.models.transformer_classes.decoder_layer import (
+    DecoderLayer,
+)
 
 
 class Decoder(tf.keras.layers.Layer):
@@ -8,17 +10,16 @@ class Decoder(tf.keras.layers.Layer):
         super(Decoder, self).__init__()
 
         self.num_layers = num_layers
-        self.dec_layers = [DecoderLayer(d_model, num_heads, dff, rate)
-                           for _ in range(num_layers)]
+        self.dec_layers = [
+            DecoderLayer(d_model, num_heads, dff, rate) for _ in range(num_layers)
+        ]
         self.dropout = tf.keras.layers.Dropout(rate)
         self.flatten = tf.keras.layers.Flatten()
         self.dense = tf.keras.layers.Dense(output_size)
 
     def get_config(self):
         config = super().get_config().copy()
-        config.update({
-            'num_layers': self.num_layers
-        })
+        config.update({"num_layers": self.num_layers})
         return config
 
     def call(self, x, enc_output):

@@ -35,8 +35,10 @@ class Market:
         n_folds: int = self._configs.market.n_folds
         for model in self._models:
             for i in range(n_folds):
-                agent = Agent(model_name=model,
-                              fold_number=i+1,
-                              data=self.preprocessed_data,
-                              config=self._configs.agent)
+                agent = Agent(
+                    model_name=model,
+                    fold_number=i + 1,
+                    data=self.preprocessed_data,
+                    config=self._configs.agent,
+                )
                 agent.run()

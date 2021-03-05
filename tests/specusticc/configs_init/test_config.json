@@ -1,0 +1,11 @@
+{
+  "test_parameter": "test_value",
+  "import": {
+    "train_date": {
+      "from": "2004-01-01", "to": "2017-12-31"
+    },
+    "test_date": [
+      {"from": "2018-01-01", "to": "2019-06-30"}
+    ]
+  }
+}

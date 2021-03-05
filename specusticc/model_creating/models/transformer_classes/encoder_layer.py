@@ -1,7 +1,11 @@
 import tensorflow as tf
 
-from specusticc.model_creating.models.transformer_classes.multi_head_attention import MultiHeadAttention
-from specusticc.model_creating.models.transformer_classes.point_wise import point_wise_feed_forward_network
+from specusticc.model_creating.models.transformer_classes.multi_head_attention import (
+    MultiHeadAttention,
+)
+from specusticc.model_creating.models.transformer_classes.point_wise import (
+    point_wise_feed_forward_network,
+)
 
 
 class EncoderLayer(tf.keras.layers.Layer):
@@ -24,6 +28,8 @@ class EncoderLayer(tf.keras.layers.Layer):
 
         ffn_output = self.ffn(out1)  # (batch_size, input_seq_len, d_model)
         ffn_output = self.dropout2(ffn_output)
-        out2 = self.layernorm2(out1 + ffn_output)  # (batch_size, input_seq_len, d_model)
+        out2 = self.layernorm2(
+            out1 + ffn_output
+        )  # (batch_size, input_seq_len, d_model)
 
         return out2

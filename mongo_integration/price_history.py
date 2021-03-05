@@ -9,4 +9,8 @@ class PriceHistory:
 
     def __dict__(self):
         historyDict = [history.__dict__ for history in self.history]
-        return {'ticker': self.ticker, 'fetch_date': self.fetch_date, 'history': historyDict}
+        return {
+            "ticker": self.ticker,
+            "fetch_date": self.fetch_date,
+            "history": historyDict,
+        }

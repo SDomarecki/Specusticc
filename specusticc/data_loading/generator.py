@@ -20,7 +20,14 @@ class Generator:
         td = timedelta(days=1)
         res = []
         for val in y:
-            one_dist = {'date': current_date, 'open': val, 'high': val, 'low': val, 'close': val, 'vol': 100000}
+            one_dist = {
+                "date": current_date,
+                "open": val,
+                "high": val,
+                "low": val,
+                "close": val,
+                "vol": 100000,
+            }
             res.append(one_dist)
             current_date = current_date + td
         return res

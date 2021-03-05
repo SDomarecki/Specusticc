@@ -9,17 +9,23 @@ from specusticc.reporting.reporter import Reporter
 
 
 class Agent:
-    def __init__(self, model_name: str, fold_number: int, data: PreprocessedData, config: AgentConfig):
+    def __init__(
+        self,
+        model_name: str,
+        fold_number: int,
+        data: PreprocessedData,
+        config: AgentConfig,
+    ):
         self.config: AgentConfig = config
 
-        self._name = f'{model_name}_{fold_number}'
+        self._name = f"{model_name}_{fold_number}"
         self.model_name: str = model_name
         self._fold_number: int = fold_number
         self._data: PreprocessedData = data
 
     def run(self):
         hyperparam_method = self.config.hyperparam_optimization_method
-        if hyperparam_method in ['grid', 'random', 'bayes']:
+        if hyperparam_method in ["grid", "random", "bayes"]:
             self._optimize_model()
         else:
             self._create_model()

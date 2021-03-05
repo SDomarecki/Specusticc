@@ -17,9 +17,9 @@ class CNN:
     def _fetch_possible_parameters(self):
         batch_size = [20, 50, 100]
         epochs = [50, 100]
-        optimizer = ['Adam']
+        optimizer = ["Adam"]
         neurons = [20, 50, 100, 150, 200]
-        activation = ['relu', 'softmax', 'linear', 'tanh']
+        activation = ["relu", "softmax", "linear", "tanh"]
         dropout_rate = [0.2, 0.4, 0.6, 0.8]
         kernel_size = [2, 4, 6, 8, 10]
 
@@ -30,25 +30,34 @@ class CNN:
             optimizer=optimizer,
             neurons=neurons,
             kernel_size=kernel_size,
-            activation=activation)
+            activation=activation,
+        )
 
-    def build_model(self,
-                    optimizer='adam',
-                    dropout_rate=0.0,
-                    neurons=100,
-                    filters=50,
-                    kernel_size=3,
-                    pool_size=2,
-                    activation='relu',
-                    conv_stacks=4):
+    def build_model(
+        self,
+        optimizer="adam",
+        dropout_rate=0.0,
+        neurons=100,
+        filters=50,
+        kernel_size=3,
+        pool_size=2,
+        activation="relu",
+        conv_stacks=4,
+    ):
 
         input_layer = L.Input(shape=(self.input_timesteps, self.input_features))
 
         cnn1 = input_layer
         for i in range(conv_stacks):
-            cnn1 = L.Conv1D(filters=filters, kernel_size=kernel_size, activation='relu')(cnn1)
-            cnn1 = L.Conv1D(filters=filters, kernel_size=kernel_size, activation='relu')(cnn1)
-            cnn1 = L.Conv1D(filters=filters, kernel_size=kernel_size, activation='relu')(cnn1)
+            cnn1 = L.Conv1D(
+                filters=filters, kernel_size=kernel_size, activation="relu"
+            )(cnn1)
+            cnn1 = L.Conv1D(
+                filters=filters, kernel_size=kernel_size, activation="relu"
+            )(cnn1)
+            cnn1 = L.Conv1D(
+                filters=filters, kernel_size=kernel_size, activation="relu"
+            )(cnn1)
             cnn1 = L.MaxPooling1D(pool_size=pool_size)(cnn1)
             cnn1 = L.BatchNormalization()(cnn1)
             cnn1 = L.Dropout(rate=dropout_rate)(cnn1)
@@ -61,7 +70,7 @@ class CNN:
         output = L.Dense(units=self.output_timesteps, activation="linear")(dense)
         model = M.Model(inputs=input_layer, outputs=output)
 
-        mape = 'mean_absolute_percentage_error'
+        mape = "mean_absolute_percentage_error"
         model.compile(loss=mape, optimizer=optimizer, metrics=[mape])
 
         return model

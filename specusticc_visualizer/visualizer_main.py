@@ -16,6 +16,6 @@ Shortcut paths to visualize
 """
 
 if __name__ == "__main__":
-    results_path = 'examples/test_non_correlated_data'
+    results_path = "examples/test_non_correlated_data"
     analyzer = ResultsAnalyzer(results_path)
     analyzer.analyze_predictions()

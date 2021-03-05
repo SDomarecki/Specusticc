@@ -1,6 +1,8 @@
 import tensorflow as tf
 
-from specusticc.model_creating.models.transformer_classes.encoder_layer import EncoderLayer
+from specusticc.model_creating.models.transformer_classes.encoder_layer import (
+    EncoderLayer,
+)
 
 
 class Encoder(tf.keras.layers.Layer):
@@ -8,15 +10,14 @@ class Encoder(tf.keras.layers.Layer):
         super(Encoder, self).__init__()
 
         self.num_layers = num_layers
-        self.enc_layers = [EncoderLayer(d_model, num_heads, dff, rate)
-                           for _ in range(num_layers)]
+        self.enc_layers = [
+            EncoderLayer(d_model, num_heads, dff, rate) for _ in range(num_layers)
+        ]
         self.dropout = tf.keras.layers.Dropout(rate)
 
     def get_config(self):
         config = super().get_config().copy()
-        config.update({
-            'num_layers': self.num_layers
-        })
+        config.update({"num_layers": self.num_layers})
         return config
 
     def call(self, x):
