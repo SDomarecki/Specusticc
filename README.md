@@ -1,3 +1,9 @@
+[![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
+[![Updates](https://pyup.io/repos/github/SDomarecki/Specusticc/shield.svg)](https://pyup.io/repos/github/SDomarecki/Specusticc/)
+[![Python application](https://github.com/SDomarecki/Specusticc/workflows/Python%20application/badge.svg)](https://github.com/SDomarecki/Specusticc/actions)
+[![codecov](https://codecov.io/gh/SDomarecki/Specusticc/branch/master/graph/badge.svg?token=9TL9ND6579)](https://codecov.io/gh/SDomarecki/Specusticc)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 # Specusticc
 
 Specusticc utilizes neural networks in prediction of stock prices of companies listed on Warsaw Stock Exchange.
