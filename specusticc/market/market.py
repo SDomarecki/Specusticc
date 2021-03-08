@@ -1,7 +1,6 @@
 from specusticc.agent.agent import Agent
 from specusticc.configs_init.model.configs_wrapper import ConfigsWrapper
 from specusticc.data_loading.csv_data_loader import CSVDataLoader
-from specusticc.data_loading.data_loader import DataLoader
 from specusticc.data_loading.generated_data_loader import GeneratedDataLoader
 from specusticc.data_loading.loaded_data import LoadedData
 from specusticc.data_loading.mongo_data_loader import MongoDataLoader

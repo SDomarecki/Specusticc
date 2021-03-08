@@ -40,6 +40,7 @@ def test___create_loader_config_validDict_createsLoaderConfig():
     config_dict = {
         "import": {
             "datasource": "mongodb",
+            "database_path": "./database",
             "input": {"tickers": ["a", "b", "c"]},
             "target": {"tickers": ["d", "e", "f"]},
             "context": {"tickers": ["g", "h", "i"]},
@@ -54,6 +55,7 @@ def test___create_loader_config_validDict_createsLoaderConfig():
 
     assert (
         loader.datasource == "mongodb"
+        and loader.database_path == "./database"
         and loader.input_tickers == ["a", "b", "c"]
         and loader.output_tickers == ["d", "e", "f"]
         and loader.context_tickers == ["g", "h", "i"]

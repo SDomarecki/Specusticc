@@ -1,6 +1,7 @@
 {
   "import": {
     "datasource": "csv",
+    "database_path": "tests/e2e/test_database",
     "input": {
       "tickers": [
         "PKO"

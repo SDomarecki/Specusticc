@@ -41,6 +41,7 @@ class Configer:
         context_dict_config = import_dict_config.get("context") or {}
 
         loader_config.datasource = import_dict_config.get("datasource", "csv")
+        loader_config.database_path = import_dict_config.get("database_path", "")
         loader_config.input_tickers = input_dict_config.get("tickers", [])
         loader_config.output_tickers = target_dict_config.get("tickers", [])
         loader_config.context_tickers = context_dict_config.get("tickers", [])
