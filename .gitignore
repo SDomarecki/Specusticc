@@ -215,3 +215,4 @@ dmypy.json
 examples/**/*.csv
 *.png
 *.h5
+/tests/e2e/**/*.csv

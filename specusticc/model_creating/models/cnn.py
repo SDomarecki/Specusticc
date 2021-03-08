@@ -42,7 +42,7 @@ class CNN:
         kernel_size=3,
         pool_size=2,
         activation="relu",
-        conv_stacks=4,
+        conv_stacks=3,
     ):
 
         input_layer = L.Input(shape=(self.input_timesteps, self.input_features))
