@@ -16,22 +16,26 @@ from specusticc.data_preprocessing.preprocessed_data import PreprocessedData
 
 
 class DataPreprocessor:
-    def __init__(self, data: LoadedData, config: PreprocessorConfig):
+    def __init__(self, config: PreprocessorConfig):
         self.config = config
-        self.input: {} = data.input
-        self.output: {} = data.output
-        self.context: {} = data.context
+        self.input: {}
+        self.output: {}
+        self.context: {}
 
-        self.input_df: pd.DataFrame = None
-        self.output_df: pd.DataFrame = None
-        self.context_df: pd.DataFrame = None
+        self.input_df: pd.DataFrame
+        self.output_df: pd.DataFrame
+        self.context_df: pd.DataFrame
 
         self.preprocessed_data: PreprocessedData = PreprocessedData()
 
     def get_data(self) -> PreprocessedData:
         return self.preprocessed_data
 
-    def preprocess_data(self):
+    def preprocess_data(self, data: LoadedData):
+        self.input = data.input
+        self.output = data.output
+        self.context = data.context
+
         self._limit_columns()
         self._merge_data_dicts()
         self._filter_by_dates()

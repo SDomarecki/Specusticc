@@ -1,5 +1,6 @@
 import sys
 
+from specusticc.configs_init.configer import Configer
 from specusticc.market.market import Market
 
 if __name__ == "__main__":
@@ -7,5 +8,10 @@ if __name__ == "__main__":
     model_names = sys.argv[2:]
 
     example_path = f"./examples/{example_directory}"
-    market = Market(example_path=example_path, models=model_names)
+
+    configer = Configer(save_path=example_path)
+    configer.create_all_configs()
+    configs = configer.get_configs_wrapper()
+
+    market = Market(configs=configs, models=model_names)
     market.run()

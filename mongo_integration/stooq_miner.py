@@ -25,7 +25,7 @@ class StooqMiner:
             price_histories.append(price_history)
             i += 1
             print(f"Fetched already {i} companies", end="\r")
-        print("Saving in database...", end="")
+        print("Saving in test_database...", end="")
         self.save_in_database(price_histories)
         print("Saved")
 
