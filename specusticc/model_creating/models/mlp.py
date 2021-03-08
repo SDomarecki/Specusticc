@@ -18,33 +18,27 @@ class MLP:
 
     def _fetch_possible_parameters(self):
         batch_size = [20, 50, 100]
-        epochs = [10, 25, 50, 100]
+        epochs = [50, 100]
         optimizer = ["Adam"]
         neurons = [100, 150, 200]
-        neurons2 = [20, 50, 100]
-        activation = ["relu", "softmax", "linear", "tanh"]
-        activation2 = ["relu", "softmax", "linear", "tanh"]
-        dropout_rate = [0.2, 0.4, 0.6, 0.8]
+        activation = ["relu", "linear"]
 
         self.possible_parameters = dict(
             batch_size=batch_size,
             epochs=epochs,
-            dropout_rate=dropout_rate,
             optimizer=optimizer,
             neurons=neurons,
-            neurons2=neurons2,
             activation=activation,
-            activation2=activation2,
         )
 
     def build_model(
         self,
         optimizer="adam",
-        dropout_rate=0.1,
         neurons=200,
         activation="relu",
         fnn_stacks=5,
     ):
+        dropout_rate = 0.1
         print(
             f"Optimizer={optimizer}, dropout_rate={dropout_rate}, neurons={neurons}, activation={activation}"
         )

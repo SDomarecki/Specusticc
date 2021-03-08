@@ -24,7 +24,7 @@ class Optimizer:
 
         regressor = KerasRegressor(build_fn=build_fn, verbose=1)
         grid = GridSearchCV(
-            estimator=regressor, param_grid=possible_params, n_jobs=1, cv=10
+            estimator=regressor, param_grid=possible_params, n_jobs=1, cv=5
         )
         grid_result = grid.fit(X, Y)
 

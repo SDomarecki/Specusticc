@@ -2,7 +2,6 @@ import os
 
 import pandas as pd
 
-import specusticc.utilities.directories as dirs
 from specusticc.data_postprocessing.postprocessed_data import PostprocessedData
 
 
@@ -15,7 +14,7 @@ class Reporter:
         self._model_name = model_name
 
     def save_results(self):
-        dirs.create_save_dir(self._save_path)
+        os.makedirs(self._save_path, exist_ok=True)
 
         self._save_one_data_csv(
             self._test_results.train_true_data, "train/true_data.csv"

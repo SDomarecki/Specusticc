@@ -1,0 +1,45 @@
+{
+  "import": {
+    "datasource": "csv",
+    "database_path": "tests/e2e/test_database",
+    "input": {
+      "tickers": [
+        "PKO"
+      ],
+      "columns": [
+        "open", "high", "low", "close", "vol"
+      ]
+    },
+    "target": {
+      "tickers": [
+        "PKO"
+      ],
+      "columns": [
+        "close"
+      ]
+    },
+    "context": {
+      "tickers": [
+	    "PZU", "^SPX"
+      ],
+      "columns": [
+        "open", "high", "low", "close", "vol"
+      ]
+    },
+    "train_date": {
+      "from": "2010-06-01", "to": "2017-12-31"
+    },
+    "test_date": [
+      {"from": "2018-01-01", "to": "2019-06-30"}
+    ]
+  },
+  "preprocessing": {
+    "window_length": 100,
+    "rolling": 30,
+    "horizon": 30
+  },
+  "agent": {
+    "folds": 1,
+    "hyperparam_optimization_method": "grid"
+  }
+}
