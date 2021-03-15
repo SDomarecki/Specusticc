@@ -22,7 +22,7 @@ class Decoder(tf.keras.layers.Layer):
         config.update({"num_layers": self.num_layers})
         return config
 
-    def call(self, inputs, **kwargs):
+    def call(self, inputs, **kwargs):  # pragma: no cover
         [x, enc_output] = inputs
         x = self.dropout(x)
 

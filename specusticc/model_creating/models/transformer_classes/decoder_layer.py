@@ -25,7 +25,7 @@ class DecoderLayer(tf.keras.layers.Layer):
         self.dropout2 = tf.keras.layers.Dropout(rate)
         self.dropout3 = tf.keras.layers.Dropout(rate)
 
-    def call(self, inputs, **kwargs):
+    def call(self, inputs, **kwargs):  # pragma: no cover
         [x, enc_output] = inputs
         # enc_output.shape == (batch_size, input_seq_len, d_model)
 

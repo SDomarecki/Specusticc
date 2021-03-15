@@ -25,7 +25,7 @@ class MultiHeadAttention(tf.keras.layers.Layer):
         x = tf.reshape(x, (batch_size, -1, self.num_heads, self.depth))
         return tf.transpose(x, perm=[0, 2, 1, 3])
 
-    def call(self, inputs, **kwargs):
+    def call(self, inputs, **kwargs):  # pragma: no cover
         [v, k, q] = inputs
         batch_size = tf.shape(q)[0]
 
