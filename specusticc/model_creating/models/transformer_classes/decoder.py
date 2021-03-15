@@ -22,11 +22,12 @@ class Decoder(tf.keras.layers.Layer):
         config.update({"num_layers": self.num_layers})
         return config
 
-    def call(self, x, enc_output):
+    def call(self, inputs, **kwargs):
+        [x, enc_output] = inputs
         x = self.dropout(x)
 
         for i in range(self.num_layers):
-            x, block1, block2 = self.dec_layers[i](x, enc_output)
+            x, block1, block2 = self.dec_layers[i]([x, enc_output])
 
         # x.shape == (batch_size, target_seq_len, d_model)
         x = self.flatten(x)

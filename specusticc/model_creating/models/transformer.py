@@ -59,7 +59,7 @@ class ModelTransformer:
             dff,
             rate=dropout_rate,
         )
-        dec_output = decoder(decoder_inputs, encoder_outputs)
+        dec_output = decoder([decoder_inputs, encoder_outputs])
 
         model = Models.Model([encoder_inputs, decoder_inputs], dec_output)
 
