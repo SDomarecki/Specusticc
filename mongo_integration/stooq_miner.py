@@ -29,7 +29,8 @@ class StooqMiner:
         self.save_in_database(price_histories)
         print("Saved")
 
-    def read_csv(self, file: str) -> pd.DataFrame:
+    @staticmethod
+    def read_csv(file: str) -> pd.DataFrame:
         file = file.lower()
         df = pd.read_csv(file, delimiter=",")
         return df
@@ -38,7 +39,7 @@ class StooqMiner:
         self, ticker: str, prices: pd.DataFrame
     ) -> PriceHistory:
         ph = PriceHistory(ticker, self.now)
-        for index, row in prices.iterrows():
+        for _, row in prices.iterrows():
             date_time_str = row["Data"]
             date_time_obj = datetime.datetime.strptime(date_time_str, "%Y-%m-%d")
             pr = PriceRecord(

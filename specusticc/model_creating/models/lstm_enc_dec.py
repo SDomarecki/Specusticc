@@ -37,19 +37,19 @@ class LSTMEncoderDecoder:
             shape=(self.context_timesteps, self.context_features), name="Encoder_input"
         )
         middle_encoder = encoder_inputs
-        for i in range(middle_layers):
+        for _ in range(middle_layers):
             lstm = L.LSTM(self.context_features, return_sequences=True)
             middle_encoder = lstm(middle_encoder)
             middle_encoder = L.Dropout(dropout_rate)(middle_encoder)
         encoder = L.LSTM(self.context_features, return_state=True, name="Encoder_LSTM")
-        encoder_outputs, state_h, state_c = encoder(middle_encoder)
+        _, state_h, state_c = encoder(middle_encoder)
         encoder_states = [state_h, state_c]
 
         decoder_inputs = L.Input(
             shape=(self.input_timesteps, self.input_features), name="Decoder_input"
         )
         middle_decoder = decoder_inputs
-        for i in range(middle_layers):
+        for _ in range(middle_layers):
             lstm = L.LSTM(self.input_features, return_sequences=True)
             middle_decoder = lstm(middle_decoder)
             middle_decoder = L.Dropout(dropout_rate)(middle_decoder)

@@ -55,7 +55,8 @@ class DataPreprocessor:
         self.output_df = self._dict_to_merged_dataframe(self.output)
         self.context_df = self._dict_to_merged_dataframe(self.context)
 
-    def _dict_to_merged_dataframe(self, data: dict) -> pd.DataFrame:
+    @staticmethod
+    def _dict_to_merged_dataframe(data: dict) -> pd.DataFrame:
         unified_df = pd.DataFrame(columns=["date"])
         for ticker, df in data.items():
             df.columns = [
@@ -73,23 +74,21 @@ class DataPreprocessor:
         return unified_df
 
     def _filter_by_dates(self):
-        self.train_ioc = {}
-        self.train_ioc["input"] = _filter_history_by_dates(
-            self.input_df, self.config.train_date
-        )
-        self.train_ioc["output"] = _filter_history_by_dates(
-            self.output_df, self.config.train_date
-        )
-        self.train_ioc["context"] = _filter_history_by_dates(
-            self.context_df, self.config.train_date
-        )
+        self.train_ioc = {
+            "input": _filter_history_by_dates(self.input_df, self.config.train_date),
+            "output": _filter_history_by_dates(self.output_df, self.config.train_date),
+            "context": _filter_history_by_dates(
+                self.context_df, self.config.train_date
+            ),
+        }
 
         self.test_iocs = []
         for date_range in self.config.test_dates:
-            test_ioc = {}
-            test_ioc["input"] = _filter_history_by_dates(self.input_df, date_range)
-            test_ioc["output"] = _filter_history_by_dates(self.output_df, date_range)
-            test_ioc["context"] = _filter_history_by_dates(self.context_df, date_range)
+            test_ioc = {
+                "input": _filter_history_by_dates(self.input_df, date_range),
+                "output": _filter_history_by_dates(self.output_df, date_range),
+                "context": _filter_history_by_dates(self.context_df, date_range),
+            }
             self.test_iocs.append(test_ioc)
 
     def _limit_context_dates_by_input_dates(self):

@@ -27,7 +27,7 @@ class Decoder(tf.keras.layers.Layer):
         x = self.dropout(x)
 
         for i in range(self.num_layers):
-            x, block1, block2 = self.dec_layers[i]([x, enc_output])
+            x, _, _ = self.dec_layers[i]([x, enc_output])
 
         # x.shape == (batch_size, target_seq_len, d_model)
         x = self.flatten(x)

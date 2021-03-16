@@ -17,11 +17,11 @@ class ResultsAnalyzer:
         dirs = listdir(self.output_path)
         dirs.remove("config.json")
 
-        for dir in dirs:
-            self.analyze_one_prediction(dir)
+        for one_dir in dirs:
+            self.analyze_one_prediction(one_dir)
 
-    def analyze_one_prediction(self, dir):
-        full_path = self.output_path + "/" + dir
+    def analyze_one_prediction(self, directory):
+        full_path = self.output_path + "/" + directory
         files = listdir(full_path)
         if "plots" in files:
             files.remove("plots")
@@ -63,6 +63,7 @@ class ResultsAnalyzer:
         )
         sp.draw_plots()
 
-    def _load_config(self, config_path: str) -> dict:
-        file = open(config_path)
-        return json.load(file)
+    @staticmethod
+    def _load_config(config_path: str) -> dict:
+        with open(config_path) as file:
+            return json.load(file)

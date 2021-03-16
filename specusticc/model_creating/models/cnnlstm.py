@@ -47,7 +47,7 @@ class CNNLSTM:
         model = M.Sequential()
 
         model.add(L.Input(shape=(self.input_timesteps, self.input_features)))
-        for i in range(conv_stacks):
+        for _ in range(conv_stacks):
             model.add(
                 L.Conv1D(
                     filters=neurons, kernel_size=kernel_size, activation=activation

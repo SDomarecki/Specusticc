@@ -46,7 +46,7 @@ class MLP:
 
         model.add(Layers.Input(shape=(self.input_timesteps, self.input_features)))
         model.add(Layers.Flatten())
-        for i in range(fnn_stacks):
+        for _ in range(fnn_stacks):
             model.add(Layers.Dense(units=neurons, activation=activation))
             model.add(Layers.Dropout(rate=dropout_rate))
             # model.add(Layers.BatchNormalization())

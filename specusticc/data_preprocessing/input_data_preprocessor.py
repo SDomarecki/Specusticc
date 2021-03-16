@@ -23,15 +23,15 @@ class InputDataPreprocessor:
         input_samples = input_samples.to_numpy()
 
         output = input_samples.reshape(samples, self.timestamps, features)
-        output, scaler = self.detrend(output)
+        output, _ = self.detrend(output)
 
         return output
 
-    def detrend(self, samples):
+    @staticmethod
+    def detrend(samples):
         scaler = np.array([])  # (samples, features)
         detrended_samples = np.empty(samples.shape)
-        for i in range(len(samples)):
-            sample = samples[i]
+        for i, sample in enumerate(samples):
             scaler = np.append(scaler, sample[0])
             detrended_sample = np.ones(sample.shape)
             for j in range(1, len(sample)):

@@ -49,7 +49,8 @@ class Trainer:
         self._plot_history(history)
         return model
 
-    def _plot_history(self, history):
+    @staticmethod
+    def _plot_history(history):
         plt.plot(history.history["mean_absolute_percentage_error"])
         if "val_mean_absolute_percentage_error" in history.history:
             plt.plot(history.history["val_mean_absolute_percentage_error"])

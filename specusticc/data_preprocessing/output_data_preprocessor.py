@@ -30,11 +30,11 @@ class OutputDataPreprocessor:
 
         return output, scaler, org_columns, output_dates
 
-    def detrend(self, samples):
+    @staticmethod
+    def detrend(samples):
         scaler = np.array([])  # (samples, features)
         detrended_samples = np.empty(samples.shape)
-        for i in range(len(samples)):
-            sample = samples[i]
+        for i, sample in enumerate(samples):
             scaler = np.append(scaler, sample[0])
             detrended_sample = np.ones(sample.shape)
             for j in range(1, len(sample)):

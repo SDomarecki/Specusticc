@@ -50,8 +50,8 @@ class DataPostprocessor:
         self.postprocessed_data.train_prediction = reversed_predicted_samples.flatten()
 
     def reverse_tests_detrend(self):
-        for i in range(len(self.preprocessed_data.test_sets)):
-            scaler = self.preprocessed_data.test_sets[i].output_scaler
+        for i, test_set in enumerate(self.preprocessed_data.test_sets):
+            scaler = test_set.output_scaler
             true_samples = self.preprocessed_data.test_sets[i].output
             predicted_samples = self.test_results.test_output[i]
             reversed_true_samples = np.empty(true_samples.shape)
@@ -96,18 +96,18 @@ class DataPostprocessor:
         self.postprocessed_data.train_prediction = df
 
     def _retrieve_test_dataframes(self):
-        for i in range(len(self.postprocessed_data.test_true_datas)):
+        for i, test_true_data in enumerate(self.postprocessed_data.test_true_datas):
             df = pd.DataFrame(
-                data=self.postprocessed_data.test_true_datas[i],
+                data=test_true_data,
                 index=self.preprocessed_data.test_sets[i].output_dates.index,
                 columns=self.preprocessed_data.test_sets[i].output_columns[:-1],
             )
             df["date"] = self.preprocessed_data.test_sets[i].output_dates
             self.postprocessed_data.test_true_datas[i] = df
 
-        for i in range(len(self.postprocessed_data.test_predictions)):
+        for i, test_prediction in enumerate(self.postprocessed_data.test_predictions):
             df = pd.DataFrame(
-                data=self.postprocessed_data.test_predictions[i],
+                data=test_prediction,
                 index=self.preprocessed_data.test_sets[i].output_dates.index,
                 columns=self.preprocessed_data.test_sets[i].output_columns[:-1],
             )
