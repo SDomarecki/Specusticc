@@ -20,8 +20,8 @@ class Encoder(tf.keras.layers.Layer):
         config.update({"num_layers": self.num_layers})
         return config
 
-    def call(self, x, **kwargs):  # pragma: no cover
-        x = self.dropout(x)
+    def call(self, inputs, **kwargs):  # pragma: no cover
+        x = self.dropout(inputs)
 
         for i in range(self.num_layers):
             x = self.enc_layers[i](x)
